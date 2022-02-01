@@ -1,0 +1,217 @@
+﻿@using System.Security.Claims;
+@using Microsoft.Extensions.Options;
+@inject IOptions<Parfume.Models.VapidKeys> vapidKeys;
+@{ var username = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value.ToString() + " " + User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname).Value.ToString(); }
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewBag.Title</title>
+    <!-- Styles -->
+    <!-- Bootstrap CSS CDN -->
+    <link href="~/Layout/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Our Custom CSS -->
+    <link href="~/Layout/customStyles/sidebar.css" rel="stylesheet" />
+    <link href="~/Layout/font-awesome/css/solid.css" rel="stylesheet" />
+    <!-- Scrollbar Custom CSS -->
+    <link href="~/Layout/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+
+    <link href="~/Layout/selectize.js/css/selectize.css" rel="stylesheet" />
+
+    <link href="~/CustomScript/Scripts/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />
+
+    <link href="~/shared/select2/select2.min.css" rel="stylesheet" />
+
+    <link href="~/CustomStyle/Style.css" rel="stylesheet" />
+
+    <!-- Scripts -->
+
+    <script src="~/Layout/jquery/jquery.min.js" crossorigin="anonymous"></script>
+    <!--Jquery validator -->
+    <script src="~/Layout/jquery/jquery-validate/jquery.validate.min.js" crossorigin="anonymous"></script>
+    <script src="~/Layout/jquery/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" crossorigin="anonymous"></script>
+    <!-- Font Awesome JS -->
+
+    <script defer src="~/Layout/font-awesome/js/solid.js"></script>
+    <script defer src="~/Layout/font-awesome/js/fontawesome.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="~/Layout/twitter-bootstrap/js/bootstrap.min.js"></script>
+    <!-- jQuery Custom Scroller CDN -->
+    <script src="~/CustomScript/Scripts/moment.js/moment.js"></script>
+
+    <script src="~/Layout/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/CustomScript/Scripts/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.js"></script>
+    <script src="~/Layout/selectize.js/js/standalone/selectize.js"></script>
+
+    <script src="~/Layout/datatable/js/jquery.dataTables.js"></script>
+    <script src="~/Layout/datatable/js/dataTables.bootstrap4.js"></script>
+    <script src="~/Layout/datatable/js/dataTables.responsive.min.js"></script>
+    <script src="~/Layout/datatable/js/dataTables.select.min.js"></script>
+
+    //Export to exxel
+    <script src="https://cdn.datatables.net/buttons/2.1.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js "></script>
+    <script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.html5.min.js "></script>
+
+    <script src="~/shared/select2/select2.min.js"></script>
+
+    @*<script src="~/Layout/customScripts/_layout.js"></script>*@
+
+</head>
+
+<body style="font-size:15px;">
+    <input hidden value="@vapidKeys.Value.PublicKey" id="VapidPublicKey" />
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <a asp-controller="Home" asp-action="Index">
+                <div class="sidebar-header">
+
+                    <img style="width: 200px;" src="~/images/logo2.png" />
+                </div>
+            </a>
+
+            <ul class="list-unstyled components">
+
+                @if (true)
+                {
+                <li class="">
+
+                    <a href="#sale" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                        <i class="fas fa-share-square"></i> Satişlar
+                    </a>
+                    <ul class="collapse list-unstyled" id="sale">
+                        <li>
+                            <a asp-controller="Home" asp-action="SaleCredite">
+                                <i class="fas fa-credit-card"></i>
+                                Kredit
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="Home" asp-action="SaleCash">
+                                <i class="fas fa-cash-register"></i>
+                                Nağd
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="WhoPays">
+                        <i class="fas fa-money-check-alt"></i> Müştəri ödənişi
+                    </a>
+                </li>
+                <li>
+                    <a href="#Customer" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                        <i class="fas fa-history"></i> Müştərilər məlumatları
+                    </a>
+                    <ul class="collapse list-unstyled" id="Customer">
+                        <li>
+                            <a asp-controller="Customer" asp-action="AllCustomer">
+                                <i class="fas fa-users"></i> Müştərilər
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="Customer" asp-action="CreateCustomer">
+                                <i class="fas fa-users-cog"></i> Müştərilər yarat
+                            </a>
+                        </li>
+                    </ul>
+
+                </li>
+                <li>
+                    <a asp-controller="Customer" asp-action="BlockCustomer">
+                        <i class="fas fa-user-lock"></i> Blok olunan müştərilər
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Customer" asp-action="GeneralCustomer">
+                        <i class="fas fa-users-cog"></i>Ümümi müştərilər
+                    </a>
+                </li>
+                <li>
+                    <a href="#history" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                        <i class="fas fa-history"></i> Tarixçə
+                    </a>
+                    <ul class="collapse list-unstyled" id="history">
+                        <li>
+                            <a asp-controller="Home" asp-action="HistoryCredite">
+                                <i class="fas fa-credit-card"></i>
+                                Kredit
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="Home" asp-action="History">
+                                <i class="fas fa-cash-register"></i>
+                                Nağd
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @if (User.IsInRole("Admin"))
+                    {
+
+                <li>
+                    <a href="#Report" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                        <i class="fas fa-history"></i> Hesabat
+                    </a>
+                    <ul class="collapse list-unstyled" id="Report">
+                        <li>
+                            <a asp-controller="Report" asp-action="ReportPayment">
+                                <i class="fas fa-wallet"></i>
+                                Hesabat aylıq üzrə
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="Report" asp-action="ReportCreate">
+                                <i class="fas fa-wallet"></i>
+                                Hesabat hamsı
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                    }}
+            </ul>
+            <div class="ml-2 position-fixed" style="bottom:0;left:5px;font-weight:bold;">
+                <span class="text-left">©Parfume de euro</span>
+            </div>
+        </nav>
+
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                        <span></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <div class="col-9 text-center" style="font-size:medium;font-weight:bold;">
+                        </div>
+                        <div class="ml-auto">
+                            @username
+                        </div>
+                        <div class="ml-auto">
+                            <a asp-action="ChangePassword" asp-controller="Account" class="download" title="Hesabdan çıx" style="font-size:large">
+                                <i title="parolu dəyişmək" class="fas fa-user-cog"></i>
+                            </a>
+                        </div>
+                        <div class="ml-auto">
+                            <a asp-action="LogOut" asp-controller="Account" class="download" title="Hesabdan çıx" style="font-size:large">
+                                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            @RenderBody()
+        </div>
+    </div>
+</body>
+
+</html>

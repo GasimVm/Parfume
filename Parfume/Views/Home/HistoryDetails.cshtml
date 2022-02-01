@@ -1,0 +1,203 @@
+﻿@model Parfume.Models.Order
+
+@{
+    ViewData["Title"] = "Pay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+ 
+
+<input hidden id="OrderId" value="@Model.Id" />
+<div class=" contairner">
+    <h3 class="mb-3   text-center">Müştəri məlumatları</h3>
+    <div class="row text-center">
+        <div class="col-3 mt-3">
+            <label class="labelColor">Adı</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.Name" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Soyad</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.Customer.Surname" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ata adı</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.Customer.FatherName" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Fin</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.Fincode" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Nömrəsi</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.BaseNumber" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ələvə nömrə</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.FirstNumberWho" />
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.FirstNumber" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ələvə nömrə</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.SecondNumberWho" />
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.SecondNumber" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ələvə nömrə</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.ThirdNumberWho" />
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.ThirdNumber" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ünvan</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.Address" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">İş yeri</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.WorkAddress" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">İnstagram </label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.InstagramAddress" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Sifariş sayı </label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Customer.Orders.Count" />
+        </div>
+    </div>
+
+
+    <h3 class="mb-3 mt-5 text-center">Sifariş məlumatları</h3>
+    <div class="row text-center">
+        <div class="col-2 mt-3">
+            <label class="labelColor">Satıcının adı</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.User.Name " />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Satıcının soyadı</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.User.Surname" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Satıcının fin kodu</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.User.Fincode" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Qeydə alındığı tarix</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.CreateDate.ToString("dd/MM/yyyy HH:mm")" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Məhsulun adı</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.Name" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Miqdarı(ml) </label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.Quantity" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Sayı</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.Amount" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Qiyməti</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.Price" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Total Qiyməti</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.TotalPrice" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Müddət </label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.Duration" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Aylıq ödəniş</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.MonthPrice" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Ilkin ödəniş</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.FirstPrice" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Ödəniş tarixi</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.PaymentDate?.ToString("dd/MM/yyyy")" />
+        </div>
+        <div class="col-2 mt-3">
+            <label class="labelColor">Borc</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.Debt" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Satışın qeydə alındığı tarix</label>
+            <input type="text" readonly class="form-control  text-center  " value="@Model.CreateDate.ToString("dd/MM/yyyy")" />
+        </div>
+        
+    </div>
+
+    <h3 class="mb-3 mt-5 text-center">Ödəniş tarixi</h3>
+    <div class="row text-center mt-3">
+        <table   id="table" class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Ödəməli olduğu pulun miqdarı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Ödədiyı pulun miqdarı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Ödənişin qeydə alındığı tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Ödəniş etməli olduğu tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                </tr>
+            </thead>
+            <tbody class="TableBodyDetails">
+                @{ var index = 1;}
+                @foreach (var item in Model.PaymentHistories.Where(c=>c.Status==true))
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@item.MonthPrice</td>
+                        <td>@item.PayPrice</td>
+                        <td>@item.Note</td>
+                        <td>@item.PayDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+   
+</div>
+<script>
+    $(document).ready(function () {
+       
+        var table = $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5'
+            ],
+            "language": {
+                "search": "",
+                "emptyTable": "Heç bir məlumat yoxdur",
+                "sSearchPlaceholder": "Axtar",
+                "sLengthMenu": "_MENU_ sətir göstər",
+                "paginate": {
+                    "previous": "Əvvəlki",
+                    "next": "Sonrakı",
+                    "first": "Birinci",
+                    "last": "Axırıncı"
+                },
+                "info": "_TOTAL_ sətirdən _START_-dən _END_-kimi göstərir",
+                "infoEmpty": "0 nəticə",
+                "infoFiltered": "( _MAX_ sətirdən filter olunub)",
+                "zeroRecords": "Uyğun nətica tapılmadı",
+            }
+        });
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.header()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('#table th input').on('click', function () {
+            return false;
+        });
+    })</script>

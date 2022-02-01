@@ -1,0 +1,26 @@
+﻿
+[data-toggle="collapse"] .fa:before {
+    content: "\f139";
+}
+
+[data-toggle="collapse"].collapsed .fa:before {
+    content: "\f13a";
+}
+
+.main {
+    width: 100%;
+}
+
+th {
+    white-space: nowrap;
+    width: 12em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid #000000;
+}
+
+.funcBodyText {
+    font-size: 12px;
+}
+
+

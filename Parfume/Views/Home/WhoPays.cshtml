@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Parfume.Models.Order>
+@{
+    ViewData["Title"] = "History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" style="overflow:auto">
+    <div class="card-body pb-4">
+        <table id="table" class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; "> Adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Fin kod<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Instragram <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Məhsulun adı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Toplam qiyməti<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Aylıq ödənişi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Borcu<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Ödəniş tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Alış tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Əməliyyat<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+
+                </tr>
+            </thead>
+            <tbody class="TableBodyDetails">
+                @{ var index = 1; }
+                @foreach (var item in Model)
+                {
+                    string color = "";
+                    if (item.PaymentDate<DateTime.Now.AddDays(1))
+                    {
+                        color = "red";
+                    }else if(item.PaymentDate<DateTime.Now.AddDays(3)){
+                         color="yellow";
+                }
+
+                <tr style="background-color:@color" data-href="@Url.Action("Pay","Home",new {orderId=item.Id })">
+                    <td>@index</td>
+                    <td>@item.Customer.Name @item.Customer.Surname @item.Customer.FatherName </td>
+                    <td>@item.Customer.Fincode</td>
+                    <td>@item.Customer.BaseNumber</td>
+                    <td>@item.Customer.InstagramAddress</td>
+                    <td>@item.Name</td>
+                    <td>@item.TotalPrice</td>
+                    <td>@item.MonthPrice</td>
+                    <td>@item.Debt</td>
+                    <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
+                    <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+                   @if (User.IsInRole("Admin"))
+                {
+                    <td class="text-center removeOrder" data-OrderId="@item.Id"><a><i style="color:red" class="fas fa-trash-alt"></i></a></td>
+                }
+                </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="~/CustomScript/Scripts/WhoPays.js?v=3"></script>

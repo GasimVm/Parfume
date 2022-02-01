@@ -1,0 +1,76 @@
+﻿@model Parfume.Models.Customer
+@{
+    ViewData["Title"] = "CustomerChange";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class=" contairner">
+    <h3 class="mb-3   text-center">Müştəri məlumatları</h3>
+    <input hidden class="form-control customerId " value="@Model.Id" />
+
+    <div class="row text-center">
+        <div class="col-3">
+            <label class="labelColor">Adı</label>
+            <input type="text" class="form-control name " value="@Model.Name" />
+
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Soyad</label>
+            <input type="text" class="form-control surname " value="@Model.Surname" />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Ata adı</label>
+            <input type="text" class="form-control fatherName " value="@Model.FatherName" />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Fin</label>
+            <input type="text" class="form-control fincode " value="@Model.Fincode" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ünvanı</label>
+            <input type="text" class="form-control address " value="@Model.Address" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">İş yeri</label>
+            <input type="text" class="form-control workAddress " value="@Model.WorkAddress" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">İnstagram səhfəsi</label>
+            <input type="text" class="form-control InstagramAddress " value="@Model.InstagramAddress" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Kim okey verib?</label>
+            <input type="text" class="form-control WhoIsOkey " value="@Model.WhoIsOkey" />
+        </div>
+    </div>
+
+    <h3 class="mb-3 mt-5 text-center">Telefon məlumatları</h3>
+    <div class="row text-center">
+        <div class="col-3 ">
+            <label class="labelColor">Öz nömrəsi</label>
+            <input type="text" class="form-control  baseNumber " value="@Model.BaseNumber" />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı və nömrəsi</label>
+            <input type="text" class="form-control firstName" value="@Model.FirstNumberWho" />
+            <input type="text" class="form-control firstNumber" value="@Model.FirstNumber" />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı və nömrəsi</label>
+            <input type="text" class="form-control secondName" value="@Model.SecondNumberWho" />
+            <input type="text" class="form-control secondNumber" value="@Model.SecondNumber" />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı və nömrəsi</label>
+            <input type="text" class="form-control thirdName" value="@Model.ThirdNumberWho" />
+            <input type="text" class="form-control thirdNumber " value="@Model.ThirdNumberWho" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4 offset-4">
+            <input type="button" class="btn editCustomer" style="width:100%; background: #c79957; margin-top: 12%; " value="Qeydə al" />
+        </div>
+    </div>
+</div>
+<script src="~/CustomScript/Scripts/ChangeCustomer.js"></script>

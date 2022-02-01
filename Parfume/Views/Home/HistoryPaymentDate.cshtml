@@ -1,0 +1,64 @@
+﻿@model Parfume.Models.HistoryPayVM;
+@{
+    ViewData["Title"] = "HistoryPaymentDate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Layout/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
+<link href="~/Layout/bootstrap-datepicker-1.9.0-dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
+<script src="~/Layout/bootstrap-datepicker-1.9.0-dist/js/bootstrap-datepicker.js"></script>
+<script src="~/Layout/bootstrap-datepicker-1.9.0-dist/locales/bootstrap-datepicker.az.min.js"></script>
+<script src="~/Layout/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="~/Layout/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+<h3 class="mb-3   text-center">Ümümi məlumatları</h3>
+<div>
+    <div class="col-6 offset-3 ">
+
+        <div class="btn btn-default" title="Əməliyyat tarixi" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; margin-left:35px;">
+            <i class="fa fa-calendar"></i>&nbsp;
+            <span></span> <i class="fa fa-caret-down"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row text-center">
+    <div class="col-3 mt-3">
+        <label class="labelColor">Ümümi satış sayı</label>
+        <input type="text" class="form-control  OrderCount " readonly value="@Model.OrderCount" />
+    </div>
+    <div class="col-3 mt-3">
+        <label class="labelColor">Nağd satış sayı</label>
+        <input type="text" class="form-control  CachOrder " readonly value="@Model.CachOrder" />
+    </div>
+    <div class="col-3 mt-3">
+        <label class="labelColor">Kredit satış sayı</label>
+        <input type="text" class="form-control   CrediteOrder" readonly value="@Model.CrediteOrder" />
+    </div>
+    <div class="col-3 mt-3">
+        <label class="labelColor">Borc</label>
+        <input type="text" class="form-control  Debt " readonly value="@Model.Debt" />
+    </div>
+
+    <div class="col-3 mt-3">
+        <label class="labelColor">Nağd pul satışdan gələn</label>
+        <input type="text" class="form-control   CachMany" readonly value="@Model.CachMany" />
+    </div>
+    <div class="col-3 mt-3">
+        <label class="labelColor">Kredit ödənişilə gələn  </label>
+        <input type="text" class="form-control  CrediteMany " readonly value="@Model.CrediteMany" />
+    </div>
+    <div class="col-3 mt-3">
+        <label class="labelColor">Ödənməli olan pul  </label>
+        <input type="text" class="form-control  ImportantMany " readonly value="@Model.ImportantMany" />
+    </div>
+    <div class="col-3 mt-3">
+        <label class="labelColor">Ümümi pul</label>
+        <input type="text" class="form-control  GeneralMany " readonly value="@Model.GeneralMany" />
+    </div>
+    <div class="col-3 mt-3">
+        <label class="labelColor">Ümümi satiş</label>
+        <input type="text" class="form-control   SaleMany" readonly value="@Model.SaleMany" />
+    </div>
+</div>
+
+<script src="~/CustomScript/Scripts/HistoryPay.js"></script>

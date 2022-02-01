@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "ReportPayment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Layout/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
+<link href="~/Layout/bootstrap-datepicker-1.9.0-dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
+<script src="~/Layout/bootstrap-datepicker-1.9.0-dist/js/bootstrap-datepicker.js"></script>
+<script src="~/Layout/bootstrap-datepicker-1.9.0-dist/locales/bootstrap-datepicker.az.min.js"></script>
+<script src="~/Layout/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="~/Layout/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+<div>
+    <div class="col-6 offset-3 ">
+        <div class="btn btn-default" title="Əməliyyat tarixi" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; margin-left:35px;">
+            <i class="fa fa-calendar"></i>&nbsp;
+            <span></span> <i class="fa fa-caret-down"></i>
+        </div>
+    </div>
+</div>
+
+<div hidden class="row text-center generalView">
+
+    <div class="col-2 mt-3">
+        <label class="labelColor">Nağd satışdan gələn</label>
+        <input type="text" class="form-control   CachMany" readonly />
+    </div>
+    <div class="col-2 mt-3">
+        <label class="labelColor">Kredit ödənişilə gələn  </label>
+        <input type="text" class="form-control  CrediteMany " readonly />
+    </div>
+    <div class="col-2 mt-3">
+        <label class="labelColor">Balans </label>
+        <input type="text" class="form-control  Balans " readonly />
+    </div>
+    <div class="col-2 mt-3">
+        <label class="labelColor">Borc </label>
+        <input type="text" class="form-control  Debt " readonly />
+    </div>
+    <div class="col-2 mt-3">
+        <label class="labelColor">Ümümis pul</label>
+        <input type="text" class="form-control  Important " readonly />
+    </div>
+</div>
+
+<script src="~/CustomScript/Scripts/ReportPayment.js"></script>

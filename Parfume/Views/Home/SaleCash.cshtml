@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewData["Title"] = "SaleCash";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/CustomScript/Scripts/SendOrderCash.js?v=3"></script>
+<div class=" contairner">
+    <h3 class="mb-3   text-center">Müştəri məlumatları</h3>
+    <div class="row text-center">
+        <div class="col-3">
+            <label class="labelColor">Fin</label>
+            <select class="users-Directly" style="width: 100% !important;" id="UsersDirectly"></select>
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı</label>
+            <input type="text" class="form-control name " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Soyad</label>
+            <input type="text" class="form-control surname " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Ata adı</label>
+            <input type="text" class="form-control fatherName " />
+        </div>
+
+        <div class="col-3 mt-3">
+            <label class="labelColor">Öz nömrəsi</label>
+            <input type="text" class="form-control  baseNumber " />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">İnstagram səhfəsi</label>
+            <input type="text" class="form-control InstagramAddress " />
+        </div>
+    </div>
+
+
+    <h3 class="mb-3 mt-5 text-center">Sifariş məlumatları</h3>
+    <div class="row text-center">
+        <div class="col-3">
+            <label class="labelColor">Parfumun adı</label>
+            <input type="text" class="form-control productName  " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Miqdarı(ml)</label>
+            <input type="number" min="0" class="form-control  quantity " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Sayı</label>
+            <input type="number" min="0" class="form-control amount  " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Qiyməti</label>
+            <input type="text" class="form-control  price " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Maya dəyəri</label>
+            <input type="number" class="form-control  cost " />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Toplam qiymət</label>
+            <input type="number" class="form-control totalPrice " />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Tarix</label>
+            <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                <input type="text" required data-val-required="Vaxtı qeyd etməlisiz" id="Create_Date" class="form-control datetimepicker-input" data-target="#datetimepicker3" />
+                <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <input type="button" class="btn sendOrder" style="background: #c79957; margin-top: 12%; " value="Qeydə al" />
+        </div>
+    </div>
+
+    
+</div>

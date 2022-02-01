@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "CreateCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/CustomScript/Scripts/CreateCustomer.js?v=3"></script>
+<div class=" contairner">
+    <h3 class="mb-3   text-center">Müştəri məlumatları</h3>
+    <div class="row text-center">
+        <div class="col-3">
+            <label class="labelColor">Fin</label>
+            <input type="text" class="form-control fincode " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı</label>
+            <input type="text" class="form-control name " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Soyad</label>
+            <input type="text" class="form-control surname " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Ata adı</label>
+            <input type="text" class="form-control fatherName " />
+        </div>
+
+
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ünvanı</label>
+            <input type="text" class="form-control address " />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">İş yeri</label>
+            <input type="text" class="form-control workAddress " />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">İnstagram səhfəsi</label>
+            <input type="text" class="form-control InstagramAddress " />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Kim okey verib?</label>
+            <input type="text" class="form-control WhoIsOkey " />
+        </div>
+    </div>
+
+    <h3 class="mb-3 mt-5 text-center">Telefon məlumatları</h3>
+    <div class="row text-center">
+        <div class="col-3 ">
+            <label class="labelColor">Öz nömrəsi</label>
+            <input type="text" class="form-control  baseNumber " />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı və nömrəsi</label>
+            <input type="text" class="form-control firstName" />
+            <input type="text" class="form-control firstNumber" />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı və nömrəsi</label>
+            <input type="text" class="form-control secondName" />
+            <input type="text" class="form-control secondNumber" />
+        </div>
+        <div class="col-3">
+            <label class="labelColor">Adı və nömrəsi</label>
+            <input type="text" class="form-control thirdName" />
+            <input type="text" class="form-control thirdNumber " />
+        </div>
+    </div>
+    <div class="col-3">
+        <input type="button" class="btn sendOrder" style="background: #c79957; margin-top: 12%; " value="Qeydə al" />
+    </div>
+</div>
+
+
+ 
