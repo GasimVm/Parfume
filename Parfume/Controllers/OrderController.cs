@@ -336,14 +336,7 @@ namespace Parfume.Controllers
                 }
                 var orderId = Convert.ToInt32(OrderId);
                 var Price = Convert.ToDouble(price);
-                var crediteHistory = new CrediteHistory()
-                {
-                    CachMany = Price,
-                    UserId = UserId,
-                    Note = note,
-                    OrderId = orderId,
-                };
-                _context.CrediteHistories.Add(crediteHistory);
+               
                 var order = _context.Orders.Where(c => c.Id == orderId).FirstOrDefault();
                 order.Debt = order.Debt - Price;
                 order.StatusNotification = 1;
@@ -366,6 +359,16 @@ namespace Parfume.Controllers
                     paymentHistory.PayDate = CreateDate;
                     paymentHistory.Debt = Convert.ToDouble(order.Debt);
                     _context.PaymentHistories.Update(paymentHistory);
+
+                    var crediteHistory = new CrediteHistory()
+                    {
+                        CachMany = Price,
+                        UserId = UserId,
+                        Note = note,
+                        OrderId = orderId,
+                        PaymentHistoryId= paymentHistory.Id
+                    };
+                    _context.CrediteHistories.Add(crediteHistory);
                     _context.SaveChanges();
                 }
                 
@@ -402,6 +405,56 @@ namespace Parfume.Controllers
                 _context.Orders.Update(order);
                 _context.SaveChanges();
                  
+                return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
+            }
+            catch (Exception ex)
+            {
+                _context.Logs.Add(new Log()
+                {
+                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
+                    UserId = UserId,
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                return Json(new { status = "error", message = "Xəta baş verdi" });
+            }
+        }
+       public ActionResult ChangePaymentPay(int payHistoryId)
+        {
+            var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
+          ViewBag.Many= payHistory.PayPrice;
+          ViewBag.PayHistoryId = payHistoryId;
+          ViewBag.OrderId = payHistory.OrderId;
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult ChangePaymentPay(string OrderId, int newMany, int payHistoryId)
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+            try
+            {
+                var orderId = Convert.ToInt32(OrderId);
+                var order = _context.Orders.Where(c => c.Id == orderId).First();
+                var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
+               
+                if (_context.CrediteHistories.Any(c=>c.PaymentHistoryId==payHistoryId))
+                {
+                   var crediteHistory= _context.CrediteHistories.Where(c => c.PaymentHistoryId == payHistoryId).First();
+                    crediteHistory.CachMany = newMany;
+                    _context.CrediteHistories.Update(crediteHistory);
+                    _context.SaveChanges();
+                }
+                order.Debt += (payHistory.PayPrice-newMany);
+                _context.Orders.Update(order);
+                _context.SaveChanges();
+                payHistory.PayPrice = newMany;
+                payHistory.Debt = (double)order.Debt;
+                _context.PaymentHistories.Update(payHistory);
+                _context.SaveChanges();
+
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
             catch (Exception ex)

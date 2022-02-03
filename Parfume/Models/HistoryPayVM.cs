@@ -17,6 +17,11 @@ namespace Parfume.Models
         public double? CrediteMany { get; set; }
         public double? SaleMany { get; set; }
         public double? ImportantMany { get; set; }
+        public double? GeneralBalans { get; set; }
+        public double? NeededMany { get; set; }
+        public double? FirstBalans { get; set; }
+
+
 
     }
 }

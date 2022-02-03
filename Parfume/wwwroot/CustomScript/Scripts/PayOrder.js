@@ -3,6 +3,50 @@
         format: 'DD/MM/YYYY',
         sideBySide: false
     });
+    ChangePay();
+    ChangeDate();
+    Pay();
+   
+})
+
+function ChangePay() {
+    
+    $(document).on("click", ".changePay", function () {
+        window.location.href = $(this).attr('data-href');
+         
+    })
+}
+function ChangeDate() {
+
+    $(".changeDate").click(function () {
+        var changeDay = $(".changeDay").val();
+        var OrderId = $("#OrderId").val();
+        var formData = new FormData();
+        formData.append('changeDay', changeDay)
+        formData.append('OrderId', OrderId)
+        if (confirm('Ödəmə tarixini dəyişmək istiyrsiz?')) {
+            $.ajax({
+                type: 'POST',
+                url: '/Order/ChangePaymentDate',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status === "success") {
+                        alert("Qeydə alındı!")
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+
+                    }
+                }
+            });
+        }
+
+    })
+}
+function Pay() {
     $(".PayOrder").click(function () {
 
         var OrderId = $("#OrderId").val();
@@ -12,7 +56,7 @@
         if (price.length == 0) {
             alert("Qiymət boş ola bilməz!")
             return
-        } else if (dateCreate ==undefined) {
+        } else if (dateCreate == undefined) {
             alert("Ödəniş tarixi boş ola bilməz!")
             return
         }
@@ -42,34 +86,6 @@
                 }
             });
         }
-       
-    })
 
-    $(".changeDate").click(function () {
-        var changeDay = $(".changeDay").val();
-        var OrderId = $("#OrderId").val();
-        var formData = new FormData();
-        formData.append('changeDay', changeDay)
-        formData.append('OrderId', OrderId)
-        if (confirm('Ödəmə tarixini dəyişmək istiyrsiz?')) {
-            $.ajax({
-                type: 'POST',
-                url: '/Order/ChangePaymentDate',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.status === "success") {
-                        alert("Qeydə alındı!")
-                        window.location.reload();
-                    }
-                    else {
-                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
-                        
-                    }
-                }
-            });
-        }
-      
     })
-})
+}

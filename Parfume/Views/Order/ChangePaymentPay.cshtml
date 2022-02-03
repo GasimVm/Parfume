@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewData["Title"] = "ChangePaymentPay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <input hidden value="@ViewBag.OrderId" id="OrderId" />
+        <div class="col-3 offset-1">
+           <input value="@ViewBag.Many" class="form-control newMany" />
+        </div>
+        <div class="col-3 offset-1">
+            <input  class="btn btn-success save" data-payHistoryId="@ViewBag.PayHistoryId" value="Yadda saxla"/>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".save").click(function () {
+            var payHistoryId = $(this).attr("data-payHistoryId");
+            var newMany = $(".newMany").val();
+            var OrderId = $("#OrderId").val();
+            var formData = new FormData();
+            formData.append('OrderId', OrderId)
+            formData.append('payHistoryId', payHistoryId)
+            formData.append('newMany', newMany)
+            if (confirm('Ödəmə miqdarini dəyişmək istiyrsiz?')) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Order/ChangePaymentPay',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.status === "success") {
+                            alert("Qeydə alındı!")
+                            window.location.reload();
+                        }
+                        else {
+                            alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+
+                        }
+                    }
+                });
+                
+            }
+
+        })
+    })
+</script>

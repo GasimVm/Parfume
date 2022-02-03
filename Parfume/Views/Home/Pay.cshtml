@@ -49,6 +49,26 @@
             <input type="text" readonly class="form-control  text-center  " value="@Model.Name" />
         </div>
         <div class="col-2">
+            <label class="labelColor">Satiş qiyməti</label>
+            <input type="number" readonly class="form-control  text-center  " value="@Model.Price" />
+        </div>
+        <div class="col-2">
+            <label class="labelColor">Məhsulun sayı</label>
+            <input type="number" readonly class="form-control  text-center  " value="@Model.Amount" />
+        </div>
+        <div class="col-2">
+            <label class="labelColor">Cəm qiyməti </label>
+            <input type="number" readonly class="form-control  text-center  " value="@Model.TotalPrice" />
+        </div>
+        <div class="col-2">
+            <label class="labelColor">İlkin ödəniş</label>
+            <input type="number" readonly class="form-control  text-center  " value="@Model.FirstPrice" />
+        </div>
+        <div class="col-2">
+            <label class="labelColor">Maya dəyəri</label>
+            <input type="number" readonly class="form-control  text-center  " value="@Model.Cost" />
+        </div>
+        <div class="col-2">
             <label class="labelColor">Borc</label>
             <input type="number" readonly class="form-control  text-center  " value="@Model.Debt" />
         </div>
@@ -89,6 +109,7 @@
                     <th>Borc<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Ödənişin qeydə alındığı tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Ödəniş etməli olduğu tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Ödəniş dəyişdir<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                 </tr>
             </thead>
             <tbody class="TableBodyDetails">
@@ -101,7 +122,7 @@
                         color = "#36c336";
                     }
 
-                    <tr style="background-color:@color">
+                    <tr style="background-color:@color" >
                         <td>@index</td>
                         <td>@item.MonthPrice</td>
                         <td>@item.PayPrice</td>
@@ -109,6 +130,15 @@
                         <td>@item.Debt</td>
                         <td>@item.PayDate?.ToString("dd/MM/yyyy")</td>
                         <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (item.PayPrice != null)
+                            {
+                                <button type="button" class="btn btn-info changePay " data-href="@Url.Action("ChangePaymentPay","Order",new {payHistoryId=item.Id })" style=" background-color: #7c6e58 !important; width: 80px; ">
+                                    Edit
+                                </button>
+                            }
+
+                        </td>
                     </tr>
                     index++;
                 }
