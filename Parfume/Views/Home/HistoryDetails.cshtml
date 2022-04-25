@@ -100,6 +100,10 @@
             <input type="text" readonly class="form-control text-center  " value="@Model.Price" />
         </div>
         <div class="col-2 mt-3">
+            <label class="labelColor">Maya qiyməti</label>
+            <input type="text" readonly class="form-control text-center  " value="@Model.Cost" />
+        </div>
+        <div class="col-2 mt-3">
             <label class="labelColor">Total Qiyməti</label>
             <input type="text" readonly class="form-control text-center  " value="@Model.TotalPrice" />
         </div>
@@ -127,7 +131,7 @@
             <label class="labelColor">Satışın qeydə alındığı tarix</label>
             <input type="text" readonly class="form-control  text-center  " value="@Model.CreateDate.ToString("dd/MM/yyyy")" />
         </div>
-        
+
     </div>
 
     <h3 class="mb-3 mt-5 text-center">Ödəniş tarixi</h3>

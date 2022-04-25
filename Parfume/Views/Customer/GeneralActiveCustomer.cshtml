@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Parfume.Models.CustomerModel>
+@{
+    ViewData["Title"] = "GeneralActiveCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card" style="overflow:auto">
+    <div class="card-body pb-4">
+        <table id="table" class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; ">Adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:80px; ">Fin<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:120px; ">Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                     
+                    <th style="width:180px; ">Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; ">Kim okeyliyib<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:200px; ">Əməliyyat<br /> </th>
+                </tr>
+            </thead>
+            <tbody class="TableBodyDetails">
+                @{ var index = 1;}
+                @foreach (var item in Model)
+                {
+                    <tr   data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.Id })">
+                        <td>@index</td>
+                        <td>@item.Name @item.Surname @item.FatherName  </td>
+                        <td>@item.Fincode</td>
+                        <td>@item.BaseNumber</td>
+                        <td>@item.Note @item.BlockNote</td>
+                        <td>@item.WhoIsOkey </td>
+                        <td>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerChange","Customer",new {customerId=item.Id })" style="  width:80px; ">
+                                    Edit
+                                </button>
+                            }
+
+                        </td>
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Qeyd</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control noteBlock"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="button" class="btn btn-primary blockUser">Təsdiqlə</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/CustomScript/Scripts/GeneralCustomer.js"></script>
+

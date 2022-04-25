@@ -9,5 +9,10 @@ namespace Parfume.Service
    public interface IUserService
     {
         (IEnumerable<CustomerModel> customers, int rowCount) GetCustomer(string fincode, int page, int length, string search);
+        (IEnumerable<CustomerModel> customers, int rowCount) GetCustomerWithPhone(string fincode, int page, int length, string search);
+
+        public IEnumerable<CustomerModel> GetCustomerWithDebt(   int type);
     }
+
+
 }

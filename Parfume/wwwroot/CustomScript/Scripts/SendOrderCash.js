@@ -147,7 +147,7 @@ function Select2Plugin() {
         },
         ajax: {
             delay: 500,
-            url: '/Customer/Users',
+            url: '/Customer/UsersWithPhone',
             data: function (params) {
                 var query = {
                     search: params.term,

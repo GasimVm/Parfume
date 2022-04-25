@@ -20,6 +20,7 @@ namespace Parfume.DAL
         public DbSet<Role> Roles { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<Product>  Products { get; set; }
+        public DbSet<Expense>   Expenses { get; set; }
         public DbSet<PaymentHistory>  PaymentHistories { get; set; }
         public DbSet<UserWebPushCredentials>  userWebPushCredentials { get; set; }
 

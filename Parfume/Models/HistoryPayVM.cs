@@ -12,6 +12,7 @@ namespace Parfume.Models
         public int CachOrder { get; set; }
         public int Income { get; set; }
         public int CrediteOrder { get; set; }
+        public int Expense { get; set; }
         public double? CachMany { get; set; }
         public double? GeneralMany { get; set; }
         public double? CrediteMany { get; set; }

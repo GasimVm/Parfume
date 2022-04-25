@@ -34,6 +34,20 @@ namespace Parfume.Controllers
             var model = _context.Customers.Include(c => c.Orders).ToList();
             return View(model);
         }
+
+        public IActionResult GeneralActiveCustomer()
+        {
+
+            var model = _userService.GetCustomerWithDebt(1);
+            
+            return View(model);
+        }
+        public IActionResult GeneralPassiveCustomer()
+        {
+            var model = _userService.GetCustomerWithDebt(2);
+
+            return View(model);
+        }
         public IActionResult CreateCustomer()
         {
 
@@ -297,5 +311,73 @@ namespace Parfume.Controllers
             }).ToList();
             return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
         }
+
+        public JsonResult UsersWithPhone(string search, int page, string blackList,
+                         bool selfAccess = false, bool fullAccess = false, bool isDelegation = false, bool selfInner = false)
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+            string fincode;
+            fincode = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+
+            if (!String.IsNullOrEmpty(search))
+            {
+                search = search.Trim().Replace(" ", "");
+            }
+            List<int> _blackList = new List<int>();
+            if (!string.IsNullOrEmpty(blackList))
+            {
+                _blackList = blackList.Split(',').Select(Int32.Parse).ToList();
+            }
+
+
+            (IEnumerable<CustomerModel> employees, int rowCount) employeesAndRowCount = _userService.GetCustomerWithPhone(fincode, page, 100, search);
+
+            IEnumerable<Customer> users =
+                 employeesAndRowCount.employees
+                 .Select(e => new Customer
+                 {
+                     Id = e.Id,
+                     Fincode = e.Fincode,
+                     Name = e.Name,
+                     Surname = e.Surname,
+                     Address = e.Address,
+                     BaseNumber = e.BaseNumber,
+                     FatherName = e.FatherName,
+                     FirstNumber = e.FirstNumber,
+                     FirstNumberWho = e.FirstNumberWho,
+                     InstagramAddress = e.InstagramAddress,
+                     SecondNumber = e.SecondNumber,
+                     SecondNumberWho = e.SecondNumberWho,
+                     ThirdNumber = e.ThirdNumber,
+                     ThirdNumberWho = e.ThirdNumberWho,
+                     WorkAddress = e.WorkAddress,
+                     WhoIsOkey = e.WhoIsOkey
+                 }).ToList();
+
+            List<Select2Result> results = users.Select(u =>
+            new Select2Result
+            {
+                id = u.Id.ToString(),
+                text = u.Name + " /" + u.Fincode +" /" + u.BaseNumber,
+                Name = u.Name,
+                Surname = u.Surname,
+                FatherName = u.FatherName,
+                Fincode = u.Fincode,
+                Address = u.Address,
+                WorkAddress = u.WorkAddress,
+                InstagramAddress = u.InstagramAddress,
+                BaseNumber = u.BaseNumber,
+                FirstNumber = u.FirstNumber,
+                FirstNumberWho = u.FirstNumberWho,
+                SecondNumber = u.SecondNumber,
+                SecondNumberWho = u.SecondNumberWho,
+                ThirdNumber = u.ThirdNumber,
+                ThirdNumberWho = u.ThirdNumberWho,
+                WhoIsOkey = u.WhoIsOkey
+            }).ToList();
+            return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
+        }
+
     }
 }

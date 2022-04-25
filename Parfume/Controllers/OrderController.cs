@@ -17,7 +17,7 @@ namespace Parfume.Controllers
     {
         private readonly ParfumeContext _context;
         private readonly ICreatePdfService _createPdfService;
-        public OrderController(ParfumeContext context,ICreatePdfService createPdfService)
+        public OrderController(ParfumeContext context, ICreatePdfService createPdfService)
         {
             _context = context;
             _createPdfService = createPdfService;
@@ -29,23 +29,23 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateOrder(string name, string surname, string duration, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
             string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, string monthlyPayment, string productName, string totalPrice, string address,
-            string workAddress, string InstagramAddress, string CustomerId,string dateCreate,string WhoIsOkey, int cost)
+            string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey, int cost)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
             try
             {
                 var ctsId = 0;
-                
+
                 if (fincode.Contains('/'))
                 {
                     fincode = fincode.Split('/')[1].ToString();
                 }
                 if (!CustomerId.Contains("new"))
                 {
-                    ctsId= Int32.Parse(CustomerId);
+                    ctsId = Int32.Parse(CustomerId);
                 }
-                
+
                 if (_context.Customers.Any(c => c.Fincode.ToUpper() == fincode.Trim().ToUpper() && c.IsBlock))
                 {
                     return Json(new { status = "error", message = "Bu şəxs qara siyahıdadır!" });
@@ -55,7 +55,7 @@ namespace Parfume.Controllers
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 var debt = Convert.ToDouble(totalPrice) - Convert.ToDouble(firstPrice);
                 var CreateDate = DateTime.Now;
-                if (  dateCreate != null)
+                if (dateCreate != null)
                 {
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
 
@@ -96,7 +96,7 @@ namespace Parfume.Controllers
                         FirstNumberWho = firstName,
                         InstagramAddress = InstagramAddress,
                         Name = name,
-                        WhoIsOkey=WhoIsOkey,
+                        WhoIsOkey = WhoIsOkey,
                         SecondNumber = secondNumber,
                         SecondNumberWho = secondName,
                         Surname = surname,
@@ -142,21 +142,21 @@ namespace Parfume.Controllers
                     Duration = Convert.ToInt32(duration),
                     PaymentDate = CreateDate.AddMonths(1),
                     Price = Convert.ToDouble(price),
-                     Cost= cost,
+                    Cost = cost,
                     FirstPrice = Convert.ToDouble(firstPrice),
                     ProductId = productId,
                     TotalPrice = Convert.ToDouble(totalPrice),
                     UserId = UserId,
-                    CreateDate= CreateDate,
+                    CreateDate = CreateDate,
                     Status = 2,
-                   StatusNotification=1
+                    StatusNotification = 1
                 };
 
                 _context.Orders.Add(order).GetDatabaseValues();
                 _context.SaveChanges();
 
                 var paymentHistory = new List<PaymentHistory>();
-                for (int i = 1; i <= Convert.ToInt32(duration)  ; i++)
+                for (int i = 1; i <= Convert.ToInt32(duration); i++)
                 {
                     paymentHistory.Add(new PaymentHistory()
                     {
@@ -165,9 +165,9 @@ namespace Parfume.Controllers
                         MonthPrice = Convert.ToDouble(monthlyPayment),
                         Status = false,
                         Queue = i,
-                        Debt= debt,
+                        Debt = debt,
                         PaymentDate = CreateDate.AddMonths(i),
-                        PayDate= CreateDate.AddMonths(i)
+                        PayDate = CreateDate.AddMonths(i)
 
                     });
 
@@ -201,12 +201,14 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateOrderCash(string name, string surname, string fatherName, string baseNumber, string fincode,
              string quantity, string price, string amount, string productName, string totalPrice,
-             string InstagramAddress , string CustomerId , string dateCreate,string cost)
+             string InstagramAddress, string CustomerId, string dateCreate, string cost)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
             try
             {
+                fincode = fincode ?? "";
+
                 if (fincode.Contains('/'))
                 {
                     fincode = fincode.Split('/')[1].ToString();
@@ -223,11 +225,11 @@ namespace Parfume.Controllers
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
 
                 }
-                if (!CustomerId.Contains("new"))
+                if (!CustomerId.Contains("new") && CustomerId != "null")
                 {
                     ctsId = Int32.Parse(CustomerId);
                 }
-                if (fincode!=null)
+                if (fincode != null && fincode != "")
                 {
                     CustomerFin = fincode.Trim().ToUpper();
                 }
@@ -244,7 +246,7 @@ namespace Parfume.Controllers
                     _context.SaveChanges();
                     customerId = ctsId;
                 }
-                else if (!_context.Customers.Any(c => c.Fincode.ToUpper() == CustomerFin && c.IsActive && !c.IsBlock) || CustomerFin=="")
+                else if (!_context.Customers.Any(c => c.Fincode.ToUpper() == CustomerFin && c.IsActive && !c.IsBlock) || CustomerFin == "")
                 {
                     var customer = new Customer()
                     {
@@ -290,9 +292,9 @@ namespace Parfume.Controllers
                     Quantity = quantity,
                     Price = Convert.ToDouble(price),
                     ProductId = productId,
-                    Cost=Convert.ToInt32(cost),
+                    Cost = Convert.ToInt32(cost),
                     TotalPrice = Convert.ToDouble(totalPrice),
-                    CreateDate= CreateDate,
+                    CreateDate = CreateDate,
                     UserId = UserId,
                     Status = 1
                 };
@@ -315,12 +317,9 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
-
-
         }
-
         [HttpPost]
-        public JsonResult PayOrder(string OrderId, string price, string note,string dateCreate)
+        public JsonResult PayOrder(string OrderId, string price, string note, string dateCreate)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
@@ -336,7 +335,7 @@ namespace Parfume.Controllers
                 }
                 var orderId = Convert.ToInt32(OrderId);
                 var Price = Convert.ToDouble(price);
-               
+
                 var order = _context.Orders.Where(c => c.Id == orderId).FirstOrDefault();
                 order.Debt = order.Debt - Price;
                 order.StatusNotification = 1;
@@ -350,9 +349,9 @@ namespace Parfume.Controllers
                     _context.Orders.Update(order);
                     _context.SaveChanges();
                 }
-                if (_context.PaymentHistories.Any(c => c.OrderId == orderId && c.Status==false))
+                if (_context.PaymentHistories.Any(c => c.OrderId == orderId && c.Status == false))
                 {
-                  var paymentHistory=  _context.PaymentHistories.Where(c => c.OrderId == orderId && c.Status == false).FirstOrDefault();
+                    var paymentHistory = _context.PaymentHistories.Where(c => c.OrderId == orderId && c.Status == false).FirstOrDefault();
                     paymentHistory.Status = true;
                     paymentHistory.Note = note;
                     paymentHistory.PayPrice = Price;
@@ -366,13 +365,40 @@ namespace Parfume.Controllers
                         UserId = UserId,
                         Note = note,
                         OrderId = orderId,
-                        PaymentHistoryId= paymentHistory.Id
+                        PaymentHistoryId = paymentHistory.Id
                     };
                     _context.CrediteHistories.Add(crediteHistory);
                     _context.SaveChanges();
                 }
-                
+                else
+                {
+                    var paymentHistory = _context.PaymentHistories.Where(c => c.OrderId == orderId).FirstOrDefault();
+                    _context.PaymentHistories.Add(new PaymentHistory()
+                    {
+                        CustomerId = paymentHistory.CustomerId,
+                        MonthPrice = paymentHistory.MonthPrice,
+                        PayPrice = Price,
+                        Note = note,
+                        Status = true,
+                        Queue = paymentHistory.Queue + 1,
+                        Debt = Convert.ToDouble(order.Debt),
+                        PaymentDate = CreateDate,
+                        PayDate = CreateDate,
+                        OrderId = orderId
+                    });
+                    _context.SaveChanges();
+                }
 
+                _context.Logs.Add(new Log()
+                {
+                    Error = "Ugurlu odenis miqdar" + price,
+                    UserId = UserId,
+                    BrowserInfo = "order id=" + OrderId.ToString(),
+                    Success = true,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
@@ -382,6 +408,7 @@ namespace Parfume.Controllers
                 {
                     Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
                     UserId = UserId,
+                    BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = false,
                     Type = 1,
                     Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
@@ -392,7 +419,7 @@ namespace Parfume.Controllers
         }
 
         [HttpPost]
-        public JsonResult ChangePaymentDate(string OrderId,int changeDay)
+        public JsonResult ChangePaymentDate(string OrderId, int changeDay)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
@@ -404,7 +431,17 @@ namespace Parfume.Controllers
                 order.StatusNotification = 1;
                 _context.Orders.Update(order);
                 _context.SaveChanges();
-                 
+
+                _context.Logs.Add(new Log()
+                {
+                    Error = "ChangePaymentDate day number" + changeDay.ToString(),
+                    UserId = UserId,
+                    BrowserInfo = "order id=" + OrderId.ToString(),
+                    Success = true,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
             catch (Exception ex)
@@ -421,12 +458,12 @@ namespace Parfume.Controllers
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
-       public ActionResult ChangePaymentPay(int payHistoryId)
+        public ActionResult ChangePaymentPay(int payHistoryId)
         {
             var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
-          ViewBag.Many= payHistory.PayPrice;
-          ViewBag.PayHistoryId = payHistoryId;
-          ViewBag.OrderId = payHistory.OrderId;
+            ViewBag.Many = payHistory.PayPrice;
+            ViewBag.PayHistoryId = payHistoryId;
+            ViewBag.OrderId = payHistory.OrderId;
             return View();
         }
 
@@ -439,20 +476,87 @@ namespace Parfume.Controllers
                 var orderId = Convert.ToInt32(OrderId);
                 var order = _context.Orders.Where(c => c.Id == orderId).First();
                 var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
-               
-                if (_context.CrediteHistories.Any(c=>c.PaymentHistoryId==payHistoryId))
+
+                if (_context.CrediteHistories.Any(c => c.PaymentHistoryId == payHistoryId))
                 {
-                   var crediteHistory= _context.CrediteHistories.Where(c => c.PaymentHistoryId == payHistoryId).First();
+                    var crediteHistory = _context.CrediteHistories.Where(c => c.PaymentHistoryId == payHistoryId).First();
                     crediteHistory.CachMany = newMany;
                     _context.CrediteHistories.Update(crediteHistory);
                     _context.SaveChanges();
                 }
-                order.Debt += (payHistory.PayPrice-newMany);
+                order.Debt += (payHistory.PayPrice - newMany);
                 _context.Orders.Update(order);
                 _context.SaveChanges();
                 payHistory.PayPrice = newMany;
                 payHistory.Debt = (double)order.Debt;
                 _context.PaymentHistories.Update(payHistory);
+                _context.SaveChanges();
+                _context.Logs.Add(new Log()
+                {
+                    Error = "odenisin miqdarinini deyismek yeni miqdar" + newMany.ToString(),
+                    UserId = UserId,
+                    BrowserInfo = "order id=" + OrderId.ToString(),
+                    Success = true,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+
+
+                return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
+            }
+            catch (Exception ex)
+            {
+                _context.Logs.Add(new Log()
+                {
+                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
+                    UserId = UserId,
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                return Json(new { status = "error", message = "Xəta baş verdi" });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DeletePaymentPay(string OrderId, int payHistoryId)
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+            try
+            {
+                var orderId = Convert.ToInt32(OrderId);
+                var order = _context.Orders.Where(c => c.Id == orderId).First();
+                var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
+                var newMany = payHistory.PayPrice;
+                if (_context.CrediteHistories.Any(c => c.PaymentHistoryId == payHistoryId))
+                {
+                    var crediteHistory = _context.CrediteHistories.Where(c => c.PaymentHistoryId == payHistoryId).First();
+                    _context.CrediteHistories.Remove(crediteHistory);
+                    _context.SaveChanges();
+                }
+                order.Debt += payHistory.PayPrice;
+                order.PaymentDate = order.PaymentDate?.AddMonths(-1);
+                _context.Orders.Update(order);
+                _context.SaveChanges();
+                payHistory.PayPrice = null;
+                payHistory.Note = null;
+                payHistory.PayDate = payHistory.PaymentDate;
+                payHistory.Status = false;
+                payHistory.Debt = (double)order.Debt;
+                _context.PaymentHistories.Update(payHistory);
+                _context.SaveChanges();
+
+                _context.Logs.Add(new Log()
+                {
+                    Error = "odenisin Silmek  payHistoryId=" + payHistoryId.ToString(),
+                    UserId = UserId,
+                    BrowserInfo = "order id=" + OrderId.ToString(),
+                    Success = true,
+                    Type = 3,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
                 _context.SaveChanges();
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
@@ -491,6 +595,16 @@ namespace Parfume.Controllers
                 _context.Orders.Remove(order);
                 _context.SaveChanges();
 
+                _context.Logs.Add(new Log()
+                {
+                    Error = "sifarisi Silmek  OrderId=" + OrderId,
+                    UserId = UserId,
+                    BrowserInfo = "order id=" + OrderId.ToString(),
+                    Success = true,
+                    Type = 3,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
             catch (Exception ex)

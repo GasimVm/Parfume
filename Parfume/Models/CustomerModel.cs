@@ -15,6 +15,9 @@ namespace Parfume.Models
         public string Address { get; set; }
         public string WorkAddress { get; set; }
         public string InstagramAddress { get; set; }
+ 
+        public string Note { get; set; }
+        public string BlockNote { get; set; }
 
         public string BaseNumber { get; set; }
         public string FirstNumber { get; set; }

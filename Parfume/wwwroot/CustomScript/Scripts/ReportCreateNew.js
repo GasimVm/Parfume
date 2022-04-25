@@ -13,6 +13,7 @@ function DateRang() {
     function cb(start, end) {
         if (!isAllSelected) {
             $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY')).change();
+            console.log("test")
         } else {
             $('#reportrange span').html('Hamısı').change();
         }
@@ -54,8 +55,14 @@ function DateRang() {
 function ApplyBtn() {
     $("#reportrange").change(function () {
         dateRange = $('#reportrange span').html();
+        
+        if (dateRange == "Invalid date - Invalid date") {
+            console.log("true")
+            dateRange = "Hamısı";
+        }
         var formData = new FormData();
         formData.append('dateRange', dateRange)
+        console.log(dateRange)
         $(".SaleMany").val("");
         $(".OrderCount").val("");
         $(".CachOrder").val("");
@@ -68,6 +75,7 @@ function ApplyBtn() {
         $(".NeededMany").val("");
         $(".GeneralBalans").val("");
         $(".FirstBalans").val("");
+        $(".expense").val("");
         $.ajax({
             type: 'POST',
             url: '/Report/ReportCreateNew',
@@ -88,7 +96,9 @@ function ApplyBtn() {
                 $(".NeededMany").val(response.data["neededMany"])
                 $(".GeneralBalans").val(response.data["generalBalans"])
                 $(".FirstBalans").val(response.data["firstBalans"])
-            }
+                $(".expense").val(response.data["expense"])
+            },
+            error: function (response) { console.log(response.data) }
         });
 
     })

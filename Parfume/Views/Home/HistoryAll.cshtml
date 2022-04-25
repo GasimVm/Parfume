@@ -1,11 +1,50 @@
 ﻿@model IEnumerable<Parfume.Models.Order>
 @{
-    ViewData["Title"] = "History";
+    ViewData["Title"] = "HistoryAll";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
-<script src="~/CustomScript/Scripts/HistoryCach.js?v=5"></script>
+<script>
+    $(document).ready(function () {
+        $('.page-loading').fadeOut('slow');
+        $("ul:not(.components) li a").click(function () {
+            $('.page-loading').fadeIn('slow');
+        })
+        var table = $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5'
+            ],
+            "language": {
+                "search": "",
+                "emptyTable": "Heç bir məlumat yoxdur",
+                "sSearchPlaceholder": "Axtar",
+                "sLengthMenu": "_MENU_ sətir göstər",
+                "paginate": {
+                    "previous": "Əvvəlki",
+                    "next": "Sonrakı",
+                    "first": "Birinci",
+                    "last": "Axırıncı"
+                },
+                "info": "_TOTAL_ sətirdən _START_-dən _END_-kimi göstərir",
+                "infoEmpty": "0 nəticə",
+                "infoFiltered": "( _MAX_ sətirdən filter olunub)",
+                "zeroRecords": "Uyğun nətica tapılmadı",
+            }
+        });
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.header()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('#table th input').on('click', function () {
+            return false;
+        });
+    })</script>
 
 <div class="card" style="overflow:auto">
     <div class="card-body pb-4">
@@ -23,16 +62,20 @@
                     <th>Toplam qiyməti<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Borcu<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th>Əməliyyat<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-
+                    <th>Nağd/Kredit<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                 </tr>
             </thead>
             <tbody class="TableBodyDetails">
-                @{ var index = 1;}
+                @{ var index = 1; }
                 @foreach (var item in Model)
                 {
+                    string colorDebt = "";
+                    if (item.Debt==0)
+                    {
+                        colorDebt = "green";
+                    }
 
-                    <tr data-href="@Url.Action("HistoryDetails","Home",new {orderId=item.Id })">
+                    <tr style="background:@colorDebt" data-href="@Url.Action("HistoryDetails","Home",new {orderId=item.Id })">
                         <td>@index</td>
                         <td>@item.User.Name @item.User.Surname @item.User.FatherName </td>
                         <td>@item.Customer.Name @item.Customer.Surname @item.Customer.FatherName </td>
@@ -44,10 +87,15 @@
                         <td>@item.TotalPrice</td>
                         <td>@item.Debt</td>
                         <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
-                        @if (User.IsInRole("Admin"))
+                        @if (item.IsCredite)
                         {
-                            <td class="text-center removeOrder" data-OrderId="@item.Id"><a><i style="color:red" class="fas fa-trash-alt"></i></a></td>
+                            <td> Kredit</td>
                         }
+                        else
+                        {
+                            <td>Nağd</td>
+                        }
+
                     </tr>
                     index++;
                 }
@@ -56,3 +104,9 @@
     </div>
 </div>
 
+<script>
+
+    $(document).on("dblclick", ".TableBodyDetails tr", function () {
+        window.location.href = $(this).attr('data-href');
+    })
+</script>

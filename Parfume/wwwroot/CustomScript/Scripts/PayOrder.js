@@ -6,7 +6,7 @@
     ChangePay();
     ChangeDate();
     Pay();
-   
+    DeletePay()
 })
 
 function ChangePay() {
@@ -65,7 +65,7 @@ function Pay() {
         formData.append('price', price)
         formData.append('note', note)
         formData.append('dateCreate', dateCreate)
-        if (confirm('Ödəmə qeydə istiyrsiz?')) {
+        if (confirm('Ödəməni qeydə almaq istiyrsiz?')) {
             $(".PayOrder").hide();
             $.ajax({
                 type: 'POST',
@@ -87,5 +87,35 @@ function Pay() {
             });
         }
 
+    })
+}
+
+function DeletePay() {
+
+    $(document).on("click", ".deletePay", function () {
+        var payHistoryId = $(this).attr("data-payHistoryId");
+        var OrderId = $("#OrderId").val();
+        var formData = new FormData();
+        formData.append('payHistoryId', payHistoryId)
+        formData.append('OrderId', OrderId)
+        if (confirm('Ödənişi silmək istiyrsiz?')) {
+            $.ajax({
+                type: 'POST',
+                url: '/Order/DeletePaymentPay',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status === "success") {
+                        alert("Qeydə alındı!")
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+
+                    }
+                }
+            });
+        }
     })
 }

@@ -55,6 +55,12 @@ namespace Parfume.Controllers
             var model = _context.Orders.Where(c=>c.IsCredite==false).Include(c => c.Customer).Include(c => c.User).ToList();
             return View(model);
         }
+
+        public IActionResult HistoryAll()
+        {
+            var model = _context.Orders.Include(c => c.Customer).Include(c => c.User).ToList();
+            return View(model);
+        }
         public IActionResult DebtHistory()
         {
             var model = _context.Orders.Where(c => c.Debt > 0).Include(c => c.Customer).Include(c => c.User).ToList();
@@ -62,7 +68,7 @@ namespace Parfume.Controllers
         }
         public IActionResult WhoPays()
         {
-            var model = _context.Orders.Where(c=>c.Debt>0 && c.Status==2).Include(c => c.Customer).Include(c => c.User).OrderBy(c=>c.PaymentDate).ToList();
+            var model = _context.Orders.Where(c=>c.Debt>0 && c.Status==2).Include(c => c.Customer).Include(c=>c.PaymentHistories).Include(c => c.User).OrderBy(c=>c.PaymentDate).ToList();
             return View(model);
         }
         public IActionResult HistoryDetails(int orderId)

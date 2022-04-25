@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="~/CustomScript/Scripts/PayOrder.js?v=3"></script>
+<script src="~/CustomScript/Scripts/PayOrder.js?v=5"></script>
 
 <input hidden id="OrderId" value="@Model.Id" />
 <div class=" contairner">
@@ -136,6 +136,9 @@
                                 <button type="button" class="btn btn-info changePay " data-href="@Url.Action("ChangePaymentPay","Order",new {payHistoryId=item.Id })" style=" background-color: #7c6e58 !important; width: 80px; ">
                                     Edit
                                 </button>
+                                <button type="button" class="btn btn-info deletePay " data-payHistoryId="@item.Id"  style=" background-color: #7c6e58 !important; width: 80px; ">
+                                    Silmək
+                                </button>
                             }
 
                         </td>
@@ -170,4 +173,4 @@
 </div>
 
 
-<script src="~/CustomScript/Scripts/HomePay.js"></script>
+<script src="~/CustomScript/Scripts/HomePay.js?v=8"></script>
