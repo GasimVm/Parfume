@@ -1,4 +1,7 @@
 ﻿@model Parfume.Models.Order
+@{ 
+    var IsAdmin = User.IsInRole("Admin");
+}
 
 @{
     ViewData["Title"] = "Pay";
@@ -35,10 +38,13 @@
             <label class="labelColor">Ödəmə tarixi</label>
             <input type="text" readonly class="form-control  text-center " value="@Model.PaymentDate?.ToString("dd/MM/yyyy")" />
         </div>
-        <div class="col-2">
-            <label class="labelColor">Ödəmə tarixi dəyiş</label>
-            <input type="button" class="form-control  text-center " style="background-color: #c79957 " value="Edit" data-toggle="modal" data-target="#exampleModalCenter" />
-        </div>
+        @if (IsAdmin) {
+    <div class="col-2">
+        <label class="labelColor">Ödəmə tarixi dəyiş</label>
+        <input type="button" class="form-control  text-center " style="background-color: #c79957 " value="Edit" data-toggle="modal" data-target="#exampleModalCenter" />
+    </div>
+        }
+        
     </div>
 
 
@@ -64,10 +70,14 @@
             <label class="labelColor">İlkin ödəniş</label>
             <input type="number" readonly class="form-control  text-center  " value="@Model.FirstPrice" />
         </div>
-        <div class="col-2">
-            <label class="labelColor">Maya dəyəri</label>
-            <input type="number" readonly class="form-control  text-center  " value="@Model.Cost" />
-        </div>
+        @if (IsAdmin)
+        {
+            <div class="col-2">
+                <label class="labelColor">Maya dəyəri</label>
+                <input type="number" readonly class="form-control  text-center  " value="@Model.Cost" />
+            </div>
+        }
+
         <div class="col-2">
             <label class="labelColor">Borc</label>
             <input type="number" readonly class="form-control  text-center  " value="@Model.Debt" />
@@ -89,10 +99,19 @@
                 </div>
             </div>
         </div>
-        <div class="col-2">
-            <input type="button" class="btn PayOrder" style="background: #c79957;margin-top:12%;  width:100% " value="Ödə" />
-        </div>
+
     </div>
+    @if (IsAdmin)
+    {
+        <div class="row">
+            <div class="col-8">
+                <input type="button" class="btn PayOrder" style="background: #c79957;margin-top:12%;  width:30% " value="Ödə" />
+                <input type="button" class="btn " data-toggle="modal" data-target="#exampleModalCenterCost" style="background: #c79957;margin-top:12%;  width:30% " value="Dəyişmək" />
+            </div>
+
+        </div>
+    }
+
     <br />
     <br />
     <br />
@@ -113,7 +132,7 @@
                 </tr>
             </thead>
             <tbody class="TableBodyDetails">
-                @{ var index = 1; string color = "";}
+                @{ var index = 1; string color = ""; }
                 @foreach (var item in Model.PaymentHistories)
                 {
                     color = "";
@@ -122,7 +141,7 @@
                         color = "#36c336";
                     }
 
-                    <tr style="background-color:@color" >
+                    <tr style="background-color:@color">
                         <td>@index</td>
                         <td>@item.MonthPrice</td>
                         <td>@item.PayPrice</td>
@@ -131,12 +150,12 @@
                         <td>@item.PayDate?.ToString("dd/MM/yyyy")</td>
                         <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
                         <td>
-                            @if (item.PayPrice != null)
+                            @if (item.PayPrice != null && IsAdmin)
                             {
                                 <button type="button" class="btn btn-info changePay " data-href="@Url.Action("ChangePaymentPay","Order",new {payHistoryId=item.Id })" style=" background-color: #7c6e58 !important; width: 80px; ">
                                     Edit
                                 </button>
-                                <button type="button" class="btn btn-info deletePay " data-payHistoryId="@item.Id"  style=" background-color: #7c6e58 !important; width: 80px; ">
+                                <button type="button" class="btn btn-info deletePay " data-payHistoryId="@item.Id" style=" background-color: #7c6e58 !important; width: 80px; ">
                                     Silmək
                                 </button>
                             }
@@ -172,5 +191,25 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="exampleModalCenterCost" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Maya dəyəri</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="number" min="0" class="form-control changeCostValue" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="button" class="btn btn-primary changeCostbtn" value="@Model.Id">Təsdiqlə</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="~/CustomScript/Scripts/HomePay.js?v=8"></script>

@@ -458,6 +458,48 @@ namespace Parfume.Controllers
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
+        
+             [HttpPost]
+        public JsonResult ChangeCost(string OrderId, int changeCost)
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+
+            try
+            {
+                var orderId = Convert.ToInt32(OrderId);
+                var order = _context.Orders.Where(c => c.Id == orderId).FirstOrDefault();
+                var orderCost = order.Cost;
+                order.Cost = changeCost;
+              
+                _context.Orders.Update(order);
+                _context.SaveChanges();
+
+                _context.Logs.Add(new Log()
+                {
+                    Error = "new cost" + changeCost.ToString()+" old cost:"+ orderCost,
+                    UserId = UserId,
+                    BrowserInfo = "order id=" + OrderId.ToString(),
+                    Success = true,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
+            }
+            catch (Exception ex)
+            {
+                _context.Logs.Add(new Log()
+                {
+                    Error = ex.Message ?? "new cost",
+                    UserId = UserId,
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                return Json(new { status = "error", message = "Xəta baş verdi" });
+            }
+        }
         public ActionResult ChangePaymentPay(int payHistoryId)
         {
             var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();

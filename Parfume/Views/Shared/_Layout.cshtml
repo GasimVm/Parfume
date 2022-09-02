@@ -81,26 +81,30 @@
 
                 @if (true)
                 {
-                    <li class="">
+                    if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                    {
+                        <li class="">
 
-                        <a href="#sale" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
-                            <i class="fas fa-share-square"></i> Satişlar
-                        </a>
-                        <ul class="collapse list-unstyled" id="sale">
-                            <li>
-                                <a asp-controller="Home" asp-action="SaleCredite">
-                                    <i class="fas fa-credit-card"></i>
-                                    Kredit
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Home" asp-action="SaleCash">
-                                    <i class="fas fa-cash-register"></i>
-                                    Nağd
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <a href="#sale" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                                <i class="fas fa-share-square"></i> Satişlar
+                            </a>
+                            <ul class="collapse list-unstyled" id="sale">
+                                <li>
+                                    <a asp-controller="Home" asp-action="SaleCredite">
+                                        <i class="fas fa-credit-card"></i>
+                                        Kredit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Home" asp-action="SaleCash">
+                                        <i class="fas fa-cash-register"></i>
+                                        Nağd
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+
                     <li class="">
 
                         <a href="#Expense" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">

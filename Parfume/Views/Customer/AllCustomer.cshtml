@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<Parfume.Models.Customer>
+@{ 
+    var IsAdmin = User.IsInRole("Admin");
+}
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -41,13 +44,16 @@
                         <td>@item.WhoIsOkey</td>
                         <td>@item.Note</td>
                         <td>
+                            @if (IsAdmin)
+                            {
+                                <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerEdit","Customer",new {customerId=item.Id })" style="  width:80px; ">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn  modalCustomer" data-CustomerId="@item.Id" style="background: #c79957; width:80px; " data-toggle="modal" data-target="#exampleModalCenter">
+                                    Blok et
+                                </button>
+                            }
 
-                            <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerEdit","Customer",new {customerId=item.Id })" style="  width:80px; ">
-                                Edit
-                            </button>
-                            <button type="button" class="btn  modalCustomer" data-CustomerId="@item.Id" style="background: #c79957; width:80px; " data-toggle="modal" data-target="#exampleModalCenter">
-                                Blok et
-                            </button>
                         </td>
 
                     </tr>

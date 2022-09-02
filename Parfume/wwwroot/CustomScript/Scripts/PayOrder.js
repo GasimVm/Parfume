@@ -6,7 +6,8 @@
     ChangePay();
     ChangeDate();
     Pay();
-    DeletePay()
+    DeletePay();
+    ChangeCost();
 })
 
 function ChangePay() {
@@ -117,5 +118,35 @@ function DeletePay() {
                 }
             });
         }
+    })
+}
+
+function ChangeCost() {
+    $(".changeCostbtn").click(function () {
+        var changeCost = $(".changeCostValue").val();
+        var OrderId = $("#OrderId").val();
+        var formData = new FormData();
+        formData.append('changeCost', changeCost)
+        formData.append('OrderId', OrderId)
+        if (confirm('Maya dəyərini dəyişmək istiyrsiz?')) {
+            $.ajax({
+                type: 'POST',
+                url: '/Order/ChangeCost',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status === "success") {
+                        alert("Qeydə alındı!")
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+
+                    }
+                }
+            });
+        }
+
     })
 }
