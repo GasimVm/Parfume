@@ -1,5 +1,8 @@
 ﻿$(document).ready(function () {
     SendOrder();
+    $('#Birthdate').datetimepicker({
+        format: 'DD/MM/YYYY' 
+    });
 })
 
 function SendOrder() {
@@ -21,7 +24,7 @@ function SendOrder() {
         var secondNumber = $(".secondNumber").val();
         var thirdName = $(".thirdName").val();
         var thirdNumber = $(".thirdNumber").val();
-
+        var dateBirth = $("#Birth_Date").val();
         if (name.length == 0) {
             alert("Ad yazmaq mecburidi")
             return
@@ -41,6 +44,7 @@ function SendOrder() {
         formData.append('thirdName', thirdName)
         formData.append('thirdNumber', thirdNumber)
         formData.append('WhoIsOkey', WhoIsOkey)
+        formData.append('dateBirth', dateBirth)
         
         if (confirm('İstifadəcini qeydə almaq istiyirsiz?')) {
             $(".sendOrder").hide();

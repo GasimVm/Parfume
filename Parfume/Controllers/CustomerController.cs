@@ -6,6 +6,7 @@ using Parfume.Models;
 using Parfume.Service;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -28,6 +29,20 @@ namespace Parfume.Controllers
         {
             var model = _context.Customers.Where(c => c.IsBlock == false && c.IsActive == true).Include(c => c.Orders).ToList();
             return View(model);
+        }
+        public IActionResult AllCustomerBirthday()
+        {
+            List<Customer> customers = new List<Customer>();
+            var mouth = DateTime.Now.Month;
+            var day = DateTime.Now.Day;
+            foreach (var item in _context.Customers.Where(c=>c.Birthday!=null))
+            {
+                if (item.Birthday?.Day==day && item.Birthday?.Month==mouth)
+                {
+                    customers.Add(item);
+                }
+            }
+            return View(customers);
         }
         public IActionResult GeneralCustomer()
         {
@@ -56,7 +71,7 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateCustomer(string name, string surname, string fatherName, string baseNumber,
             string fincode, string address, string workAddress, string InstagramAddress, string firstName, string firstNumber, string secondName,
-            string secondNumber, string thirdName, string thirdNumber, string WhoIsOkey)
+            string secondNumber, string thirdName, string thirdNumber, string WhoIsOkey ,string dateBirth)
         {
 
             if (_context.Customers.Any(c => c.Fincode.ToUpper() == fincode.Trim().ToUpper() && c.IsBlock))
@@ -67,7 +82,14 @@ namespace Parfume.Controllers
             {
                 return Json(new { status = "error", message = "Bu şəxs   siyahıda var!" });
             }
-
+            var format = "dd/MM/yyyy";
+            CultureInfo provider = CultureInfo.InvariantCulture;
+             
+            DateTime? BirthDate = null;
+            if (dateBirth != null)
+            {
+                BirthDate = DateTime.ParseExact(dateBirth, format, provider);
+            }
             var customer = new Customer()
             {
                 Address = address,
@@ -84,7 +106,8 @@ namespace Parfume.Controllers
                 SecondNumber = secondNumber,
                 ThirdNumberWho = thirdName,
                 ThirdNumber = thirdNumber,
-                WhoIsOkey = WhoIsOkey
+                WhoIsOkey = WhoIsOkey,
+                Birthday=BirthDate
 
             };
             _context.Customers.Add(customer);
@@ -172,13 +195,21 @@ namespace Parfume.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Seller")]
         public JsonResult CustomerChange(int CustomerId, string name, string surname, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
             string secondNumber, string thirdName, string thirdNumber, string address,
-            string workAddress, string InstagramAddress, string WhoIsOkey)
+            string workAddress, string InstagramAddress, string WhoIsOkey , string dateBirth)
         {
             try
             {
+                var format = "dd/MM/yyyy";
+                CultureInfo provider = CultureInfo.InvariantCulture;
+
+                DateTime? BirthDate = null;
+                if (dateBirth != null)
+                {
+                    BirthDate = DateTime.ParseExact(dateBirth, format, provider);
+                }
                 if (_context.Customers.Any(c => c.Id == CustomerId))
                 {
                     var customer = _context.Customers.Where(c => c.Id == CustomerId).FirstOrDefault();
@@ -197,6 +228,7 @@ namespace Parfume.Controllers
                     customer.ThirdNumberWho = thirdName;
                     customer.ThirdNumber = thirdNumber;
                     customer.WhoIsOkey = WhoIsOkey;
+                    customer.Birthday = BirthDate;
                     customer.CreateDate = DateTime.Now;
                     _context.Customers.Update(customer);
                     _context.SaveChanges();
@@ -212,16 +244,25 @@ namespace Parfume.Controllers
 
 
         }
-        public JsonResult AddNote(string CustomerId, string noteCustomer)
+        public JsonResult AddNote(string CustomerId, string noteCustomer, string dateBirth)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
             try
             {
                 var customerId = Convert.ToInt32(CustomerId);
+                var format = "dd/MM/yyyy";
+                CultureInfo provider = CultureInfo.InvariantCulture;
+
+                DateTime? BirthDate = null;
+                if (dateBirth != null)
+                {
+                    BirthDate = DateTime.ParseExact(dateBirth, format, provider);
+                }
                 if (_context.Customers.Any(c => c.Id == customerId))
                 {
                     var customer = _context.Customers.Where(c => c.Id == customerId).FirstOrDefault();
                     customer.Note = noteCustomer;
+                    customer.Birthday = BirthDate;
                     _context.Customers.Update(customer);
                     _context.SaveChanges();
                     return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });

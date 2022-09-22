@@ -1,8 +1,12 @@
-﻿@model IEnumerable<Parfume.Models.CustomerModel>
+﻿@model IEnumerable<Parfume.Models.Customer>
 @{
-    ViewData["Title"] = "GeneralActiveCustomer";
+    var IsAdmin = User.IsInRole("Admin");
+}
+@{
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="card" style="overflow:auto">
     <div class="card-body pb-4">
         <table id="table" class="table table-hover table-bordered ">
@@ -10,12 +14,12 @@
                 <tr>
                     <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th style="width:80px; ">Fin<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th style="width:120px; ">Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                     
-                    <th style="width:180px; ">Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Doğum tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Fin<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:80px; ">Sifariş sayı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Kim okeyliyib<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th style="width:200px; ">Doğum tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /> </th>
+                    <th style="width:180px; ">Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:200px; ">Əməliyyat<br /> </th>
                 </tr>
             </thead>
@@ -23,23 +27,29 @@
                 @{ var index = 1;}
                 @foreach (var item in Model)
                 {
-                    <tr   data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.Id })">
+
+                    <tr data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.Id })">
                         <td>@index</td>
                         <td>@item.Name @item.Surname @item.FatherName  </td>
+                        <td>@item.Birthday?.ToString("dd/MMMM/yyyy")</td>
                         <td>@item.Fincode</td>
                         <td>@item.BaseNumber</td>
-                        <td>@item.Note @item.BlockNote</td>
-                        <td>@item.WhoIsOkey </td>
-                        <td>@item.Birthday  </td>
+                        <td>@item.Orders.Count</td>
+                        <td>@item.WhoIsOkey</td>
+                        <td>@item.Note</td>
                         <td>
-                            @if (User.IsInRole("Admin")|| User.IsInRole("Seller"))
+                            @if (IsAdmin)
                             {
-                                <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerChange","Customer",new {customerId=item.Id })" style="  width:80px; ">
+                                <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerEdit","Customer",new {customerId=item.Id })" style="  width:80px; ">
                                     Edit
+                                </button>
+                                <button type="button" class="btn  modalCustomer" data-CustomerId="@item.Id" style="background: #c79957; width:80px; " data-toggle="modal" data-target="#exampleModalCenter">
+                                    Blok et
                                 </button>
                             }
 
                         </td>
+
                     </tr>
                     index++;
                 }
@@ -63,10 +73,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
-                <button type="button" class="btn btn-primary blockUser">Təsdiqlə</button>
+                <button type="button" class="btn btn-primary blockUser" data-CustomerIdBlock="">Təsdiqlə</button>
             </div>
         </div>
     </div>
 </div>
-<script src="~/CustomScript/Scripts/GeneralCustomer.js"></script>
 
+
+<script src="~/CustomScript/Scripts/AllCustomer.js"></script>

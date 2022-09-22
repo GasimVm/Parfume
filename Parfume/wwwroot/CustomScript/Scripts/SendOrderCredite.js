@@ -5,12 +5,15 @@ var noResults = 'Uyğun nəticə tapılmadı.';
 $(document).ready(function () {
     Select2Plugin();
     SendOrder();
+    $('#Birthdate').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
     $('#datetimepicker3').datetimepicker({
         format: 'DD/MM/YYYY',
         sideBySide: false
     });
-
     
+   
 
 })
 function SendOrder() {
@@ -50,6 +53,8 @@ function SendOrder() {
         var formData = new FormData();
         var fincode = $("#UsersDirectly option:selected").text();
         var dateCreate = $("#Create_Date").val();
+        var dateBirth = $("#Birth_Date").val();
+        
         var WhoIsOkey = $(".WhoIsOkey").val();
         var CustomerId = $("#UsersDirectly").val();
         var surname = $(".surname").val();
@@ -123,7 +128,9 @@ function SendOrder() {
         formData.append('CustomerId', CustomerId)
         formData.append('workAddress', workAddress)
         formData.append('WhoIsOkey', WhoIsOkey)
+        formData.append('dateBirth', dateBirth)
         formData.append('InstagramAddress', InstagramAddress)
+
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {
             $(".sendOrder").hide();
             $.ajax({

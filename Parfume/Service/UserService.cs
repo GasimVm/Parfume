@@ -116,6 +116,8 @@ namespace Parfume.Service
                                 WhoIsOkey = reader[21]?.ToString(),
                                 Note = reader[20]?.ToString(),
                                 BlockNote = reader[19]?.ToString(),
+                                Birthday= reader[22]?.ToString(),
+                                
                             });
                         }
                     }

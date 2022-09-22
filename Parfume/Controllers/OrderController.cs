@@ -29,7 +29,7 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateOrder(string name, string surname, string duration, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
             string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, string monthlyPayment, string productName, string totalPrice, string address,
-            string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey, int cost)
+            string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey, int cost,string dateBirth)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
@@ -55,10 +55,14 @@ namespace Parfume.Controllers
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 var debt = Convert.ToDouble(totalPrice) - Convert.ToDouble(firstPrice);
                 var CreateDate = DateTime.Now;
+                var BirthDate = DateTime.Now;
                 if (dateCreate != null)
                 {
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
-
+                }
+                if (dateBirth!=null)
+                {
+                    BirthDate = DateTime.ParseExact(dateBirth, format, provider);
                 }
                 var customerId = 0;
                 var productId = 0;
@@ -80,6 +84,7 @@ namespace Parfume.Controllers
                     customerDb.ThirdNumber = thirdNumber;
                     customerDb.ThirdNumberWho = thirdName;
                     customerDb.WorkAddress = workAddress;
+                    customerDb.Birthday = BirthDate;
                     _context.Customers.Update(customerDb);
                     _context.SaveChanges();
                     customerId = ctsId;
@@ -103,6 +108,7 @@ namespace Parfume.Controllers
                         ThirdNumber = thirdNumber,
                         ThirdNumberWho = thirdName,
                         WorkAddress = workAddress,
+                        Birthday = BirthDate
                     };
                     _context.Customers.Add(customer).GetDatabaseValues();
                     _context.SaveChanges();
@@ -201,7 +207,7 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateOrderCash(string name, string surname, string fatherName, string baseNumber, string fincode,
              string quantity, string price, string amount, string productName, string totalPrice,
-             string InstagramAddress, string CustomerId, string dateCreate, string cost)
+             string InstagramAddress, string CustomerId, string dateCreate, string cost, string dateBirth)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
@@ -220,9 +226,15 @@ namespace Parfume.Controllers
                 var format = "dd/MM/yyyy";
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 var CreateDate = DateTime.Now;
+                DateTime? BirthDate =null;
                 if (dateCreate != null)
                 {
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
+
+                }
+                if (dateBirth!=null)
+                {
+                    BirthDate = DateTime.ParseExact(dateBirth, format, provider);
 
                 }
                 if (!CustomerId.Contains("new") && CustomerId != "null")
@@ -242,6 +254,7 @@ namespace Parfume.Controllers
                     customerDb.InstagramAddress = InstagramAddress;
                     customerDb.Name = name;
                     customerDb.Surname = surname;
+                    customerDb.Birthday = BirthDate;
                     _context.Customers.Update(customerDb);
                     _context.SaveChanges();
                     customerId = ctsId;
@@ -256,6 +269,7 @@ namespace Parfume.Controllers
                         InstagramAddress = InstagramAddress,
                         Name = name,
                         Surname = surname,
+                        Birthday = BirthDate
                     };
                     _context.Customers.Add(customer).GetDatabaseValues();
                     _context.SaveChanges();
@@ -579,6 +593,7 @@ namespace Parfume.Controllers
                     _context.SaveChanges();
                 }
                 order.Debt += payHistory.PayPrice;
+                order.Status = 2;
                 order.PaymentDate = order.PaymentDate?.AddMonths(-1);
                 _context.Orders.Update(order);
                 _context.SaveChanges();

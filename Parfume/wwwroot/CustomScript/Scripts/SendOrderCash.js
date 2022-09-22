@@ -7,10 +7,14 @@ $(document).ready(function () {
     Change();
     SendOrder();
     Select2Plugin()
+    $('#Birthdate').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
     $('#datetimepicker3').datetimepicker({
         format: 'DD/MM/YYYY',
         sideBySide: false
     });
+    
 })
 
 function SendOrder() {
@@ -30,6 +34,7 @@ function SendOrder() {
         var cost = $(".cost").val();
         var dateCreate = $("#Create_Date").val();
         var InstagramAddress = $(".InstagramAddress").val();
+        var dateBirth = $("#Birth_Date").val();
 
 
         if (name.length == 0) {
@@ -65,6 +70,7 @@ function SendOrder() {
         formData.append('CustomerId', CustomerId)
         formData.append('cost', cost)
         formData.append('dateCreate', dateCreate)
+        formData.append('dateBirth', dateBirth)
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {
             $(".sendOrder").hide();
 

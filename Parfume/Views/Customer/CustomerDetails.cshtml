@@ -28,6 +28,10 @@
             <input type="text" readonly class="form-control  text-center " value="@Model.Fincode" />
         </div>
         <div class="col-3 mt-3">
+            <label class="labelColor">Doğum tarixi</label>
+            <input type="text" readonly class="form-control  text-center " value="@Model.Birthday?.ToString("dd/MMMM/yyyy")" />
+        </div>
+        <div class="col-3 mt-3">
             <label class="labelColor">Nömrəsi</label>
             <input type="text" readonly class="form-control  text-center " value="@Model.BaseNumber" />
         </div>

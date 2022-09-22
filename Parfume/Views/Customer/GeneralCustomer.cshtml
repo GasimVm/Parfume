@@ -17,6 +17,8 @@
                     <th style="width:80px; ">Kredit sayı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Kim okeyliyib<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:200px; ">Doğum tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /> </th>
+
                     <th style="width:200px; ">Əməliyyat<br /> </th>
                 </tr>
             </thead>
@@ -39,8 +41,9 @@
                         <td>@item.Orders.Where(c => c.IsCredite == true).ToList().Count</td>
                         <td>@item.Note @item.BlockNote</td>
                         <td>@item.WhoIsOkey </td>
+                        <td>@item.Birthday?.ToString("dd/MM/yyyy") </td>
                         <td>
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
                             {
                                 <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerChange","Customer",new {customerId=item.Id })" style="  width:80px; ">
                                     Edit

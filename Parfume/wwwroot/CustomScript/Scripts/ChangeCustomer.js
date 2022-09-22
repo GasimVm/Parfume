@@ -1,5 +1,8 @@
 ﻿$(document).ready(function () {
     ChangeCustomer();
+    $('#Birthdate').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
 })
 
 function ChangeCustomer() {
@@ -23,6 +26,7 @@ function ChangeCustomer() {
         var address = $(".address").val();
         var workAddress = $(".workAddress").val();
         var InstagramAddress = $(".InstagramAddress").val();
+        var dateBirth = $("#Birth_Date").val();
         if (name.length == 0) {
             alert("Ad yazmaq mecburidi")
             return
@@ -44,6 +48,8 @@ function ChangeCustomer() {
         formData.append('workAddress', workAddress)
         formData.append('WhoIsOkey', WhoIsOkey)
         formData.append('InstagramAddress', InstagramAddress)
+        formData.append('dateBirth', dateBirth)
+
         if (confirm('Qeydə almaq istiyirsiz?')) {
             $.ajax({
                 type: 'POST',

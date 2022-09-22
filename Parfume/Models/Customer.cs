@@ -32,6 +32,7 @@ namespace Parfume.Models
 
         public bool IsBlock { get; set; }
         public DateTime? BlockDate { get; set; }
+        public DateTime? Birthday { get; set; }
 
         public string BlockNote { get; set; }
         public string WhoIsOkey { get; set; }

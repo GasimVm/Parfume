@@ -14,6 +14,7 @@
                     <th style="width:120px; ">Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Kim okeyliyib<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:200px; ">Doğum tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /> </th>
                     <th style="width:200px; ">Əməliyyat<br /> </th>
                 </tr>
             </thead>
@@ -22,24 +23,25 @@
                 @foreach (var item in Model)
                 {
                     
-                    <tr   data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.Id })">
-                        <td>@index</td>
-                        <td>@item.Name @item.Surname @item.FatherName  </td>
-                        <td>@item.Fincode</td>
-                        <td>@item.BaseNumber</td>
-                         
-                        <td>@item.Note @item.BlockNote</td>
-                        <td>@item.WhoIsOkey </td>
-                        <td>
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerChange","Customer",new {customerId=item.Id })" style="  width:80px; ">
-                                    Edit
-                                </button>
-                            }
+                <tr data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.Id })">
+                    <td>@index</td>
+                    <td>@item.Name @item.Surname @item.FatherName  </td>
+                    <td>@item.Fincode</td>
+                    <td>@item.BaseNumber</td>
 
-                        </td>
-                    </tr>
+                    <td>@item.Note @item.BlockNote</td>
+                    <td>@item.WhoIsOkey </td>
+                    <td>@item.Birthday  </td>
+                    <td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                        {
+                            <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerChange","Customer",new {customerId=item.Id })" style="  width:80px; ">
+                                Edit
+                            </button>
+                        }
+
+                    </td>
+                </tr>
                     index++;
                 }
             </tbody>

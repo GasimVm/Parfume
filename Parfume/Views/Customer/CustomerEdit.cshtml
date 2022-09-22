@@ -4,7 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
- 
+
+<script src="~/CustomScript/Scripts/CustomerEdit.js"></script>
 <div class=" contairner">
     <h3 class="mb-3   text-center">Qeyd əlavə olunması</h3>
     <div class="row text-center">
@@ -12,39 +13,22 @@
             <label class="labelColor">Qeyd</label>
             <textarea class="form-control noteCustomer">@Model.Note</textarea>
         </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Doğum tarixı</label>
+            <div class="input-group date" id="Birthdate" data-target-input="nearest">
+                <input type="text" required data-val-required="Vaxtı qeyd etməlisiz" id="Birth_Date" class="form-control datetimepicker-input" data-target="#Birthdate" />
+                <div class="input-group-append" data-target="#Birthdate" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+        </div>
         <input hidden class="customerId" value="@Model.Id" />
         <div class="col-3 mt-3">
             <button style="height: 50%; margin-top: 13%;" class="btn btn-success addNoteCustomer">Yadda saxla</button>
         </div>
-        
+
     </div>
 </div>
-<script>
-    $(".addNoteCustomer").click(function () {
-        var formData = new FormData();
-        var CustomerId = $(".customerId").val();
-        var noteCustomer = $(".noteCustomer").val();
-        formData.append('CustomerId', CustomerId)
-        formData.append('noteCustomer', noteCustomer)
-        $.ajax({
-            type: 'POST',
-            url: '/Customer/AddNote',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response.status === "success") {
 
-                    alert("Qeydə alındı!")
-                    window.location.reload();
-                }
-                else {
-                    alert("Xəta baş verdi,şəbəkəni yoxluyun!")
-                    $("#gAnalize").show()
-                }
-            }
-        });
-    })
-</script>
 
 
