@@ -28,7 +28,7 @@ namespace Parfume.Controllers
         }
         [HttpPost]
         public JsonResult CreateOrder(string name, string surname, string duration, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
-            string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, string monthlyPayment, string productName, string totalPrice, string address,
+            string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, double monthlyPayment, string productName, string totalPrice, string address,
             string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey, int cost,string dateBirth)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
@@ -54,6 +54,7 @@ namespace Parfume.Controllers
                 var format = "dd/MM/yyyy";
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 var debt = Convert.ToDouble(totalPrice) - Convert.ToDouble(firstPrice);
+                monthlyPayment = Math.Round(debt/Convert.ToDouble(duration));
                 var CreateDate = DateTime.Now;
                 var BirthDate = DateTime.Now;
                 if (dateCreate != null)
@@ -136,13 +137,14 @@ namespace Parfume.Controllers
                 {
                     productId = _context.Products.Where(c => c.Name == productName).FirstOrDefault().Id;
                 }
+                 
                 var order = new Order()
-                {
+                { 
                     Amount = Convert.ToInt32(amount),
                     CustomerId = customerId,
                     Debt = debt,
                     IsCredite = true,
-                    MonthPrice = Convert.ToDouble(monthlyPayment),
+                    MonthPrice = monthlyPayment  ,
                     Name = productName,
                     Quantity = quantity,
                     Duration = Convert.ToInt32(duration),
@@ -164,18 +166,37 @@ namespace Parfume.Controllers
                 var paymentHistory = new List<PaymentHistory>();
                 for (int i = 1; i <= Convert.ToInt32(duration); i++)
                 {
-                    paymentHistory.Add(new PaymentHistory()
+                    if (i== Convert.ToInt32(duration))
                     {
-                        CustomerId = customerId,
-                        OrderId = order.Id,
-                        MonthPrice = Convert.ToDouble(monthlyPayment),
-                        Status = false,
-                        Queue = i,
-                        Debt = debt,
-                        PaymentDate = CreateDate.AddMonths(i),
-                        PayDate = CreateDate.AddMonths(i)
+                        paymentHistory.Add(new PaymentHistory()
+                        {
+                            CustomerId = customerId,
+                            OrderId = order.Id,
+                            MonthPrice = debt- monthlyPayment*(i-1),
+                            Status = false,
+                            Queue = i,
+                            Debt = debt,
+                            PaymentDate = CreateDate.AddMonths(i),
+                            PayDate = CreateDate.AddMonths(i)
 
-                    });
+                        });
+                    }
+                    else
+                    {
+                        paymentHistory.Add(new PaymentHistory()
+                        {
+                            CustomerId = customerId,
+                            OrderId = order.Id,
+                            MonthPrice = monthlyPayment  ,
+                            Status = false,
+                            Queue = i,
+                            Debt = debt,
+                            PaymentDate = CreateDate.AddMonths(i),
+                            PayDate = CreateDate.AddMonths(i)
+
+                        });
+                    }
+                   
 
                 }
                 _context.PaymentHistories.AddRange(paymentHistory);
