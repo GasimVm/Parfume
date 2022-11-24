@@ -39,7 +39,8 @@ namespace Parfume.Models
         public string Note { get; set; }
         public bool IsActive { get; set; }
         public DateTime? CreateDate { get; set; }
-
+        public int? CardId { get; set; }
+        public virtual Card Card { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<PaymentHistory> PaymentHistories { get; set; }

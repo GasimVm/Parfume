@@ -29,7 +29,7 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateOrder(string name, string surname, string duration, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
             string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, double monthlyPayment, string productName, string totalPrice, string address,
-            string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey, int cost,string dateBirth)
+            string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey, int cost,string dateBirth,int cardId)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
@@ -86,6 +86,7 @@ namespace Parfume.Controllers
                     customerDb.ThirdNumberWho = thirdName;
                     customerDb.WorkAddress = workAddress;
                     customerDb.Birthday = BirthDate;
+                    customerDb.CardId = cardId;
                     _context.Customers.Update(customerDb);
                     _context.SaveChanges();
                     customerId = ctsId;
@@ -109,7 +110,8 @@ namespace Parfume.Controllers
                         ThirdNumber = thirdNumber,
                         ThirdNumberWho = thirdName,
                         WorkAddress = workAddress,
-                        Birthday = BirthDate
+                        Birthday = BirthDate,
+                        CardId=cardId
                     };
                     _context.Customers.Add(customer).GetDatabaseValues();
                     _context.SaveChanges();
@@ -157,9 +159,10 @@ namespace Parfume.Controllers
                     UserId = UserId,
                     CreateDate = CreateDate,
                     Status = 2,
-                    StatusNotification = 1
+                    StatusNotification = 1,
+                    CardId=cardId
                 };
-
+                
                 _context.Orders.Add(order).GetDatabaseValues();
                 _context.SaveChanges();
 
@@ -205,6 +208,11 @@ namespace Parfume.Controllers
                 //var html = _createPdfService.CreateHTML(order.Id);
                 //var css = _createPdfService.CreateCSS();
                 //_createPdfService.CreatePdf(css,html, order.Id);
+                var cardDb = _context.Cards.Where(c => c.Id == cardId).First();
+                cardDb.Limit += (int)monthlyPayment;
+                _context.Cards.Update(cardDb);
+                _context.SaveChanges();
+
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
@@ -379,8 +387,12 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 if (order.Debt == 0)
                 {
+                   var cardDb= _context.Cards.Where(c => c.Id == order.CardId).First();
+                    cardDb.Limit= cardDb.Limit - (int)order.MonthPrice;
                     order.Status = 1;
                     order.StatusNotification = 2;
+                    _context.Cards.Update(cardDb);
+                    _context.SaveChanges();
                     _context.Orders.Update(order);
                     _context.SaveChanges();
                 }

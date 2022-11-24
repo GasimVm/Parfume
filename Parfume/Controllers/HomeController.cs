@@ -33,7 +33,8 @@ namespace Parfume.Controllers
         }
         public IActionResult SaleCredite()
         {
-            return View();
+            var model = _context.Cards.Where(c => c.Active && c.Limit <= 4000).ToList();
+            return View(model);
         }
         public IActionResult SaleCash()
         {

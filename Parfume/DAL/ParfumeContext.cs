@@ -7,22 +7,23 @@ using System.Threading.Tasks;
 
 namespace Parfume.DAL
 {
-    public class ParfumeContext:DbContext
+    public class ParfumeContext : DbContext
     {
-        public ParfumeContext(DbContextOptions<ParfumeContext> options):base(options)
+        public ParfumeContext(DbContextOptions<ParfumeContext> options) : base(options)
         {
 
         }
-        public DbSet<User>  Users { get; set; }
-        public DbSet<Order>  Orders { get; set; }
-        public DbSet<CrediteHistory>  CrediteHistories { get; set; }
-        public DbSet<Customer>  Customers { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<CrediteHistory> CrediteHistories { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Log> Logs { get; set; }
-        public DbSet<Product>  Products { get; set; }
-        public DbSet<Expense>   Expenses { get; set; }
-        public DbSet<PaymentHistory>  PaymentHistories { get; set; }
-        public DbSet<UserWebPushCredentials>  userWebPushCredentials { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<PaymentHistory> PaymentHistories { get; set; }
+        public DbSet<UserWebPushCredentials> userWebPushCredentials { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -39,6 +40,10 @@ namespace Parfume.DAL
                .Property(b => b.CreateDate)
                .HasDefaultValueSql("GETDATE()");
 
+            modelBuilder.Entity<Card>()
+               .Property(b => b.CreateDate)
+               .HasDefaultValueSql("GETDATE()");
+
             modelBuilder.Entity<CrediteHistory>()
           .Property(b => b.CreateDate)
           .HasDefaultValueSql("GETDATE()");
@@ -51,6 +56,9 @@ namespace Parfume.DAL
 
             modelBuilder.Entity<Customer>()
        .Property(b => b.IsActive)
+       .HasDefaultValue(true);
+            modelBuilder.Entity<Card>()
+       .Property(b => b.Active)
        .HasDefaultValue(true);
 
             modelBuilder.Entity<Customer>()

@@ -41,7 +41,8 @@ namespace Parfume.Models
         public int Status { get; set; }
         // 1-gonderilir 2-gonderilmir
         public int StatusNotification { get; set; }
-
+        public int? CardId { get; set; }
+        public virtual Card Card { get; set; }
         public virtual ICollection<CrediteHistory>  CrediteHistories { get; set; }
         public virtual ICollection<PaymentHistory>   PaymentHistories { get; set; }
 

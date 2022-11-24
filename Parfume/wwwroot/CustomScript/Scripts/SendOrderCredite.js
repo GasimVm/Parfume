@@ -52,6 +52,7 @@ function SendOrder() {
     $(".sendOrder").click(function () {
         var formData = new FormData();
         var fincode = $("#UsersDirectly option:selected").text();
+       
         var dateCreate = $("#Create_Date").val();
         var dateBirth = $("#Birth_Date").val();
         
@@ -59,6 +60,7 @@ function SendOrder() {
         var CustomerId = $("#UsersDirectly").val();
         var surname = $(".surname").val();
         var duration = $(".duration").children("option:selected").val();
+        var cardId = $(".cardInfo").children("option:selected").val();
         var fatherName = $(".fatherName").val();
         var baseNumber = $(".baseNumber").val();
         var name = $(".name").val();
@@ -129,6 +131,7 @@ function SendOrder() {
         formData.append('workAddress', workAddress)
         formData.append('WhoIsOkey', WhoIsOkey)
         formData.append('dateBirth', dateBirth)
+        formData.append('cardId', cardId)
         formData.append('InstagramAddress', InstagramAddress)
 
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {

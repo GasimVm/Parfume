@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Parfume.Models.Card>
+@{
+    ViewData["Title"] = "Card";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $('.page-loading').fadeOut('slow');
+        $("ul:not(.components) li a").click(function () {
+            $('.page-loading').fadeIn('slow');
+        })
+        var table = $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5'
+            ],
+            "language": {
+                "search": "",
+                "emptyTable": "Heç bir məlumat yoxdur",
+                "sSearchPlaceholder": "Axtar",
+                "sLengthMenu": "_MENU_ sətir göstər",
+                "paginate": {
+                    "previous": "Əvvəlki",
+                    "next": "Sonrakı",
+                    "first": "Birinci",
+                    "last": "Axırıncı"
+                },
+                "info": "_TOTAL_ sətirdən _START_-dən _END_-kimi göstərir",
+                "infoEmpty": "0 nəticə",
+                "infoFiltered": "( _MAX_ sətirdən filter olunub)",
+                "zeroRecords": "Uyğun nətica tapılmadı",
+            }
+        });
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.header()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('#table th input').on('click', function () {
+            return false;
+        });
+    })</script>
+
+<div class="card" style="overflow:auto">
+    <div class="card-body pb-4">
+        <table id="table" class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:280px; ">Kartin adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; ">Limit <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Activ<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                </tr>
+            </thead>
+            <tbody class="TableBodyDetails">
+                @{ var index = 1; }
+                @foreach (var item in Model)
+                {
+                    string colorDebt = "";
+                    if (!item.Active)
+                    {
+                        colorDebt = "red";
+                    }
+                <tr style="background:@colorDebt" data-href="@Url.Action("CardCustomerDetails","Card",new {orderId=item.Id })">
+                    <td>@index</td>
+                    <td>@item.Name</td>
+                    <td>@item.Limit</td>
+                    @if (item.Active)
+                    {
+                        <td> Aktiv</td>
+                    }
+                    else
+                    {
+                        <td>Active deyil</td>
+                    }
+                    <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+
+                </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    $(document).on("dblclick", ".TableBodyDetails tr", function () {
+        window.location.href = $(this).attr('data-href');
+    })
+</script>

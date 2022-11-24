@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parfume.DAL;
 
 namespace Parfume.Migrations
 {
     [DbContext(typeof(ParfumeContext))]
-    partial class ParfumeContextModelSnapshot : ModelSnapshot
+    [Migration("20221124080907_AddCard")]
+    partial class AddCard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,14 +29,10 @@ namespace Parfume.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<int?>("CardId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Limit")
                         .HasColumnType("int");
@@ -44,7 +42,9 @@ namespace Parfume.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cards");
+                    b.HasIndex("CardId");
+
+                    b.ToTable("Card");
                 });
 
             modelBuilder.Entity("Parfume.Models.CrediteHistory", b =>
@@ -108,9 +108,6 @@ namespace Parfume.Migrations
                     b.Property<string>("BlockNote")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CardId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -169,8 +166,6 @@ namespace Parfume.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CardId");
 
                     b.ToTable("Customers");
                 });
@@ -410,6 +405,9 @@ namespace Parfume.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("CardId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CreateDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -437,6 +435,8 @@ namespace Parfume.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CardId");
 
                     b.HasIndex("RoleId");
 
@@ -478,6 +478,13 @@ namespace Parfume.Migrations
                     b.ToTable("userWebPushCredentials");
                 });
 
+            modelBuilder.Entity("Parfume.Models.Card", b =>
+                {
+                    b.HasOne("Parfume.Models.Card", null)
+                        .WithMany("Cards")
+                        .HasForeignKey("CardId");
+                });
+
             modelBuilder.Entity("Parfume.Models.CrediteHistory", b =>
                 {
                     b.HasOne("Parfume.Models.Order", "Order")
@@ -501,15 +508,6 @@ namespace Parfume.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Parfume.Models.Customer", b =>
-                {
-                    b.HasOne("Parfume.Models.Card", "Card")
-                        .WithMany("Customers")
-                        .HasForeignKey("CardId");
-
-                    b.Navigation("Card");
-                });
-
             modelBuilder.Entity("Parfume.Models.Log", b =>
                 {
                     b.HasOne("Parfume.Models.User", "User")
@@ -522,7 +520,7 @@ namespace Parfume.Migrations
             modelBuilder.Entity("Parfume.Models.Order", b =>
                 {
                     b.HasOne("Parfume.Models.Card", "Card")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("CardId");
 
                     b.HasOne("Parfume.Models.Customer", "Customer")
@@ -571,11 +569,17 @@ namespace Parfume.Migrations
 
             modelBuilder.Entity("Parfume.Models.User", b =>
                 {
+                    b.HasOne("Parfume.Models.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId");
+
                     b.HasOne("Parfume.Models.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Card");
 
                     b.Navigation("Role");
                 });
@@ -593,9 +597,7 @@ namespace Parfume.Migrations
 
             modelBuilder.Entity("Parfume.Models.Card", b =>
                 {
-                    b.Navigation("Customers");
-
-                    b.Navigation("Orders");
+                    b.Navigation("Cards");
                 });
 
             modelBuilder.Entity("Parfume.Models.Customer", b =>
