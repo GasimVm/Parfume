@@ -115,6 +115,7 @@
         <div class="col-3">
             <label class="labelColor">Müddət</label>
             <select class="form-control duration ">
+                <option value="1">1 ay</option>
                 <option value="2">2 ay</option>
                 <option value="3">3 ay</option>
                 <option value="4">4 ay</option>
@@ -137,6 +138,7 @@
         <div class="col-3 mt-3">
             <label class="labelColor">Kart</label>
             <select class="form-control cardInfo">
+                <option value="0"> Kart seçin</option>
                 @foreach (var item in Model)
                 {
                     <option value="@item.Id">@item.Name @item.Limit</option>

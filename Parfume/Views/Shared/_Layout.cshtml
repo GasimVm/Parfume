@@ -158,10 +158,25 @@
                             <i class="fas fa-user-lock"></i> Blok olunan müştərilər
                         </a>
                     </li>
-                    <li>
-                        <a asp-controller="Card" asp-action="Index">
-                            <i class="fas fa-credit-card"></i>Kartlar
+                    <li class="">
+
+                        <a href="#CardInfo" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                            <i class="fas fa-credit-card"></i> Kartlar
                         </a>
+                        <ul class="collapse list-unstyled" id="CardInfo">
+                            <li>
+                                <a asp-controller="Card" asp-action="Index">
+                                     <i class="fas fa-money-bill"></i>
+                                    Kart əlavə et
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Card" asp-action="CardAddCusmoter">
+                                    <i class="fas fa-cash-register"></i>
+                                    Müştəriyə kart əlavə et
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li>
                         <a href="#Generalcustomer" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">

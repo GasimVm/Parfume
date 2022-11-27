@@ -229,6 +229,7 @@ function Select2Plugin() {
                             $(".thirdName").val(data.results[i]['thirdNumberWho'])
                             $(".thirdNumber").val(data.results[i]['thirdNumber'])
                             $(".WhoIsOkey").val(data.results[i]['whoIsOkey'])
+                            $(".cardInfo").val(data.results[i]['cardId']).prop("selected", true)
                         }
                         
 

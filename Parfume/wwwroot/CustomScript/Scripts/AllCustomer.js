@@ -2,6 +2,7 @@
 $(document).ready(function () {
     CreateDatatable();
     EditAndChange();
+     
 })
 function EditAndChange() {
     
@@ -32,8 +33,6 @@ function EditAndChange() {
             });
         }
     })
-    
-
 }
 function CreateDatatable() {
     var table = $('#table').DataTable({
@@ -83,4 +82,6 @@ function CreateDatatable() {
         $(".blockUser").attr("data-CustomerIdBlock", customerId);
     })
 }
+
+ 
  

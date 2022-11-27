@@ -29,5 +29,6 @@ namespace Parfume.Models
         public string ThirdNumberWho { get; set; }
         public string Birthday { get; set; }
         public string WhoIsOkey { get; set; }
+        public string CardId { get; set; }
     }
 }

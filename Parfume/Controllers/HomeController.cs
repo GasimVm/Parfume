@@ -42,7 +42,7 @@ namespace Parfume.Controllers
         }
         public IActionResult Pay(int orderId)
         {
-            var model=_context.Orders.Where(c => c.Id == orderId).Include(c=>c.PaymentHistories).Include(c=>c.Customer).FirstOrDefault();
+            var model=_context.Orders.Where(c => c.Id == orderId).Include(c=>c.PaymentHistories).Include(c=>c.Customer).Include(c=>c.Card).FirstOrDefault();
             return View(model);
         }
 
@@ -74,7 +74,7 @@ namespace Parfume.Controllers
         }
         public IActionResult HistoryDetails(int orderId)
         {
-            var model = _context.Orders.Where(c => c.Id == orderId).Include(c => c.Customer).Include(c=>c.PaymentHistories).Include(c=>c.User).FirstOrDefault();
+            var model = _context.Orders.Where(c => c.Id == orderId).Include(c => c.Customer).Include(c=>c.PaymentHistories).Include(c=>c.User).Include(c=>c.Card).FirstOrDefault();
             return View(model);
         }
         [Authorize(Roles = "Admin")]

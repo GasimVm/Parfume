@@ -184,7 +184,8 @@ namespace Parfume.Controllers
 
         public IActionResult CustomerEdit(int customerId)
         {
-            var model = _context.Customers.Where(c => c.Id == customerId).Include(c => c.Orders).ThenInclude(c => c.User).FirstOrDefault();
+            
+            var model = _context.Customers.Where(c => c.Id == customerId).Include(c=>c.Card).Include(c => c.Orders).ThenInclude(c => c.User).FirstOrDefault();
             return View(model);
         }
 
@@ -241,10 +242,8 @@ namespace Parfume.Controllers
                 return Json(new { status = "error", message = "İstifadəci tapilmadi" });
             }
 
-
-
         }
-        public JsonResult AddNote(string CustomerId, string noteCustomer, string dateBirth)
+        public JsonResult AddNote(string CustomerId, string noteCustomer, string dateBirth )
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
             try
@@ -286,6 +285,10 @@ namespace Parfume.Controllers
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
+
+       
+
+
         public JsonResult Users(string search, int page, string blackList,
                          bool selfAccess = false, bool fullAccess = false, bool isDelegation = false, bool selfInner = false)
         {
@@ -326,7 +329,8 @@ namespace Parfume.Controllers
                      ThirdNumber = e.ThirdNumber,
                      ThirdNumberWho = e.ThirdNumberWho,
                      WorkAddress = e.WorkAddress,
-                     WhoIsOkey = e.WhoIsOkey
+                     WhoIsOkey = e.WhoIsOkey ,
+                      CardId= e.CardId=="" ? 0: Convert.ToInt32( e.CardId)
                  }).ToList();
 
             List<Select2Result> results = users.Select(u =>
@@ -348,7 +352,9 @@ namespace Parfume.Controllers
                 SecondNumberWho = u.SecondNumberWho,
                 ThirdNumber = u.ThirdNumber,
                 ThirdNumberWho = u.ThirdNumberWho,
-                WhoIsOkey = u.WhoIsOkey
+                WhoIsOkey = u.WhoIsOkey,
+                CardId=u.CardId
+                
             }).ToList();
             return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
         }

@@ -10,11 +10,13 @@ function ChangeBirth() {
          
         var formData = new FormData();
         var CustomerId = $(".customerId").val();
+        var cardId = $(".cardInfo").children("option:selected").val();
         var noteCustomer = $(".noteCustomer").val();
         var dateBirth = $("#Birth_Date").val();
         formData.append('CustomerId', CustomerId)
         formData.append('noteCustomer', noteCustomer)
         formData.append('dateBirth', dateBirth)
+        formData.append('cardId', cardId)
         $.ajax({
             type: 'POST',
             url: '/Customer/AddNote',
