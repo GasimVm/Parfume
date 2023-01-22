@@ -56,6 +56,7 @@ namespace Parfume.Controllers
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
             try
             {
+                var t = _context.Cards.Any(c => c.Name != CardName);
                 if (_context.Cards.Any(c => c.Name != CardName)  )
                 {
                     _context.Cards.Add(new Card()
@@ -92,12 +93,12 @@ namespace Parfume.Controllers
             try
             {
                 var customerId = Convert.ToInt32(CustomerId);
-                var orders = _context.Orders.Where(c => c.CustomerId == customerId);
+                var orders = _context.Orders.Where(c => c.CustomerId == customerId && c.Status==2 && c.IsCredite==true);
                 int limitCard = 0;
                 foreach (var item in orders)
                 {
                     item.CardId = cardId;
-                    limitCard += (int)item.MonthPrice;
+                    limitCard += Convert.ToInt32(item.MonthPrice);
                 }
                 _context.Orders.UpdateRange(orders);
                 _context.SaveChanges();
@@ -110,10 +111,20 @@ namespace Parfume.Controllers
                     _context.Cards.Update(card);
                     _context.Customers.Update(customer);
                     _context.SaveChanges();
+
+                    _context.Logs.Add(new Log()
+                    {
+                        Error =  $"ugurlu card add limit:{limitCard} , custmoreId={customerId} cardId:{cardId}",
+                        UserId = UserId,
+                        Success = true,
+                        Type = 1,
+                        Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                    });
+                    _context.SaveChanges();
                     return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
                 }
                 return Json(new { status = "error", message = "İstifadəci tapilmadi" });
-
+               
 
             }
             catch (Exception ex)
@@ -164,5 +175,84 @@ namespace Parfume.Controllers
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
+
+        public JsonResult ChangeCard(int customerId, int newCardId)
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+            try
+            {
+                if (_context.Customers.Any(c => c.Id == customerId))
+                {
+                    var customer = _context.Customers.Where(c => c.Id == customerId).First();
+                    var cardId = customer.CardId;
+                    var cardDb = _context.Cards.Where(c => c.Id == cardId).First();
+                    var NewcardDb = _context.Cards.Where(c => c.Id == newCardId).First();
+                    var orders = _context.Orders.Where(c => c.CustomerId == customerId && c.Debt > 0);
+                    var limit = 0;
+                    customer.CardId = newCardId;
+                    _context.Customers.Update(customer);
+                    foreach (var item in orders )
+                    {
+                        item.CardId = newCardId;
+                        limit +=(int) item.MonthPrice;
+                         
+                    }
+                    _context.Orders.UpdateRange(orders);
+
+                    
+                     
+                    cardDb.Limit -= limit;
+                    NewcardDb.Limit += limit;
+                    _context.Cards.Update(cardDb);
+                    _context.Cards.Update(NewcardDb);
+                    _context.SaveChanges();
+
+                    _context.Logs.Add(new Log()
+                    {
+                        Error =   $"Change card success. oldKard:{cardId}, newKart:{newCardId} "+DateTime.Now.ToString(),
+                        UserId = UserId,
+                        Success = true,
+                        Type = 1,
+                        Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                    });
+                    _context.SaveChanges();
+                    return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
+                }
+                return Json(new { status = "error", message = "Kart tapilmadi" });
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _context.Logs.Add(new Log()
+                {
+                    Error = ex.Message ?? "Change card error.",
+                    UserId = UserId,
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                return Json(new { status = "error", message = "Xəta baş verdi" });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ChangeCard()
+        {
+            var model = _context.Customers.Where(c => c.IsActive && c.CardId != null).ToList();
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ChangeCustomerCard(int customerId) 
+        {
+            ViewBag.CustomerId = customerId;
+            var model = _context.Cards.Where(c => c.Limit<4000 && c.Active).ToList();
+
+            return View(model);
+}
     }
 }

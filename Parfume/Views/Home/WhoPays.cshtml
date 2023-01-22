@@ -13,7 +13,7 @@
                     <th style="width:180px; "> Adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Fin kod<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th>Instragram <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="min-width:80px">Instagram <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Məhsulun adı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Toplam qiyməti<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Aylıq ödənişi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
@@ -21,7 +21,7 @@
                     <th>Ödəniş tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Alış tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Hansi ayın ödənişidir<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    @*<th>Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>*@
+                    @*<th>İş yeri<br /><input type="text" placeholder="Axtar" class="form-control" /></th>*@
                     <th>Əməliyyat<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
 
                 </tr>
@@ -59,7 +59,7 @@
                 }
                  
                     </td>
-                    @*<td>@(item.PaymentHistories.Any(c=>c.Note!=null)==true ? item.PaymentHistories.Where(c => c.Note != null).First().Note:""  )</td>*@
+                    @*<td>@item.Customer.WorkAddress</td>*@
                    @if (User.IsInRole("Admin"))
                 {
                     <td class="text-center removeOrder" data-OrderId="@item.Id"><a><i style="color:red" class="fas fa-trash-alt"></i></a></td>

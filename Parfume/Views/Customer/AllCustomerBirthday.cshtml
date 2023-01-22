@@ -14,9 +14,10 @@
                 <tr>
                     <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th>Doğum tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th>Fin<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th>Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:80px; ">Doğum tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:80px; ">Fin<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:80px; ">Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>d
+                    <th style="width:90px; ">İş yeri<br /><input type="text" placeholder="Axtar" class="form-control" /></th>d
                     <th style="width:80px; ">Sifariş sayı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Kim okeyliyib<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
@@ -28,29 +29,30 @@
                 @foreach (var item in Model)
                 {
 
-                    <tr data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.Id })">
-                        <td>@index</td>
-                        <td>@item.Name @item.Surname @item.FatherName  </td>
-                        <td>@item.Birthday?.ToString("dd/MMMM/yyyy")</td>
-                        <td>@item.Fincode</td>
-                        <td>@item.BaseNumber</td>
-                        <td>@item.Orders.Count</td>
-                        <td>@item.WhoIsOkey</td>
-                        <td>@item.Note</td>
-                        <td>
-                            @if (IsAdmin)
-                            {
-                                <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerEdit","Customer",new {customerId=item.Id })" style="  width:80px; ">
-                                    Edit
-                                </button>
-                                <button type="button" class="btn  modalCustomer" data-CustomerId="@item.Id" style="background: #c79957; width:80px; " data-toggle="modal" data-target="#exampleModalCenter">
-                                    Blok et
-                                </button>
-                            }
+                <tr data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.Id })">
+                    <td>@index</td>
+                    <td>@item.Name @item.Surname @item.FatherName  </td>
+                    <td>@item.Birthday?.ToString("dd/MMMM/yyyy")</td>
+                    <td>@item.Fincode</td>
+                    <td>@item.BaseNumber</td>
+                    <td>@item.WorkAddress</td>
+                    <td>@item.Orders.Count</td>
+                    <td>@item.WhoIsOkey</td>
+                    <td>@item.Note</td>
+                    <td>
+                        @if (IsAdmin)
+                        {
+                            <button type="button" class="btn btn-info customerEdit" data-href="@Url.Action("CustomerEdit","Customer",new {customerId=item.Id })" style="  width:80px; ">
+                                Edit
+                            </button>
+                            <button type="button" class="btn  modalCustomer" data-CustomerId="@item.Id" style="background: #c79957; width:80px; " data-toggle="modal" data-target="#exampleModalCenter">
+                                Blok et
+                            </button>
+                        }
 
-                        </td>
+                    </td>
 
-                    </tr>
+                </tr>
                     index++;
                 }
             </tbody>

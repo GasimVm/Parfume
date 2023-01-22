@@ -387,15 +387,23 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 if (order.Debt == 0)
                 {
-                   var cardDb= _context.Cards.Where(c => c.Id == order.CardId).First();
-                    cardDb.Limit= cardDb.Limit - (int)order.MonthPrice;
+                   
                     order.Status = 1;
                     order.StatusNotification = 2;
-                    _context.Cards.Update(cardDb);
-                    _context.SaveChanges();
+                    
                     _context.Orders.Update(order);
                     _context.SaveChanges();
+
+                     if (_context.Cards.Any(c => c.Id == order.CardId) )
+                {
+                    var cardDb = _context.Cards.Where(c => c.Id == order.CardId).First();
+                    cardDb.Limit = cardDb.Limit - (int)order.MonthPrice;
+                    _context.Cards.Update(cardDb);
+                    _context.SaveChanges();
                 }
+                }
+
+               
                 if (_context.PaymentHistories.Any(c => c.OrderId == orderId && c.Status == false))
                 {
                     var paymentHistory = _context.PaymentHistories.Where(c => c.OrderId == orderId && c.Status == false).FirstOrDefault();
