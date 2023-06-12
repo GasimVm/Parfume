@@ -11,6 +11,7 @@ namespace Parfume.Models
         {
              CrediteHistories = new HashSet<CrediteHistory>();
             PaymentHistories=new HashSet<PaymentHistory>();
+            BonusHistories = new HashSet<BonusHistory>();
         }
         public int Id { get; set; }
         public string Name { get; set; }
@@ -18,20 +19,18 @@ namespace Parfume.Models
         public Double Price { get; set; }
         public Double? MonthPrice { get; set; }
         public Double? Debt { get; set; }
+        public Double? OldDebt { get; set; }
         public Double? FirstPrice { get; set; }
-
+        public Double? BonusPrice { get; set; }
         public Double TotalPrice { get; set; }
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
-
         public int? Duration { get; set; }
         public string Quantity { get; set; }
-
         public int? ProductId { get; set; }
         public virtual Product Product { get; set; }
         public int UserId { get; set; }
         public virtual User User { get; set; }
-
         public int Cost { get; set; }
         public bool IsCredite { get; set; }
         public DateTime CreateDate   { get; set; }
@@ -45,6 +44,7 @@ namespace Parfume.Models
         public virtual Card Card { get; set; }
         public virtual ICollection<CrediteHistory>  CrediteHistories { get; set; }
         public virtual ICollection<PaymentHistory>   PaymentHistories { get; set; }
+        public virtual ICollection<BonusHistory>    BonusHistories { get; set; }
 
     }
 }

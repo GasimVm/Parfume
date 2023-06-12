@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Parfume.DAL;
 using Parfume.Models;
 using Parfume.Service;
@@ -17,10 +18,12 @@ namespace Parfume.Controllers
     {
         private readonly ParfumeContext _context;
         private readonly ICreatePdfService _createPdfService;
-        public OrderController(ParfumeContext context, ICreatePdfService createPdfService)
+        private readonly IBonusService _bonusService;
+        public OrderController(ParfumeContext context, ICreatePdfService createPdfService,IBonusService bonusService)
         {
             _context = context;
             _createPdfService = createPdfService;
+            _bonusService = bonusService;
         }
         public IActionResult Index()
         {
@@ -29,7 +32,8 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateOrder(string name, string surname, string duration, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
             string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, double monthlyPayment, string productName, string totalPrice, string address,
-            string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey, int cost,string dateBirth,int cardId)
+            string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey,
+            int cost,string dateBirth,int cardId,int referencesId,string bonusPrice)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
@@ -55,6 +59,8 @@ namespace Parfume.Controllers
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 var debt = Convert.ToDouble(totalPrice) - Convert.ToDouble(firstPrice);
                 monthlyPayment = Math.Round(debt/Convert.ToDouble(duration));
+                var bonusPriceCovert = Convert.ToDouble(bonusPrice);
+                 
                 var CreateDate = DateTime.Now;
                 var BirthDate = DateTime.Now;
                 if (dateCreate != null)
@@ -139,32 +145,77 @@ namespace Parfume.Controllers
                 {
                     productId = _context.Products.Where(c => c.Name == productName).FirstOrDefault().Id;
                 }
-                 
-                var order = new Order()
-                { 
-                    Amount = Convert.ToInt32(amount),
-                    CustomerId = customerId,
-                    Debt = debt,
-                    IsCredite = true,
-                    MonthPrice = monthlyPayment  ,
-                    Name = productName,
-                    Quantity = quantity,
-                    Duration = Convert.ToInt32(duration),
-                    PaymentDate = CreateDate.AddMonths(1),
-                    Price = Convert.ToDouble(price),
-                    Cost = cost,
-                    FirstPrice = Convert.ToDouble(firstPrice),
-                    ProductId = productId,
-                    TotalPrice = Convert.ToDouble(totalPrice),
-                    UserId = UserId,
-                    CreateDate = CreateDate,
-                    Status = 2,
-                    StatusNotification = 1,
-                    CardId=cardId
-                };
-                
-                _context.Orders.Add(order).GetDatabaseValues();
-                _context.SaveChanges();
+                //customerId
+                var order = new Order();
+                if (bonusPriceCovert == 0)
+                {
+                      order = new Order()
+                    {
+                        Amount = Convert.ToInt32(amount),
+                        CustomerId = customerId,
+                        Debt = debt,
+                        OldDebt = debt,
+                        IsCredite = true,
+                        MonthPrice = monthlyPayment,
+                        Name = productName,
+                        Quantity = quantity,
+                        Duration = Convert.ToInt32(duration),
+                        PaymentDate = CreateDate.AddMonths(1),
+                        Price = Convert.ToDouble(price),
+                        Cost = cost,
+                        FirstPrice = Convert.ToDouble(firstPrice),
+                        ProductId = productId,
+                        TotalPrice = Convert.ToDouble(totalPrice),
+                        UserId = UserId,
+                        CreateDate = CreateDate,
+                        Status = 2,
+                        StatusNotification = 1,
+                        CardId = cardId,
+
+                    };
+                    _context.Orders.Add(order).GetDatabaseValues();
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    if (_bonusService.CheckBonus(customerId,bonusPriceCovert))
+                    {
+                        return Json(new { status = "error", message = " Sizin kifayət qədər bonus balansiniz yoxdur! " });
+                    }
+                    else
+                    {
+                        
+                        order = new Order()
+                        {
+                            Amount = Convert.ToInt32(amount),
+                            CustomerId = customerId,
+                            Debt = debt,
+                            OldDebt = debt,
+                            IsCredite = true,
+                            MonthPrice = monthlyPayment,
+                            Name = productName,
+                            Quantity = quantity,
+                            Duration = Convert.ToInt32(duration),
+                            PaymentDate = CreateDate.AddMonths(1),
+                            Price = Convert.ToDouble(price),
+                            Cost = cost,
+                            FirstPrice = Convert.ToDouble(firstPrice),
+                            BonusPrice = Convert.ToDouble(bonusPrice),
+                            ProductId = productId,
+                            TotalPrice = Convert.ToDouble(totalPrice),
+                            UserId = UserId,
+                            CreateDate = CreateDate,
+                            Status = 2,
+                            StatusNotification = 1,
+                            CardId = cardId,
+
+                        };
+                        _context.Orders.Add(order).GetDatabaseValues();
+                        _context.SaveChanges();
+                        _bonusService.RemoveBonus(customerId, bonusPriceCovert, order.Id);
+                    }
+                }
+               
 
                 var paymentHistory = new List<PaymentHistory>();
                 for (int i = 1; i <= Convert.ToInt32(duration); i++)
@@ -213,6 +264,15 @@ namespace Parfume.Controllers
                 _context.Cards.Update(cardDb);
                 _context.SaveChanges();
 
+                if (referencesId!=0)
+                {
+                    var customerDbRef = _context.Customers.Where(c => c.Id == customerId).First();
+                    customerDbRef.ReferencesId = referencesId;
+                    _context.Customers.Update(customerDbRef);
+                    _bonusService.AddBonus(referencesId, order.TotalPrice, order.Id);
+                }
+                
+                 
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
@@ -236,7 +296,8 @@ namespace Parfume.Controllers
         [HttpPost]
         public JsonResult CreateOrderCash(string name, string surname, string fatherName, string baseNumber, string fincode,
              string quantity, string price, string amount, string productName, string totalPrice,
-             string InstagramAddress, string CustomerId, string dateCreate, string cost, string dateBirth)
+             string InstagramAddress, string CustomerId, string dateCreate, string cost, string dateBirth,
+             int referencesId, string bonusPrice)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
@@ -254,6 +315,8 @@ namespace Parfume.Controllers
                 var CustomerFin = "";
                 var format = "dd/MM/yyyy";
                 CultureInfo provider = CultureInfo.InvariantCulture;
+                var bonusPriceCovert = Convert.ToDouble(bonusPrice);
+
                 var CreateDate = DateTime.Now;
                 DateTime? BirthDate =null;
                 if (dateCreate != null)
@@ -325,26 +388,67 @@ namespace Parfume.Controllers
                 {
                     productId = _context.Products.Where(c => c.Name == productName).FirstOrDefault().Id;
                 }
-                var order = new Order()
+                var order = new Order();
+                if (bonusPriceCovert == 0)
                 {
-                    Amount = Convert.ToInt32(amount),
-                    CustomerId = customerId,
-                    Debt = 0,
-                    IsCredite = false,
-                    Name = productName,
-                    Quantity = quantity,
-                    Price = Convert.ToDouble(price),
-                    ProductId = productId,
-                    Cost = Convert.ToInt32(cost),
-                    TotalPrice = Convert.ToDouble(totalPrice),
-                    CreateDate = CreateDate,
-                    UserId = UserId,
-                    Status = 1
-                };
+                    order = new Order()
+                    {
+                        Amount = Convert.ToInt32(amount),
+                        CustomerId = customerId,
+                        IsCredite = false,
+                        Name = productName,
+                        Quantity = quantity,
+                        Price = Convert.ToDouble(price),
+                        Cost = Convert.ToInt32(cost),
+                        ProductId = productId,
+                        TotalPrice = Convert.ToDouble(totalPrice),
+                        UserId = UserId,
+                        CreateDate = CreateDate,
+                        Status = 2,
+                        StatusNotification = 1,
+                         
 
-                _context.Orders.Add(order);
-                _context.SaveChanges();
-
+                    };
+                    _context.Orders.Add(order).GetDatabaseValues();
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    if (_bonusService.CheckBonus(customerId, bonusPriceCovert))
+                    {
+                        return Json(new { status = "error", message = " Sizin kifayət qədər bonus balansiniz yoxdur! " });
+                    }
+                    else
+                    {
+                        order = new Order()
+                        {
+                            Amount = Convert.ToInt32(amount),
+                            CustomerId = customerId,
+                            IsCredite = false,
+                            Name = productName,
+                            Quantity = quantity,
+                            Price = Convert.ToDouble(price),
+                            Cost = Convert.ToInt32(cost),
+                            ProductId = productId,
+                            TotalPrice = Convert.ToDouble(totalPrice),
+                            UserId = UserId,
+                            CreateDate = CreateDate,
+                            Status = 2,
+                            StatusNotification = 1,
+                        };
+                        _context.Orders.Add(order).GetDatabaseValues();
+                        _context.SaveChanges();
+                        _bonusService.RemoveBonus(customerId, bonusPriceCovert, order.Id);
+                    }
+                }
+                if (referencesId != 0)
+                {
+                    var customerDbRef = _context.Customers.Where(c => c.Id == customerId).First();
+                    customerDbRef.ReferencesId = referencesId;
+                    _context.Customers.Update(customerDbRef);
+                   
+                    _bonusService.AddBonus(referencesId, order.TotalPrice, order.Id);
+                }
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
             catch (Exception ex)
@@ -481,8 +585,16 @@ namespace Parfume.Controllers
             try
             {
                 var orderId = Convert.ToInt32(OrderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).FirstOrDefault();
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.PaymentHistories).FirstOrDefault();
                 order.PaymentDate = order.PaymentDate?.AddDays(changeDay);
+                var history = order.PaymentHistories;
+                foreach (var item in history.Where(c=>c.Status==false))
+                {
+                    item.PaymentDate = item.PaymentDate?.AddDays(changeDay);
+                    item.PayDate = item.PayDate?.AddDays(changeDay);
+                }
+                _context.PaymentHistories.UpdateRange(history);
+                _context.SaveChanges();
                 order.StatusNotification = 1;
                 _context.Orders.Update(order);
                 _context.SaveChanges();

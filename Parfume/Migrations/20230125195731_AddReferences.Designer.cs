@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parfume.DAL;
 
 namespace Parfume.Migrations
 {
     [DbContext(typeof(ParfumeContext))]
-    partial class ParfumeContextModelSnapshot : ModelSnapshot
+    [Migration("20230125195731_AddReferences")]
+    partial class AddReferences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,9 +182,6 @@ namespace Parfume.Migrations
                     b.Property<double?>("BonusAmount")
                         .HasColumnType("float");
 
-                    b.Property<int?>("BonusDegree")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CardId")
                         .HasColumnType("int");
 
@@ -225,6 +224,9 @@ namespace Parfume.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ReferencesCustomerId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ReferencesId")
                         .HasColumnType("int");
 
@@ -253,7 +255,7 @@ namespace Parfume.Migrations
 
                     b.HasIndex("CardId");
 
-                    b.HasIndex("ReferencesId");
+                    b.HasIndex("ReferencesCustomerId");
 
                     b.ToTable("Customers");
                 });
@@ -634,13 +636,13 @@ namespace Parfume.Migrations
                         .WithMany("Customers")
                         .HasForeignKey("CardId");
 
-                    b.HasOne("Parfume.Models.Customer", "References")
+                    b.HasOne("Parfume.Models.Customer", "ReferencesCustomer")
                         .WithMany()
-                        .HasForeignKey("ReferencesId");
+                        .HasForeignKey("ReferencesCustomerId");
 
                     b.Navigation("Card");
 
-                    b.Navigation("References");
+                    b.Navigation("ReferencesCustomer");
                 });
 
             modelBuilder.Entity("Parfume.Models.Log", b =>

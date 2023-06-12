@@ -184,6 +184,33 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="">
+                        <a href="#BonusInfo" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                            <i class="fas fa-money-check-alt"></i> Bonus
+                        </a>
+                        <ul class="collapse list-unstyled" id="BonusInfo">
+                            <li>
+                                <a asp-controller="Bonus" asp-action="Index">
+                                    <i class="fas fa-money-bill"></i>
+                                    Vip Müştəri
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Bonus" asp-action="CreateVip">
+                                    <i class="fas fa-cash-register"></i>
+                                    Vip Müştəri əlavə et
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Bonus" asp-action="History">
+                                    <i class="fas fa-cash-register"></i>
+                                    Bonus tarixçəsi
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
                     <li>
                         <a href="#Generalcustomer" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
                             <i class="fas fa-users-cog"></i>Ümümi müştərilər
@@ -251,6 +278,12 @@
                                     <a asp-controller="Report" asp-action="ReportCreateNew">
                                         <i class="fas fa-wallet"></i>
                                         Hesabat hamsı
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Report" asp-action="ReportState">
+                                        <i class="fas fa-wallet"></i>
+                                        Hesabat Son
                                     </a>
                                 </li>
 

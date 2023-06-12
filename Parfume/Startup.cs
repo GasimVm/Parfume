@@ -54,6 +54,7 @@ namespace Parfume
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICreatePdfService, CreatePdfService>();
             services.AddScoped<ISendNotification, SendNotification>();
+            services.AddScoped<IBonusService, BonusService>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {

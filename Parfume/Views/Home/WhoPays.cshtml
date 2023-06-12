@@ -60,7 +60,7 @@
                  
                     </td>
                     @*<td>@item.Customer.WorkAddress</td>*@
-                   @if (User.IsInRole("Admin"))
+                   @if (User.IsInRole("Admin") || User.IsInRole("Satici"))
                 {
                     <td class="text-center removeOrder" data-OrderId="@item.Id"><a><i style="color:red" class="fas fa-trash-alt"></i></a></td>
                 }

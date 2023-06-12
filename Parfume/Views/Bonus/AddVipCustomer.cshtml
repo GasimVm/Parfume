@@ -1,0 +1,23 @@
+﻿<div class=" contairner">
+    <h3 class="mb-3   text-center">Qeyd əlavə olunması</h3>
+    <div class="row text-center">
+        <input hidden class="customerId" value="@ViewBag.CustomerId" />
+        <div class="col-4 mt-2">
+            <label>Faizi </label>
+            <select class="form-control precentInfo">
+                @for (int i = 1; i < 11; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+
+
+            </select>
+        </div>
+
+        <div class="col-3 mt-3">
+            <button style="height: 50%; margin-top: 13%;" class="btn btn-success addVipCustomer">Yadda saxla</button>
+        </div>
+
+    </div>
+</div>
+<script src="~/CustomScript/Scripts/VIpIndex.js"></script>

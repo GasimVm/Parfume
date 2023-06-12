@@ -33,12 +33,30 @@ namespace Parfume.Controllers
         }
         public IActionResult SaleCredite()
         {
-            var model = _context.Cards.Where(c => c.Active && c.Limit <= 4000).ToList();
+            var cards = _context.Cards.Where(c => c.Active && c.Limit <= 4000).ToList();
+            List<Customer> customers = new List<Customer>();
+            foreach (var item in _context.Bonus.ToList())
+            {
+                customers.Add(item.Customer);
+            }
+            var customer = _context.Bonus.ToList();
+            SaleModel model = new SaleModel()
+            {
+                Cards = cards,
+                Customers = customers
+
+            };
             return View(model);
         }
         public IActionResult SaleCash()
         {
-            return View();
+            List<Customer> customers = new List<Customer>();
+            foreach (var item in _context.Bonus.ToList())
+            {
+                customers.Add(item.Customer);
+            }
+            var customer = _context.Bonus.ToList();
+            return View(customer);
         }
         public IActionResult Pay(int orderId)
         {

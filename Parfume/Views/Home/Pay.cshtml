@@ -1,6 +1,7 @@
 ﻿@model Parfume.Models.Order
 @{ 
     var IsAdmin = User.IsInRole("Admin");
+    var IsSatici = User.IsInRole("Satici");
 }
 
 @{
@@ -38,7 +39,7 @@
             <label class="labelColor">Ödəmə tarixi</label>
             <input type="text" readonly class="form-control  text-center " value="@Model.PaymentDate?.ToString("dd/MM/yyyy")" />
         </div>
-        @if (IsAdmin) {
+        @if (IsAdmin || IsSatici) {
     <div class="col-2">
         <label class="labelColor">Ödəmə tarixi dəyiş</label>
         <input type="button" class="form-control  text-center " style="background-color: #c79957 " value="Edit" data-toggle="modal" data-target="#exampleModalCenter" />
@@ -70,7 +71,7 @@
             <label class="labelColor">İlkin ödəniş</label>
             <input type="number" readonly class="form-control  text-center  " value="@Model.FirstPrice" />
         </div>
-        @if (IsAdmin)
+        @if (IsAdmin )
         {
             <div class="col-2">
                 <label class="labelColor">Maya dəyəri</label>
@@ -104,7 +105,7 @@
         </div>
 
     </div>
-    @if (IsAdmin)
+    @if (IsAdmin || IsSatici)
     {
         <div class="row">
             <div class="col-8">
@@ -153,7 +154,7 @@
                         <td>@item.PayDate?.ToString("dd/MM/yyyy")</td>
                         <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
                         <td>
-                            @if (item.PayPrice != null && IsAdmin)
+                            @if (item.PayPrice != null && (IsAdmin|| IsSatici) )
                             {
                                 <button type="button" class="btn btn-info changePay " data-href="@Url.Action("ChangePaymentPay","Order",new {payHistoryId=item.Id })" style=" background-color: #7c6e58 !important; width: 80px; ">
                                     Edit

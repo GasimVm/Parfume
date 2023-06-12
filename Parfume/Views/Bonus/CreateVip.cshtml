@@ -44,10 +44,10 @@
                         <td>@item.WhoIsOkey</td>
                         <td>@item.Note</td>
                         <td>
-                            @if (IsAdmin || User.IsInRole("Seller") || User.IsInRole("Satici"))
+                            @if (IsAdmin || User.IsInRole("Seller"))
                             {
-                                <button type="button" class="btn btn-info addCard" data-href="@Url.Action("ChangeCustomerCard","Card",new {customerId=item.Id })" style="  width:80px; ">
-                                    Edit Card
+                                <button type="button" class="btn btn-info addVip" data-href="@Url.Action("AddVipCustomer","Bonus",new {customerId=item.Id })" style="  width:80px; ">
+                                    Add Vip
                                 </button>
                             }
 
@@ -61,4 +61,4 @@
     </div>
 </div>
 
-<script src="~/CustomScript/Scripts/AllCustomer.js"></script>
+<script src="~/CustomScript/Scripts/VIpIndex.js"></script>

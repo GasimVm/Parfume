@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parfume.DAL;
 
 namespace Parfume.Migrations
 {
     [DbContext(typeof(ParfumeContext))]
-    partial class ParfumeContextModelSnapshot : ModelSnapshot
+    [Migration("20230125193307_CreateBonus")]
+    partial class CreateBonus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,9 +182,6 @@ namespace Parfume.Migrations
                     b.Property<double?>("BonusAmount")
                         .HasColumnType("float");
 
-                    b.Property<int?>("BonusDegree")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CardId")
                         .HasColumnType("int");
 
@@ -225,9 +224,6 @@ namespace Parfume.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ReferencesId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SecondNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -252,8 +248,6 @@ namespace Parfume.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CardId");
-
-                    b.HasIndex("ReferencesId");
 
                     b.ToTable("Customers");
                 });
@@ -634,13 +628,7 @@ namespace Parfume.Migrations
                         .WithMany("Customers")
                         .HasForeignKey("CardId");
 
-                    b.HasOne("Parfume.Models.Customer", "References")
-                        .WithMany()
-                        .HasForeignKey("ReferencesId");
-
                     b.Navigation("Card");
-
-                    b.Navigation("References");
                 });
 
             modelBuilder.Entity("Parfume.Models.Log", b =>

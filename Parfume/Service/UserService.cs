@@ -48,7 +48,9 @@ namespace Parfume.Service
                             //    ThirdNumber = reader["ThirdNumber"]?.ToString(),
                             //    ThirdNumberWho = reader["ThirdNumberWho"]?.ToString(),
                             //});
-                            var test = reader[23]?.ToString();
+                            var test = reader[27]?.ToString();
+                            var test2 = reader["ReferencesId"]?.ToString();
+                             
                             employees.Add(new CustomerModel
                             {
                                 Id = (int)reader[0],
@@ -67,7 +69,8 @@ namespace Parfume.Service
                                 ThirdNumber = reader[13]?.ToString(),
                                 ThirdNumberWho = reader[14]?.ToString(),
                                 WhoIsOkey = reader[21]?.ToString(),
-                                CardId=reader[23]?.ToString()
+                                CardId=reader[23]?.ToString(),
+                                ReferencesId=reader[27]?.ToString(),
                             });
                         }
 
@@ -165,6 +168,7 @@ namespace Parfume.Service
                                 ThirdNumber = reader[13]?.ToString(),
                                 ThirdNumberWho = reader[14]?.ToString(),
                                 WhoIsOkey = reader[21]?.ToString(),
+                                ReferencesId = reader[27]?.ToString(),
                             });
                         }
 

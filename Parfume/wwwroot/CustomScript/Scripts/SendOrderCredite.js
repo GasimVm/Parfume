@@ -12,9 +12,6 @@ $(document).ready(function () {
         format: 'DD/MM/YYYY',
         sideBySide: false
     });
-    
-   
-
 })
 function SendOrder() {
     $(".price").keyup(function () {
@@ -36,23 +33,32 @@ function SendOrder() {
     $(".duration").change(function () {
         var duration = $(".duration option:selected").val();
         var firstPrice = $(".firstPrice").val();
-        var total = $(".totalPrice").val() - firstPrice;
+        var bonusPrice = $(".bonusPrice").val();
+        var total = $(".totalPrice").val() - firstPrice - bonusPrice;
         var monthlyPayment = total / duration;
         $(".monthlyPayment").val(monthlyPayment)
     })
     $(".firstPrice").change(function () {
         var firstPrice = $(".firstPrice").val();
         var duration = $(".duration option:selected").val();
-
+        var bonusPrice = $(".bonusPrice").val();
         var total = $(".totalPrice").val() ;
-        var monthlyPayment = (total - firstPrice)/ duration;
+        var monthlyPayment = (total - firstPrice - bonusPrice)/ duration;
+        $(".monthlyPayment").val(monthlyPayment)
+    })
+    $(".bonusPrice").change(function () {
+        var firstPrice = $(".firstPrice").val();
+        var duration = $(".duration option:selected").val();
+        var bonusPrice = $(".bonusPrice").val();
+        var total = $(".totalPrice").val();
+        var monthlyPayment = (total - firstPrice - bonusPrice) / duration;
         $(".monthlyPayment").val(monthlyPayment)
     })
 
     $(".sendOrder").click(function () {
         var formData = new FormData();
         var fincode = $("#UsersDirectly option:selected").text();
-       
+        var referencesId = $(".references option:selected").val();
         var dateCreate = $("#Create_Date").val();
         var dateBirth = $("#Birth_Date").val();
         
@@ -75,6 +81,7 @@ function SendOrder() {
         var price = $(".price").val();
         var cost = $(".cost").val();
         var firstPrice = $(".firstPrice").val();
+        var bonusPrice = $(".bonusPrice").val();
         var monthlyPayment = $(".monthlyPayment").val();
         var totalPrice = $(".totalPrice").val();
         var amount = $(".amount").val();
@@ -121,6 +128,7 @@ function SendOrder() {
         formData.append('price', price)
         formData.append('cost', cost)
         formData.append('firstPrice', firstPrice)
+        formData.append('bonusPrice', bonusPrice)
         formData.append('amount', amount)
         formData.append('monthlyPayment', monthlyPayment)
         formData.append('productName', productName)
@@ -132,6 +140,7 @@ function SendOrder() {
         formData.append('WhoIsOkey', WhoIsOkey)
         formData.append('dateBirth', dateBirth)
         formData.append('cardId', cardId)
+        formData.append('referencesId', referencesId)
         formData.append('InstagramAddress', InstagramAddress)
 
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {
@@ -150,7 +159,7 @@ function SendOrder() {
                     }
                     else {
                         $(".sendOrder").show();
-                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+                        alert(response.message)
                         
                     }
                 }
@@ -230,8 +239,9 @@ function Select2Plugin() {
                             $(".thirdNumber").val(data.results[i]['thirdNumber'])
                             $(".WhoIsOkey").val(data.results[i]['whoIsOkey'])
                             $(".cardInfo").val(data.results[i]['cardId']).prop("selected", true)
+                            $(".references").val(data.results[i]['referencesId']).prop("selected", true)
                         }
-                        
+                        console.log(data.results[i]['referencesId'])
 
                     });
                     data.results = []

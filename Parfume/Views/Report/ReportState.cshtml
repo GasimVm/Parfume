@@ -3,7 +3,7 @@
     ViewData["Title"] = "ReportCreateNew";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
- 
+
 <link href="~/Layout/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
 <link href="~/Layout/bootstrap-datepicker-1.9.0-dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
 <script src="~/Layout/bootstrap-datepicker-1.9.0-dist/js/bootstrap-datepicker.js"></script>
@@ -11,36 +11,40 @@
 <script src="~/Layout/bootstrap-daterangepicker/moment.min.js"></script>
 <script src="~/Layout/bootstrap-daterangepicker/daterangepicker.js"></script>
 
+ 
 <h3 class="mb-3   text-center">Ümümi məlumatları</h3>
-<div>
-    <div class="col-6 offset-3 ">
-
-        <div class="btn btn-default" title="Əməliyyat tarixi" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; margin-left:35px;">
-            <i class="fa fa-calendar"></i>&nbsp;
-            <span></span> <i class="fa fa-caret-down"></i>
+<div class="row">
+    <div class="col-3">
+            <label class="labelColor">Tarix</label>
+            <div class="input-group date" id="Lastdate" data-target-input="nearest">
+                <input type="text" required data-val-required="Vaxtı qeyd etməlisiz" id="Last_date" class="form-control datetimepicker-input" data-target="#Lastdate" />
+                <div class="input-group-append" data-target="#Lastdate" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
         </div>
     </div>
+    <div class=" col-3 mt-4"> <input class="btn btn-success" value="Hesabla" id="RepotStart" /> </div>
 </div>
 
 <div class="row">
     <div class="row mt-3" style="width: 100%; text-align: center;"><div class="col-6 offset-3"> <h3>Saylar</h3></div></div>
     <div class="row">
         <div class="col-3 mt-3"></div>
-            <div class="col-3 mt-3">
-                <label class="labelColor">Ümümi satış sayı</label>
-                <input type="text" class="form-control  OrderCount " readonly />
-            </div>
-            <div class="col-3 mt-3">
-                <label class="labelColor">Nağd satış sayı</label>
-                <input type="text" class="form-control  CachOrder " readonly />
-            </div>
-            <div class="col-3 mt-3">
-                <label class="labelColor">Kredit satış sayı</label>
-                <input type="text" class="form-control   CrediteOrder" readonly />
-            </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Ümümi satış sayı</label>
+            <input type="text" class="form-control  OrderCount " readonly />
         </div>
-
+        <div class="col-3 mt-3">
+            <label class="labelColor">Nağd satış sayı</label>
+            <input type="text" class="form-control  CachOrder " readonly />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Kredit satış sayı</label>
+            <input type="text" class="form-control   CrediteOrder" readonly />
+        </div>
     </div>
+
+</div>
 <div class="row">
     <div class="row mt-3" style="width: 100%; text-align: center; "><div class="col-6 offset-3"> <h3>Balans</h3></div></div>
     <div class="row">
@@ -65,8 +69,8 @@
             <input type="text" class="form-control   GeneralBalans" readonly />
         </div>
     </div>
-    
-   
+
+
 </div>
 
 <div class="row">
@@ -81,11 +85,11 @@
             <label class="labelColor">Ümümi satiş(Satilan mallarin total)</label>
             <input type="text" class="form-control   SaleMany" readonly />
         </div>
-        <div   class="col-3 mt-3">
+        <div class="col-3 mt-3">
             <label class="labelColor">Ödənməli pulun miqdari (Secilen vaxt araligindaki ayliq odenislerin odemiyenlerin cemi) </label>
             <input type="text" class="form-control   NeededMany" readonly />
         </div>
-        <div class="col-3 mt-3"  >
+        <div class="col-3 mt-3">
             <label class="labelColor">Ümumi yigilacaq pul</label>
             <input type="text" class="form-control  Debt " readonly />
         </div>
@@ -98,9 +102,9 @@
             <input type="text" class="form-control   expense" readonly />
         </div>
     </div>
-  
+
 
 </div>
- 
 
-<script src="~/CustomScript/Scripts/ReportCreateNew.js?v=3"></script>
+
+<script src="~/CustomScript/Scripts/ReportState.js"></script>

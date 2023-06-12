@@ -3,52 +3,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
-
-<script>
-    $(document).ready(function () {
-        $('.page-loading').fadeOut('slow');
-        $("ul:not(.components) li a").click(function () {
-            $('.page-loading').fadeIn('slow');
-        })
-        var table = $('#table').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'excelHtml5'
-            ],
-            "language": {
-                "search": "",
-                "emptyTable": "Heç bir məlumat yoxdur",
-                "sSearchPlaceholder": "Axtar",
-                "sLengthMenu": "_MENU_ sətir göstər",
-                "paginate": {
-                    "previous": "Əvvəlki",
-                    "next": "Sonrakı",
-                    "first": "Birinci",
-                    "last": "Axırıncı"
-                },
-                "info": "_TOTAL_ sətirdən _START_-dən _END_-kimi göstərir",
-                "infoEmpty": "0 nəticə",
-                "infoFiltered": "( _MAX_ sətirdən filter olunub)",
-                "zeroRecords": "Uyğun nətica tapılmadı",
-            }
-        });
-        table.columns().every(function () {
-            var that = this;
-            $('input', this.header()).on('keyup change', function () {
-                if (that.search() !== this.value) {
-                    that
-                        .search(this.value)
-                        .draw();
-                }
-            });
-        });
-        $('#table th input').on('click', function () {
-            return false;
-        });
-    })</script>
-
+<script src="~/CustomScript/Scripts/BlockCustomer.js"></script>
 <div class="card" style="overflow:auto">
     <div class="card-body pb-4">
         <table id="table" class="table table-hover table-bordered ">
@@ -61,6 +16,7 @@
                     <th>Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:100.781px;">Sifariş sayı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:200px; ">Əməliyyat<br /> </th>
 
                 </tr>
             </thead>
@@ -76,7 +32,14 @@
                         <td>@item.BaseNumber</td>
                         <td>@item.Orders.Count</td>
                         <td>@item.BlockNote</td>
-
+                        @if (User.IsInRole("Admin"))
+                        {
+                    <td>
+                        <button type="button" class="btn btn-info removeInBlock" data-CustomerIdBlock="@item.Id" style="  width:180px; ">
+                            Blokdan cixartmaq
+                        </button>
+                    </td>
+                        }
                     </tr>
                     index++;
                 }
@@ -86,8 +49,7 @@
 </div>
 
 <script>
-     
-    $(document).on("dblclick", ".TableBodyDetails tr", function () {
-        window.location.href = $(this).attr('data-href');
-    })
+
+   
+    
 </script>

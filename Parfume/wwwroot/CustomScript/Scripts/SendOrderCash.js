@@ -21,6 +21,8 @@ function SendOrder() {
     $(".sendOrder").click(function () {
         var formData = new FormData();
         var fincode = $("#UsersDirectly option:selected").text();
+        var referencesId = $(".references option:selected").val();
+        var bonusPrice = $(".bonusPrice").val();
         var CustomerId = $("#UsersDirectly").val();
         var surname = $(".surname").val();
         var fatherName = $(".fatherName").val();
@@ -71,6 +73,9 @@ function SendOrder() {
         formData.append('cost', cost)
         formData.append('dateCreate', dateCreate)
         formData.append('dateBirth', dateBirth)
+        formData.append('referencesId', referencesId)
+        formData.append('bonusPrice', bonusPrice)
+
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {
             $(".sendOrder").hide();
 
@@ -87,7 +92,7 @@ function SendOrder() {
                         window.location.reload();
                     }
                     else {
-                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+                        alert(response.message)
                         $(".sendOrder").show();
                     }
                 }
@@ -185,6 +190,8 @@ function Select2Plugin() {
                             $(".secondNumber").val(data.results[i]['secondNumber'])
                             $(".thirdName").val(data.results[i]['thirdNumberWho'])
                             $(".thirdNumber").val(data.results[i]['thirdNumber'])
+                            $(".references").val(data.results[i]['referencesId']).prop("selected", true)
+
                         }
 
 

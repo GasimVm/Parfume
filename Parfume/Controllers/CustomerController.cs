@@ -121,6 +121,36 @@ namespace Parfume.Controllers
             return View(model);
         }
 
+        public IActionResult RemoveInBlock(string customerId )
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+            try
+            {
+                var customerIdC = Convert.ToInt32(customerId);
+                if (_context.Customers.Any(c => c.Id == customerIdC))
+                {
+                    var customer = _context.Customers.Where(c => c.Id == customerIdC).FirstOrDefault();
+                    customer.IsBlock = false;
+                    _context.Customers.Update(customer);
+                    _context.SaveChanges();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _context.Logs.Add(new Log()
+                {
+                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
+                    UserId = UserId,
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                return BadRequest();
+            }
+        }
+
         public JsonResult AddBlock(string CustomerId, string NoteBlock)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
@@ -330,7 +360,8 @@ namespace Parfume.Controllers
                      ThirdNumberWho = e.ThirdNumberWho,
                      WorkAddress = e.WorkAddress,
                      WhoIsOkey = e.WhoIsOkey ,
-                      CardId= e.CardId=="" ? 0: Convert.ToInt32( e.CardId)
+                      CardId= e.CardId=="" ? 0: Convert.ToInt32( e.CardId),
+                      ReferencesId= e.ReferencesId == "" ? 0: Convert.ToInt32( e.ReferencesId)
                  }).ToList();
 
             List<Select2Result> results = users.Select(u =>
@@ -353,7 +384,8 @@ namespace Parfume.Controllers
                 ThirdNumber = u.ThirdNumber,
                 ThirdNumberWho = u.ThirdNumberWho,
                 WhoIsOkey = u.WhoIsOkey,
-                CardId=u.CardId
+                CardId=u.CardId,
+                ReferencesId=u.ReferencesId
                 
             }).ToList();
             return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
@@ -399,7 +431,8 @@ namespace Parfume.Controllers
                      ThirdNumber = e.ThirdNumber,
                      ThirdNumberWho = e.ThirdNumberWho,
                      WorkAddress = e.WorkAddress,
-                     WhoIsOkey = e.WhoIsOkey
+                     WhoIsOkey = e.WhoIsOkey,
+                     ReferencesId = e.ReferencesId == "" ? 0 : Convert.ToInt32(e.ReferencesId)
                  }).ToList();
 
             List<Select2Result> results = users.Select(u =>
@@ -421,7 +454,8 @@ namespace Parfume.Controllers
                 SecondNumberWho = u.SecondNumberWho,
                 ThirdNumber = u.ThirdNumber,
                 ThirdNumberWho = u.ThirdNumberWho,
-                WhoIsOkey = u.WhoIsOkey
+                WhoIsOkey = u.WhoIsOkey,
+                ReferencesId=u.ReferencesId
             }).ToList();
             return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
         }

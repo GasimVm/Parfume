@@ -21,6 +21,7 @@ namespace Parfume.Models
         public double? GeneralBalans { get; set; }
         public double? NeededMany { get; set; }
         public double? FirstBalans { get; set; }
+        public double? Bonus { get; set; }
 
 
 

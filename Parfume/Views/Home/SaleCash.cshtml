@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<Parfume.Models.Bonus>
+    
 @{
     ViewData["Title"] = "SaleCash";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -33,6 +34,17 @@
             <input type="text" class="form-control InstagramAddress " />
         </div>
         <div class="col-3 mt-3">
+            <label class="labelColor">Bonus kime verilir</label>
+            <select class="form-control references ">
+                <option value="0">Sec</option>
+                @foreach (var item in Model)
+                {
+                    <option value="@item.Customer.Id">@item.Customer.Name @item.Customer.Surname  (@item.Customer.BonusAmount bonus)</option>
+
+                }
+            </select>
+        </div>
+        <div class="col-3 mt-3">
             <label class="labelColor">Doğum tarixı</label>
             <div class="input-group date" id="Birthdate" data-target-input="nearest">
                 <input type="text" required data-val-required="Vaxtı qeyd etməlisiz" id="Birth_Date" class="form-control datetimepicker-input" data-target="#Birthdate" />
@@ -62,7 +74,11 @@
             <label class="labelColor">Qiyməti</label>
             <input type="text" class="form-control  price " />
         </div>
-        <div class="col-3">
+        <div class="col-3 mt-3">
+            <label class="labelColor">Bonusdan ödəniş</label>
+            <input type="number" class="form-control bonusPrice " />
+        </div>
+        <div class="col-3 mt-3">
             <label class="labelColor">Maya dəyəri</label>
             <input type="number" class="form-control  cost " />
         </div>
@@ -84,5 +100,5 @@
         </div>
     </div>
 
-    
+
 </div>

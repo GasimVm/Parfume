@@ -30,5 +30,6 @@ namespace Parfume.Models
         public string Birthday { get; set; }
         public string WhoIsOkey { get; set; }
         public string CardId { get; set; }
+        public string ReferencesId { get; set; }
     }
 }
