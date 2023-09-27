@@ -35,9 +35,8 @@ namespace Parfume.Service
 
         public bool CheckBonus(int customerId, double bonusAmount)
         {
-            var bonus = _context.Bonus.Where(c => c.CustomerId == customerId).First();
-            var customerBonus = bonus.Customer.BonusAmount;
-            if (customerBonus < bonusAmount  )
+            var customerDb = _context.Customers.Where(c => c.Id == customerId).First();
+           if(customerDb.BonusAmount<bonusAmount || customerDb.BonusAmount==bonusAmount)
             {
                 return true;
             }
@@ -47,17 +46,13 @@ namespace Parfume.Service
 
         public bool RemoveBonus(int customerId, double bonusAmount, int orderId)
         {
-            var bonus = _context.Bonus.Where(c => c.CustomerId == customerId).First();
-            bonus.Amount -= bonusAmount;
-            bonus.Customer.BonusAmount -= bonusAmount;
-            _context.Bonus.Update(bonus);
-            _context.SaveChanges();
-            _context.Customers.Update(bonus.Customer);
+            var customerDb = _context.Customers.Where(c => c.Id == customerId).First();
+            customerDb.BonusAmount -= bonusAmount;
+            _context.Customers.Update(customerDb);
             _context.BonusHistories.Add(new Models.BonusHistory()
             {
                 CustomerId = customerId,
                 Amount = bonusAmount,
-                BonusId = bonus.Id,
                 IsIncome = false,
                 OrderId = orderId
             });

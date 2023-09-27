@@ -37,6 +37,58 @@ namespace Parfume.Controllers
                var model = _context.Customers.Where(c => c.IsActive && c.CardId == cardId).ToList();
             return View(model);
         }
+        public IActionResult CardInfo(int cardId)
+        {
+
+            var model = _context.Cards.Where(c =>c.Id == cardId).FirstOrDefault();
+            return View(model);
+        }
+        [HttpPost]
+        public JsonResult ChangeCard(string cardName, int cardId)
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+            try
+            {
+                var cardOldName = "";
+                if (  _context.Cards.Any(c => c.Id == cardId))
+                {
+                    var card = _context.Cards.Where(c => c.Id == cardId).FirstOrDefault();
+                    cardOldName = card.Name;
+                    card.Name = cardName;
+                    _context.Cards.Update(card);
+                    _context.SaveChanges();
+
+                    _context.Logs.Add(new Log()
+                    {
+                        Error = $"ugurlu cardin  adi deyisdi kohne ad:{cardOldName}  cardId:{cardId}",
+                        UserId = UserId,
+                        Success = true,
+                        Type = 1,
+                        Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                    });
+                    _context.SaveChanges();
+                    return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
+                }
+              
+                return Json(new { status = "error", message = "Kard tapilmadi" });
+
+
+            }
+            catch (Exception ex)
+            {
+                _context.Logs.Add(new Log()
+                {
+                    BrowserInfo = ex.InnerException?.ToString(),
+                    Error = $" Xeta bas verdi kart adini deyismek  ,   cardId:{cardId}",
+                    UserId = UserId,
+                    Success = true,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                return Json(new { status = "error", message = "Xəta baş verdi" });
+            }
+        }
         [HttpGet]
         public IActionResult AddCard(int customerId)
         {
@@ -127,14 +179,14 @@ namespace Parfume.Controllers
                
 
             }
-            catch (Exception ex)
+            catch (Exception ex )
             {
-
                 _context.Logs.Add(new Log()
                 {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
+                    BrowserInfo=ex.InnerException?.ToString(),
+                    Error = $" Xeta bas verdi kart elave edende, custmoreId={CustomerId} cardId:{cardId}",
                     UserId = UserId,
-                    Success = false,
+                    Success = true,
                     Type = 1,
                     Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
                 });
@@ -163,20 +215,11 @@ namespace Parfume.Controllers
             catch (Exception ex)
             {
 
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "Delete card error.",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
-
-        public JsonResult ChangeCard(int customerId, int newCardId)
+        [HttpPost]
+        public JsonResult ChangeCardCustomer(int customerId, int newCardId)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
             try
@@ -222,14 +265,14 @@ namespace Parfume.Controllers
 
 
             }
-            catch (Exception ex)
+            catch (Exception  ex)
             {
-
                 _context.Logs.Add(new Log()
                 {
-                    Error = ex.Message ?? "Change card error.",
+                    BrowserInfo = ex.InnerException?.ToString(),
+                    Error = $" Xeta bas verdi kart elave edende, custmoreId={customerId} newCardId:{newCardId}",
                     UserId = UserId,
-                    Success = false,
+                    Success = true,
                     Type = 1,
                     Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
                 });
@@ -241,7 +284,7 @@ namespace Parfume.Controllers
         [HttpGet]
         public IActionResult ChangeCard()
         {
-            var model = _context.Customers.Where(c => c.IsActive && c.CardId != null).ToList();
+            var model = _context.Customers.Where(c => c.IsActive && c.CardId != null ).ToList();
 
             return View(model);
         }

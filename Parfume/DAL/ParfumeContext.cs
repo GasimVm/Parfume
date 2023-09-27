@@ -38,6 +38,9 @@ namespace Parfume.DAL
                 .Property(b => b.CreateDate)
                 .HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Order>()
+               .Property(b => b.CreateOn)
+               .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Order>()
                .Property(b => b.CreateDate)
                .HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Card>()

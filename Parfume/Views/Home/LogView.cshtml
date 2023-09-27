@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Parfume.Models.Log>
+@{
+    ViewData["Title"] = "History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="~/CustomScript/Scripts/HistoryCach.js?v=5"></script>
+
+<div class="card" style="overflow:auto">
+    <div class="card-body pb-4">
+        <table id="table" class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; ">Satıcının adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Nə iş görüb<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                     
+                </tr>
+            </thead>
+            <tbody class="TableBodyDetails">
+                @{ var index = 1;}
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@index</td>
+                        <td>@item.User?.Name @item.User?.Surname @item.User?.FatherName </td>
+                        <td>@item.Error  </td>
+                        
+                        <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+                         
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

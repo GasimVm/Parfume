@@ -87,7 +87,14 @@ namespace Parfume.Controllers
         }
         public IActionResult WhoPays()
         {
-            var model = _context.Orders.Where(c=>c.Debt>0 && c.Status==2).Include(c => c.Customer).Include(c=>c.PaymentHistories).Include(c => c.User).OrderBy(c=>c.PaymentDate).ToList();
+            var model = _context.Orders.Where(c=>c.Debt>0 && c.Status==2)
+                .Include(c => c.Customer)
+                .Include(c => c.Card)
+                .Include(c=>c.PaymentHistories)
+                .Include(c => c.User)
+                .OrderBy(c=>c.PaymentDate).ToList();
+
+
             return View(model);
         }
         public IActionResult HistoryDetails(int orderId)
@@ -259,6 +266,12 @@ namespace Parfume.Controllers
             model.GeneralMany = generalMany;
             model.OrderCount = cachOrder + crediteOrder;
             model.CrediteMany = CrediteMany;
+            return View(model);
+        }
+
+        public IActionResult LogView()
+        {
+            var model = _context.Logs.Where(c => c.Success == true && c.CreateDate>DateTime.Now.AddDays(-30)).Include(c => c.User).OrderByDescending(c=>c.CreateDate).ToList();
             return View(model);
         }
     }

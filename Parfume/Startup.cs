@@ -9,12 +9,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Parfume.DAL;
 using Parfume.Models;
 using Parfume.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Parfume
@@ -63,6 +65,12 @@ namespace Parfume
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = System.TimeSpan.FromMinutes(233);
                 });
+
+            services.AddMvc()
+                      .AddNewtonsoftJson(
+                      options => {
+                          options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                      });
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

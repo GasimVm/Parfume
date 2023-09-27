@@ -101,6 +101,22 @@
                                         Nağd
                                     </a>
                                 </li>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li>
+                                        <a asp-controller="Order" asp-action="Cashbox">
+                                            <i class="fas fa-cash-register"></i>
+                                            Kassa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Home" asp-action="LogView">
+                                            <i class="fas fa-cash-register"></i>
+                                            Loglar
+                                        </a>
+                                    </li>
+                                }
+
                             </ul>
                         </li>
                     }

@@ -11,7 +11,7 @@ namespace Parfume.Models
         public double? Amount { get; set; }
         public bool IsIncome { get; set; } // true --  gelir bonus false cixir
         public DateTime CreateDate { get; set; }
-        public int BonusId { get; set; }
+        public int? BonusId { get; set; }
         public virtual Bonus Bonus { get; set; }
         public int OrderId { get; set; }
         public virtual Order Order { get; set; }

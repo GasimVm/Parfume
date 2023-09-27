@@ -33,8 +33,10 @@ namespace Parfume.Models
         public virtual User User { get; set; }
         public int Cost { get; set; }
         public bool IsCredite { get; set; }
+        public bool? HasBonus { get; set; }
         public DateTime CreateDate   { get; set; }
         public DateTime? PaymentDate { get; set; }
+        public DateTime? CreateOn { get; set; }
 
         // 2-borclu 1-borcu bitib
         public int Status { get; set; }

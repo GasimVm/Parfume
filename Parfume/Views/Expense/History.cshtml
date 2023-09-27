@@ -18,7 +18,7 @@
                             <th> adı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                             <th>Miqdarı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                             <th>Tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                             
+                            <th>Əməliyyat<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                         </tr>
                     </thead>
                     <tbody class="TableBodyDetails">
@@ -30,7 +30,11 @@
                                 <td>@item.Name</td>
                                 <td>@item.Money</td>
                                 <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
-                                 
+                                <td>
+                                    <button type="button" class="btn  expenseDelete " data-expenseId="@item.Id" style="background: #c79957; width:80px; ">
+                                        Silmək
+                                    </button>
+                                </td>
                             </tr>
                             index++;
                         }

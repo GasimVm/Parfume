@@ -43,8 +43,17 @@
             <label class="labelColor">Kim okey verib?</label>
             <input type="text" class="form-control WhoIsOkey " />
         </div>
-
-
+        <div class="col-3 mt-3">
+            <label class="labelColor">Bonusu miqdari</label>
+            <input type="text" class="form-control BonusAmount " />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Bonusu əlavə olunsun?</label>
+            <select class="form-control hasBonus ">
+                <option value="true">Bəli</option>
+                <option value="false">Xeyr</option>
+            </select>
+        </div>
         <div class="col-3 mt-3">
             <label class="labelColor">Doğum tarixı</label>
             <div class="input-group date" id="Birthdate" data-target-input="nearest">
@@ -54,7 +63,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-3 mt-3">
+        <div hidden class="col-3 mt-3">
             <label class="labelColor">Bonus kime verilir</label>
             <select class="form-control references ">
                 <option value="0">Sec</option>
@@ -63,7 +72,7 @@
                     <option value="@item.Id">@item.Name @item.Surname  (@item.BonusAmount bonus)</option>
 
                 }
-                </select>
+            </select>
         </div>
 
 

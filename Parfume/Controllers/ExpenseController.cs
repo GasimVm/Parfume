@@ -73,5 +73,28 @@ namespace Parfume.Controllers
            var model= _context.Expenses.ToList();
             return View(model);
         }
+        public JsonResult ExpenseDelete(int ExpenseId)
+        {
+            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+            try
+            {
+                if (_context.Expenses.Any(c => c.Id == ExpenseId))
+                {
+                    var cardDb = _context.Expenses.Where(c => c.Id == ExpenseId).First();
+                     
+                    _context.Expenses.Remove(cardDb);
+                    _context.SaveChanges();
+                    return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
+                }
+                return Json(new { status = "error", message = "Kart tapilmadi" });
+
+
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { status = "error", message = "Xəta baş verdi" });
+            }
+        }
     }
 }

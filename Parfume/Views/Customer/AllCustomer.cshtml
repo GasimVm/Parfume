@@ -25,8 +25,10 @@
                     <th style="width:80px; ">Doğum tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:80px; ">Fin<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:80px; ">Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:90px; ">Bonus miqdari<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:90px; ">İş yeri<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:80px; ">Sifariş sayı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:80px; ">Ümümi borcu<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Kim okeyliyib<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Qeyd<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:200px; ">Əməliyyat<br /> </th>
@@ -43,8 +45,10 @@
                         <td>@item.Birthday?.ToString("dd/MMMM/yyyy")</td>
                         <td>@item.Fincode</td>
                         <td>@item.BaseNumber</td>
+                        <td>@item.BonusAmount?.ToString("0.##")</td>
                         <td>@item.WorkAddress</td>
                         <td>@item.Orders.Count</td>
+                        <td>@item.Orders.Sum(c=>c.Debt)</td>
                         <td>@item.WhoIsOkey</td>
                         <td>@item.Note</td>
                         <td>

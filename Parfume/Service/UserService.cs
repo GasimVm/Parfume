@@ -48,8 +48,9 @@ namespace Parfume.Service
                             //    ThirdNumber = reader["ThirdNumber"]?.ToString(),
                             //    ThirdNumberWho = reader["ThirdNumberWho"]?.ToString(),
                             //});
-                            var test = reader[27]?.ToString();
-                            var test2 = reader["ReferencesId"]?.ToString();
+                            var test = reader[24]?.ToString();
+                            var test33 = reader[25]?.ToString();
+                            var test2 = reader["BonusAmount"]?.ToString();
                              
                             employees.Add(new CustomerModel
                             {
@@ -70,6 +71,7 @@ namespace Parfume.Service
                                 ThirdNumberWho = reader[14]?.ToString(),
                                 WhoIsOkey = reader[21]?.ToString(),
                                 CardId=reader[23]?.ToString(),
+                                BonusAmount=reader[24]?.ToString(),
                                 ReferencesId=reader[27]?.ToString(),
                             });
                         }
@@ -168,6 +170,7 @@ namespace Parfume.Service
                                 ThirdNumber = reader[13]?.ToString(),
                                 ThirdNumberWho = reader[14]?.ToString(),
                                 WhoIsOkey = reader[21]?.ToString(),
+                                BonusAmount = reader[24]?.ToString(),
                                 ReferencesId = reader[27]?.ToString(),
                             });
                         }

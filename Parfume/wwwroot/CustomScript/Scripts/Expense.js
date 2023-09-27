@@ -31,6 +31,7 @@
         refresh()
     })
     CreateDataTable();
+    DeleteCard();
 })
 function refresh() {
     setTimeout(function () {
@@ -76,4 +77,32 @@ function CreateDataTable() {
     $('#table th input').on('click', function () {
         return false;
     });
+}
+
+function DeleteCard() {
+        $(document).on("click", ".expenseDelete", function () {
+        var formData = new FormData();
+
+        var ExpenseId = $(this).attr("data-expenseId");
+
+        formData.append('ExpenseId', ExpenseId)
+        $.ajax({
+            type: 'POST',
+            url: '/Expense/ExpenseDelete',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.status === "success") {
+
+                    alert("Qeydə alındı!")
+                    window.location.reload();
+                }
+                else {
+                    alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+
+                }
+            }
+        });
+    })
 }

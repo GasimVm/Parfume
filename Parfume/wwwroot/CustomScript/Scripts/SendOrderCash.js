@@ -22,6 +22,7 @@ function SendOrder() {
         var formData = new FormData();
         var fincode = $("#UsersDirectly option:selected").text();
         var referencesId = $(".references option:selected").val();
+        var hasbonus = $(".hasBonus option:selected").val();
         var bonusPrice = $(".bonusPrice").val();
         var CustomerId = $("#UsersDirectly").val();
         var surname = $(".surname").val();
@@ -37,7 +38,7 @@ function SendOrder() {
         var dateCreate = $("#Create_Date").val();
         var InstagramAddress = $(".InstagramAddress").val();
         var dateBirth = $("#Birth_Date").val();
-
+        var BonusAmount = $(".BonusAmount").val();
 
         if (name.length == 0) {
             alert("Ad yazmaq mecburidi")
@@ -75,6 +76,7 @@ function SendOrder() {
         formData.append('dateBirth', dateBirth)
         formData.append('referencesId', referencesId)
         formData.append('bonusPrice', bonusPrice)
+        formData.append('hasBonus', hasbonus)
 
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {
             $(".sendOrder").hide();
@@ -190,6 +192,7 @@ function Select2Plugin() {
                             $(".secondNumber").val(data.results[i]['secondNumber'])
                             $(".thirdName").val(data.results[i]['thirdNumberWho'])
                             $(".thirdNumber").val(data.results[i]['thirdNumber'])
+                            $(".BonusAmount").val(data.results[i]['bonusAmount'])
                             $(".references").val(data.results[i]['referencesId']).prop("selected", true)
 
                         }

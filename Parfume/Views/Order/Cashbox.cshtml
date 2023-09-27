@@ -1,0 +1,40 @@
+﻿@model IList<User>
+@{
+    ViewData["Title"] = "ReportCreateNew";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Layout/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
+<link href="~/Layout/bootstrap-datepicker-1.9.0-dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
+<script src="~/Layout/bootstrap-datepicker-1.9.0-dist/js/bootstrap-datepicker.js"></script>
+<script src="~/Layout/bootstrap-datepicker-1.9.0-dist/locales/bootstrap-datepicker.az.min.js"></script>
+<script src="~/Layout/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="~/Layout/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+
+<h3 class="mb-3   text-center">Ümümi məlumatları</h3>
+<div class="row">
+    <div class="col-3">
+        <label class="labelColor">Tarix</label>
+        <div class="input-group date" id="Lastdate" data-target-input="nearest">
+            <input type="text" required data-val-required="Vaxtı qeyd etməlisiz" id="Last_date" class="form-control datetimepicker-input" data-target="#Lastdate" />
+            <div class="input-group-append" data-target="#Lastdate" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <label class="labelColor">Satici</label>
+        <select class="form-control userId">
+            @foreach (var item in Model)
+            {
+                <option value="@item.Id">@item.Name @item.Surname</option>
+            }
+        </select>
+        
+    </div>
+    <div class=" col-3 mt-4"> <input class="btn btn-success" value="Bax" id="RepotStart" /></div>
+</div>
+<div class="row resultCash"></div>
+
+    <script src="~/CustomScript/Scripts/Cashbox.js"></script>

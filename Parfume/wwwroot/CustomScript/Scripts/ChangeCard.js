@@ -14,7 +14,7 @@ function AddCard() {
         $(".changeCardCustomer").hide()
         $.ajax({
             type: 'POST',
-            url: '/Card/ChangeCard',
+            url: '/Card/ChangeCardCustomer',
             data: formData,
             processData: false,
             contentType: false,

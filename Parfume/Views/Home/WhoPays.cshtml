@@ -3,7 +3,7 @@
     ViewData["Title"] = "History";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+   
 <div class="card" style="overflow:auto">
     <div class="card-body pb-4">
         <table id="table" class="table table-hover table-bordered ">
@@ -13,14 +13,19 @@
                     <th style="width:180px; "> Adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Fin kod<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th style="min-width:80px">Instagram <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="min-width:80px">Bonus miqdari <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Məhsulun adı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Toplam qiyməti<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Aylıq ödənişi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+
                     <th>Borcu<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Ödəniş tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th>Alış tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
-                    <th>Hansi ayın ödənişidir<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:60px; ">Hansi ayın ödənişidir<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Umumi borc<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Umumi ayliq odenis<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Kart<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+
                     @*<th>İş yeri<br /><input type="text" placeholder="Axtar" class="form-control" /></th>*@
                     <th>Əməliyyat<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
 
@@ -45,10 +50,11 @@
                     <td>@item.Customer.Name @item.Customer.Surname @item.Customer.FatherName </td>
                     <td>@item.Customer.Fincode</td>
                     <td>@item.Customer.BaseNumber</td>
-                    <td>@item.Customer.InstagramAddress</td>
+                    <td>@item.Customer.BonusAmount?.ToString("0.##")</td>
                     <td>@item.Name</td>
                     <td>@item.TotalPrice</td>
                     <td>@item.MonthPrice</td>
+
                     <td>@item.Debt</td>
                     <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
                     <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
@@ -56,18 +62,21 @@
                         @if (item.PaymentHistories.Any(c => c.PayPrice == null))
                         {
                             @item.PaymentHistories.Where(c => c.PayPrice == null).First().Queue;
-                }
-                 
+                        }
+
                     </td>
-                    @*<td>@item.Customer.WorkAddress</td>*@
-                   @if (User.IsInRole("Admin") || User.IsInRole("Satici"))
-                {
-                    <td class="text-center removeOrder" data-OrderId="@item.Id"><a><i style="color:red" class="fas fa-trash-alt"></i></a></td>
-                }
-                else
-                {
-                    <td></td>
-                }
+                    <td>@Model.Where(c => c.CustomerId == item.CustomerId && c.Debt > 0).Sum(c => c.Debt)</td>
+                    <td>@Model.Where(c => c.CustomerId == item.CustomerId && c.Debt > 0).Sum(c => c.MonthPrice)</td>
+                    <td>@item.Card?.Name</td>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Satici"))
+                    {
+                        <td class="text-center removeOrder" data-OrderId="@item.Id"><a><i style="color:red" class="fas fa-trash-alt"></i></a></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                 </tr>
                     index++;
                 }

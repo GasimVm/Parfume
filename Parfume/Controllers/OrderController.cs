@@ -10,6 +10,8 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Parfume.Controllers
 {
@@ -33,14 +35,14 @@ namespace Parfume.Controllers
         public JsonResult CreateOrder(string name, string surname, string duration, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
             string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, double monthlyPayment, string productName, string totalPrice, string address,
             string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey,
-            int cost,string dateBirth,int cardId,int referencesId,string bonusPrice)
+            int cost,string dateBirth,int cardId,int referencesId,string bonusPrice,string hasBonus)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
             try
             {
                 var ctsId = 0;
-
+                var IsBonus = Convert.ToBoolean(hasBonus);
                 if (fincode.Contains('/'))
                 {
                     fincode = fincode.Split('/')[1].ToString();
@@ -56,6 +58,7 @@ namespace Parfume.Controllers
                 }
 
                 var format = "dd/MM/yyyy";
+                 
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 var debt = Convert.ToDouble(totalPrice) - Convert.ToDouble(firstPrice);
                 monthlyPayment = Math.Round(debt/Convert.ToDouble(duration));
@@ -65,7 +68,9 @@ namespace Parfume.Controllers
                 var BirthDate = DateTime.Now;
                 if (dateCreate != null)
                 {
+                    
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
+
                 }
                 if (dateBirth!=null)
                 {
@@ -117,7 +122,8 @@ namespace Parfume.Controllers
                         ThirdNumberWho = thirdName,
                         WorkAddress = workAddress,
                         Birthday = BirthDate,
-                        CardId=cardId
+                        CardId=cardId,
+                        BonusAmount=0
                     };
                     _context.Customers.Add(customer).GetDatabaseValues();
                     _context.SaveChanges();
@@ -163,6 +169,7 @@ namespace Parfume.Controllers
                         PaymentDate = CreateDate.AddMonths(1),
                         Price = Convert.ToDouble(price),
                         Cost = cost,
+                        HasBonus= IsBonus,
                         FirstPrice = Convert.ToDouble(firstPrice),
                         ProductId = productId,
                         TotalPrice = Convert.ToDouble(totalPrice),
@@ -170,7 +177,7 @@ namespace Parfume.Controllers
                         CreateDate = CreateDate,
                         Status = 2,
                         StatusNotification = 1,
-                        CardId = cardId,
+                        CardId = cardId ,
 
                     };
                     _context.Orders.Add(order).GetDatabaseValues();
@@ -195,6 +202,7 @@ namespace Parfume.Controllers
                             MonthPrice = monthlyPayment,
                             Name = productName,
                             Quantity = quantity,
+                            HasBonus = IsBonus,
                             Duration = Convert.ToInt32(duration),
                             PaymentDate = CreateDate.AddMonths(1),
                             Price = Convert.ToDouble(price),
@@ -263,16 +271,32 @@ namespace Parfume.Controllers
                 cardDb.Limit += (int)monthlyPayment;
                 _context.Cards.Update(cardDb);
                 _context.SaveChanges();
-
-                if (referencesId!=0)
+                if (IsBonus)
+                {
+                    var customerDbase = _context.Customers.FirstOrDefault(c => c.Id == customerId);
+                    customerDbase.BonusAmount = (customerDbase.BonusAmount ?? 0) + (Convert.ToDouble(totalPrice) / 100) * 2;
+                    _context.Customers.Update(customerDbase);
+                    _context.SaveChanges();
+                }
+               
+                if (referencesId!=0 && false)
                 {
                     var customerDbRef = _context.Customers.Where(c => c.Id == customerId).First();
                     customerDbRef.ReferencesId = referencesId;
                     _context.Customers.Update(customerDbRef);
                     _bonusService.AddBonus(referencesId, order.TotalPrice, order.Id);
                 }
-                
-                 
+
+                _context.Logs.Add(new Log()
+                {
+                    Error =   $"Sifaris ugurla yerine yetrildi.Məhsulun adı{order.Product.Name} alanin fini: {order.Customer.Fincode}, sifarisin nomresi{order.Id} ,bonus eelave olunsun {hasBonus}   ",
+                    UserId = UserId,
+                    Success = true,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
@@ -297,14 +321,14 @@ namespace Parfume.Controllers
         public JsonResult CreateOrderCash(string name, string surname, string fatherName, string baseNumber, string fincode,
              string quantity, string price, string amount, string productName, string totalPrice,
              string InstagramAddress, string CustomerId, string dateCreate, string cost, string dateBirth,
-             int referencesId, string bonusPrice)
+             int referencesId, string bonusPrice,string hasBonus)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
             try
             {
                 fincode = fincode ?? "";
-
+                var IsBonus = Convert.ToBoolean(hasBonus);
                 if (fincode.Contains('/'))
                 {
                     fincode = fincode.Split('/')[1].ToString();
@@ -322,12 +346,10 @@ namespace Parfume.Controllers
                 if (dateCreate != null)
                 {
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
-
                 }
                 if (dateBirth!=null)
                 {
                     BirthDate = DateTime.ParseExact(dateBirth, format, provider);
-
                 }
                 if (!CustomerId.Contains("new") && CustomerId != "null")
                 {
@@ -360,6 +382,7 @@ namespace Parfume.Controllers
                         Fincode = CustomerFin,
                         InstagramAddress = InstagramAddress,
                         Name = name,
+                        BonusAmount = 0,
                         Surname = surname,
                         Birthday = BirthDate
                     };
@@ -398,6 +421,7 @@ namespace Parfume.Controllers
                         IsCredite = false,
                         Name = productName,
                         Quantity = quantity,
+                        HasBonus = IsBonus,
                         Price = Convert.ToDouble(price),
                         Cost = Convert.ToInt32(cost),
                         ProductId = productId,
@@ -427,6 +451,7 @@ namespace Parfume.Controllers
                             IsCredite = false,
                             Name = productName,
                             Quantity = quantity,
+                            HasBonus = IsBonus,
                             Price = Convert.ToDouble(price),
                             Cost = Convert.ToInt32(cost),
                             ProductId = productId,
@@ -441,27 +466,35 @@ namespace Parfume.Controllers
                         _bonusService.RemoveBonus(customerId, bonusPriceCovert, order.Id);
                     }
                 }
-                if (referencesId != 0)
+                if (referencesId != 0 && false)
                 {
                     var customerDbRef = _context.Customers.Where(c => c.Id == customerId).First();
                     customerDbRef.ReferencesId = referencesId;
                     _context.Customers.Update(customerDbRef);
                    
                     _bonusService.AddBonus(referencesId, order.TotalPrice, order.Id);
+                   
                 }
-                return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
-            }
-            catch (Exception ex)
-            {
+                if (IsBonus)
+                {
+                    var customerDbase = _context.Customers.FirstOrDefault(c => c.Id == customerId);
+                    customerDbase.BonusAmount = (customerDbase.BonusAmount ?? 0) + (Convert.ToDouble(totalPrice) / 100) * 2;
+                    _context.Customers.Update(customerDbase);
+                    _context.SaveChanges();
+                }
                 _context.Logs.Add(new Log()
                 {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
+                    Error = $"Sifaris ugurla yerine yetrildi.Məhsulun adı{order.Product.Name} alanin fini {order.Customer.Fincode}, sifarisin nomresi{order.Id} ,bonus elave olsun {hasBonus}   ",
                     UserId = UserId,
-                    Success = false,
+                    Success = true,
                     Type = 1,
                     Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
                 });
                 _context.SaveChanges();
+                return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
+            }
+            catch (Exception  )
+            {
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -489,7 +522,7 @@ namespace Parfume.Controllers
                 order.PaymentDate = order.PaymentDate?.AddMonths(1);
                 _context.Orders.Update(order);
                 _context.SaveChanges();
-                if (order.Debt == 0)
+                if (order.Debt ==0 || order.Debt<0)
                 {
                    
                     order.Status = 1;
@@ -532,7 +565,7 @@ namespace Parfume.Controllers
                 else
                 {
                     var paymentHistory = _context.PaymentHistories.Where(c => c.OrderId == orderId).FirstOrDefault();
-                    _context.PaymentHistories.Add(new PaymentHistory()
+                    var pymentH = new PaymentHistory()
                     {
                         CustomerId = paymentHistory.CustomerId,
                         MonthPrice = paymentHistory.MonthPrice,
@@ -544,13 +577,25 @@ namespace Parfume.Controllers
                         PaymentDate = CreateDate,
                         PayDate = CreateDate,
                         OrderId = orderId
-                    });
+                    };
+                    _context.PaymentHistories.Add(pymentH);
                     _context.SaveChanges();
+                    var crediteHistory = new CrediteHistory()
+                    {
+                        CachMany = Price,
+                        UserId = UserId,
+                        Note = note,
+                        OrderId = orderId,
+                        PaymentHistoryId = pymentH.Id
+                    };
+                    _context.CrediteHistories.Add(crediteHistory);
+                    _context.SaveChanges();
+                     
                 }
 
                 _context.Logs.Add(new Log()
                 {
-                    Error = "Ugurlu odenis miqdar" + price,
+                    Error = $"Ugurlu, odenis miqdar {price}, musterinin fini {order.Customer.Fincode},sifarisin nomresi {order.Id}",
                     UserId = UserId,
                     BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = true,
@@ -601,7 +646,7 @@ namespace Parfume.Controllers
 
                 _context.Logs.Add(new Log()
                 {
-                    Error = "ChangePaymentDate day number" + changeDay.ToString(),
+                    Error = $"Ayliqin vaxtini deyismek gunlerin sayi:{changeDay},musterinin fini {order.Customer.Fincode}, sifarisin nomresi:{order.Id} ",
                     UserId = UserId,
                     BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = true,
@@ -611,17 +656,9 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception ex)
+            catch (Exception  )
             {
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
+                
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -643,7 +680,7 @@ namespace Parfume.Controllers
 
                 _context.Logs.Add(new Log()
                 {
-                    Error = "new cost" + changeCost.ToString()+" old cost:"+ orderCost,
+                    Error = "Maya deyerin deyisdirmesi  yeni qiymet" + changeCost.ToString()+" kohne qiymet:"+ orderCost,
                     UserId = UserId,
                     BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = true,
@@ -653,17 +690,8 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception ex)
+            catch (Exception  )
             {
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "new cost",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -683,9 +711,9 @@ namespace Parfume.Controllers
             try
             {
                 var orderId = Convert.ToInt32(OrderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).First();
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.Customer).First();
                 var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
-
+                var oldMany = payHistory.PayPrice;
                 if (_context.CrediteHistories.Any(c => c.PaymentHistoryId == payHistoryId))
                 {
                     var crediteHistory = _context.CrediteHistories.Where(c => c.PaymentHistoryId == payHistoryId).First();
@@ -700,9 +728,10 @@ namespace Parfume.Controllers
                 payHistory.Debt = (double)order.Debt;
                 _context.PaymentHistories.Update(payHistory);
                 _context.SaveChanges();
+
                 _context.Logs.Add(new Log()
                 {
-                    Error = "odenisin miqdarinini deyismek yeni miqdar" + newMany.ToString(),
+                    Error = $"odenisin miqdarinini deyismek yeni miqdar: {newMany},kohne miqdar {oldMany},musterinin fini {order.Customer.Fincode}, sifarisin nomresi {order.Id}",
                     UserId = UserId,
                     BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = true,
@@ -714,17 +743,9 @@ namespace Parfume.Controllers
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception ex)
+            catch (Exception  )
             {
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
+                 
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -736,7 +757,7 @@ namespace Parfume.Controllers
             try
             {
                 var orderId = Convert.ToInt32(OrderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).First();
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.Customer).First();
                 var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
                 var newMany = payHistory.PayPrice;
                 if (_context.CrediteHistories.Any(c => c.PaymentHistoryId == payHistoryId))
@@ -760,7 +781,7 @@ namespace Parfume.Controllers
 
                 _context.Logs.Add(new Log()
                 {
-                    Error = "odenisin Silmek  payHistoryId=" + payHistoryId.ToString(),
+                    Error = $"odenisin Silmek,musterinin fini {order.Customer.Fincode}, sifarisin nomresi {order.Id}",
                     UserId = UserId,
                     BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = true,
@@ -771,17 +792,9 @@ namespace Parfume.Controllers
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception ex)
+            catch (Exception  )
             {
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
+                 
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -797,8 +810,24 @@ namespace Parfume.Controllers
                 var orderId = Convert.ToInt32(OrderId);
                 var Paymenthistory = _context.PaymentHistories.Where(c => c.OrderId == orderId);
                 var creadit = _context.CrediteHistories.Where(c => c.OrderId == orderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).FirstOrDefault();
+                var bonushistory = _context.BonusHistories.Where(c => c.OrderId == orderId);
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.Customer).FirstOrDefault();
+                if (order.CardId!=null && order.MonthPrice!=null)
+                {
+                    var card = _context.Cards.Where(c => c.Id == order.CardId).First();
+                    card.Limit -= Convert.ToInt32(order.MonthPrice);
+                    _context.Cards.Update(card);
+                    _context.SaveChanges();
+                }
+                if (order.Customer.BonusAmount>0 && order.HasBonus==true)
+                {
+                    var d = Convert.ToDecimal((order.Customer.BonusAmount - order.TotalPrice / 50));
+                    order.Customer.BonusAmount = (double?)Math.Round(d,2);
+                    
+                }
                 _context.CrediteHistories.RemoveRange(creadit);
+                _context.SaveChanges();
+                _context.BonusHistories.RemoveRange(bonushistory);
                 _context.SaveChanges();
                 _context.PaymentHistories.RemoveRange(Paymenthistory);
                 _context.SaveChanges();
@@ -807,7 +836,7 @@ namespace Parfume.Controllers
 
                 _context.Logs.Add(new Log()
                 {
-                    Error = "sifarisi Silmek  OrderId=" + OrderId,
+                    Error = $"sifarisi Silmek,musterinin fini {order.Customer.Fincode}, sifarisin nomresi {order.Id}",
                     UserId = UserId,
                     BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = true,
@@ -817,21 +846,53 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception ex)
+            catch (Exception  )
             {
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
+                 
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
 
+        public IActionResult Cashbox()
+        {
+           var model= _context.Users.Where(c => c.RoleId != 2).ToList();
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult CashboxState(string dateRange,int userId)
+        {
+            try
+            {
+                DateTime startDateTime = DateTime.MinValue;
+                DateTime endDateTime = DateTime.Now;
+                var users = _context.Users.Where(c => c.RoleId != 2).ToList();
+                double cachOrder = 0;//pullun miqdari
+                var crediteHistory = new List<CrediteHistory>(); ;
+                var model = new CashModel();
+                if (!String.IsNullOrEmpty(dateRange))
+                {
+                    endDateTime = DateTime.ParseExact(dateRange.Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                crediteHistory = _context.CrediteHistories.Where(c => c.CreateDate.Date == endDateTime.Date && c.UserId==userId)
+                    .Include(c=>c.Order).ThenInclude(c=>c.Customer)
+                    .Include(c => c.Order)
+                    .ThenInclude(c=>c.Card)
+                    .OrderBy(c => c.CreateDate).ToList();
+                foreach (var item in crediteHistory)
+                {
+                    cachOrder += item.CachMany;
+                }
+                 model.CrediteHistories=crediteHistory;
+                model.Money = cachOrder;
+                ViewBag.Cashmoney = cachOrder;
 
+                return PartialView("_PartialTableCashbox", model);
+               
+            }
+            catch (Exception  )
+            {
+                return Json(new { status = "error" });
+            }
+        }
     }
 }

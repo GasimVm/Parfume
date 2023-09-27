@@ -59,6 +59,7 @@ function SendOrder() {
         var formData = new FormData();
         var fincode = $("#UsersDirectly option:selected").text();
         var referencesId = $(".references option:selected").val();
+        var hasbonus = $(".hasBonus option:selected").val();
         var dateCreate = $("#Create_Date").val();
         var dateBirth = $("#Birth_Date").val();
         
@@ -88,6 +89,7 @@ function SendOrder() {
         var address = $(".address").val();
         var workAddress = $(".workAddress").val();
         var InstagramAddress = $(".InstagramAddress").val();
+        var BonusAmount = $(".BonusAmount").val();
         
 
         if (name.length == 0) {
@@ -141,6 +143,7 @@ function SendOrder() {
         formData.append('dateBirth', dateBirth)
         formData.append('cardId', cardId)
         formData.append('referencesId', referencesId)
+        formData.append('hasBonus', hasbonus)
         formData.append('InstagramAddress', InstagramAddress)
 
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {
@@ -238,10 +241,11 @@ function Select2Plugin() {
                             $(".thirdName").val(data.results[i]['thirdNumberWho'])
                             $(".thirdNumber").val(data.results[i]['thirdNumber'])
                             $(".WhoIsOkey").val(data.results[i]['whoIsOkey'])
+                            $(".BonusAmount").val(data.results[i]['bonusAmount'])
                             $(".cardInfo").val(data.results[i]['cardId']).prop("selected", true)
                             $(".references").val(data.results[i]['referencesId']).prop("selected", true)
                         }
-                        console.log(data.results[i]['referencesId'])
+                        console.log(data.results[i]['bonusAmount'])
 
                     });
                     data.results = []

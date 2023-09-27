@@ -53,10 +53,10 @@ function CreateDatatable() {
 }
 function EditAndChange() {
 
-    $(".removeInBlock").on("click", function () {
+    $(document).on("click", ".removeInBlock", function () {
 
         var formData = new FormData();
-        var CustomerId = $(this).attr("data-CustomerIdBlock")
+        var CustomerId = $(this).attr("data-custId")
         formData.append('customerId', CustomerId)
         if (confirm('İstifadəcinin blokdan cixartmaq istiyrsiz?')) {
             $.ajax({
@@ -73,3 +73,4 @@ function EditAndChange() {
         }
     })
 }
+

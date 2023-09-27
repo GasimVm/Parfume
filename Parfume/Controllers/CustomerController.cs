@@ -29,6 +29,7 @@ namespace Parfume.Controllers
         {
             var model = _context.Customers.Where(c => c.IsBlock == false && c.IsActive == true).Include(c => c.Orders).ToList();
             return View(model);
+
         }
         public IActionResult AllCustomerBirthday()
         {
@@ -107,7 +108,8 @@ namespace Parfume.Controllers
                 ThirdNumberWho = thirdName,
                 ThirdNumber = thirdNumber,
                 WhoIsOkey = WhoIsOkey,
-                Birthday=BirthDate
+                Birthday=BirthDate,
+                BonusAmount=0
 
             };
             _context.Customers.Add(customer);
@@ -121,7 +123,8 @@ namespace Parfume.Controllers
             return View(model);
         }
 
-        public IActionResult RemoveInBlock(string customerId )
+        [HttpPost]
+        public JsonResult RemoveInBlock(string customerId)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
             try
@@ -133,21 +136,21 @@ namespace Parfume.Controllers
                     customer.IsBlock = false;
                     _context.Customers.Update(customer);
                     _context.SaveChanges();
+                    _context.Logs.Add(new Log()
+                    {
+                        Error = $"Blokdan cixartmaq  musterinin fini {customer.Fincode} ",
+                        UserId = UserId,
+                        Success = true,
+                        Type = 1,
+                        Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                    });
+                    _context.SaveChanges();
                 }
-                return Ok();
+                return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
-                return BadRequest();
+                return Json(new { status = "error", message = "Bu şəxs   siyahıda var!" });
             }
         }
 
@@ -164,6 +167,15 @@ namespace Parfume.Controllers
                     customer.BlockNote = NoteBlock;
                     customer.BlockDate = DateTime.Now;
                     _context.Customers.Update(customer);
+                    _context.SaveChanges();
+                    _context.Logs.Add(new Log()
+                    {
+                        Error = $"Bloka salmaq musterinin fini {customer.Fincode} ",
+                        UserId = UserId,
+                        Success = true,
+                        Type = 1,
+                        Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                    });
                     _context.SaveChanges();
                     return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
                 }
@@ -300,18 +312,8 @@ namespace Parfume.Controllers
 
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                _context.Logs.Add(new Log()
-                {
-                    Error = ex.Message ?? "İstifadəçi adı və ya şifrə yanlışdır.",
-                    UserId = UserId,
-                    Success = false,
-                    Type = 1,
-                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
-                });
-                _context.SaveChanges();
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -360,6 +362,7 @@ namespace Parfume.Controllers
                      ThirdNumberWho = e.ThirdNumberWho,
                      WorkAddress = e.WorkAddress,
                      WhoIsOkey = e.WhoIsOkey ,
+                     BonusAmount= e.BonusAmount == "" ? 0 : Convert.ToDouble(e.BonusAmount),
                       CardId= e.CardId=="" ? 0: Convert.ToInt32( e.CardId),
                       ReferencesId= e.ReferencesId == "" ? 0: Convert.ToInt32( e.ReferencesId)
                  }).ToList();
@@ -384,6 +387,7 @@ namespace Parfume.Controllers
                 ThirdNumber = u.ThirdNumber,
                 ThirdNumberWho = u.ThirdNumberWho,
                 WhoIsOkey = u.WhoIsOkey,
+                BonusAmount = u.BonusAmount,
                 CardId=u.CardId,
                 ReferencesId=u.ReferencesId
                 
@@ -432,6 +436,7 @@ namespace Parfume.Controllers
                      ThirdNumberWho = e.ThirdNumberWho,
                      WorkAddress = e.WorkAddress,
                      WhoIsOkey = e.WhoIsOkey,
+                     BonusAmount= e.BonusAmount == "" ? 0 :  Convert.ToDouble( e.BonusAmount),
                      ReferencesId = e.ReferencesId == "" ? 0 : Convert.ToInt32(e.ReferencesId)
                  }).ToList();
 
@@ -455,6 +460,7 @@ namespace Parfume.Controllers
                 ThirdNumber = u.ThirdNumber,
                 ThirdNumberWho = u.ThirdNumberWho,
                 WhoIsOkey = u.WhoIsOkey,
+                BonusAmount=u.BonusAmount,
                 ReferencesId=u.ReferencesId
             }).ToList();
             return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });

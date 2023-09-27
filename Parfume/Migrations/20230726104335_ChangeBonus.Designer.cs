@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parfume.DAL;
 
 namespace Parfume.Migrations
 {
     [DbContext(typeof(ParfumeContext))]
-    partial class ParfumeContextModelSnapshot : ModelSnapshot
+    [Migration("20230726104335_ChangeBonus")]
+    partial class ChangeBonus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -353,11 +355,6 @@ namespace Parfume.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<DateTime?>("CreateOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
@@ -369,9 +366,6 @@ namespace Parfume.Migrations
 
                     b.Property<double?>("FirstPrice")
                         .HasColumnType("float");
-
-                    b.Property<bool?>("HasBonus")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsCredite")
                         .HasColumnType("bit");

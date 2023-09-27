@@ -87,10 +87,10 @@
                     }
                     <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
                     <td>
-                        <button type="button"   class="btn  cardDelete " data-cardId="@item.Id" style="background: #c79957; width:80px; " >
-                           Silmək
+                        <button type="button" class="btn  cardDelete " data-cardId="@item.Id" style="background: #c79957; width:80px; ">
+                            Silmək
                         </button>
-
+                            <a class=" btn btn-success infoCard" data-href="@Url.Action("CardInfo","Card",new {cardId=item.Id })">Dəyişmək</a>
                     </td>
 
                 </tr>
@@ -109,5 +109,7 @@
     $(document).on("click", ".addCard", function () {
         window.location.href = $(this).attr('data-href');
     })
-    
+    $(document).on("click", ".infoCard", function () {
+        window.location.href = $(this).attr('data-href');
+    })
 </script>
