@@ -16,6 +16,8 @@
                 <tr>
                     <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:180px; ">Bonus alanin Adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; ">Bonus alanin nömrəsi <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; ">Bonus alanin fini <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:80px; ">Bonusun miqdarı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:80px; ">Sifarişin nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
                     <th style="width:80px; ">Məhsulun adı<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
@@ -31,6 +33,8 @@
                     <tr data-href="@Url.Action("CustomerDetails", "Customer", new { customerId = item.CustomerId })">
                         <td>@index</td>
                         <td>@item.Customer.Name @item.Customer.Surname @item.Customer.FatherName  </td>
+                         <td>@item.Customer.BaseNumber </td>
+                         <td>@item.Customer.Fincode </td>
                          <td>@item.Amount </td>
                          <td>@item.Order.Id </td>
                          <td>@item.Order.Name </td>

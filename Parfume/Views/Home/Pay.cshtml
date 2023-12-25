@@ -60,6 +60,10 @@
             <input type="number" readonly class="form-control  text-center  " value="@Model.Price" />
         </div>
         <div class="col-2">
+            <label class="labelColor">Bonusdan cixilan</label>
+            <input type="number" readonly class="form-control  text-center  " value="@Model.BonusPrice" />
+        </div>
+        <div class="col-2">
             <label class="labelColor">Məhsulun sayı</label>
             <input type="number" readonly class="form-control  text-center  " value="@Model.Amount" />
         </div>
@@ -71,7 +75,7 @@
             <label class="labelColor">İlkin ödəniş</label>
             <input type="number" readonly class="form-control  text-center  " value="@Model.FirstPrice" />
         </div>
-        @if (IsAdmin )
+        @if (IsAdmin)
         {
             <div class="col-2">
                 <label class="labelColor">Maya dəyəri</label>

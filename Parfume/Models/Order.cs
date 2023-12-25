@@ -21,6 +21,7 @@ namespace Parfume.Models
         public Double? Debt { get; set; }
         public Double? OldDebt { get; set; }
         public Double? FirstPrice { get; set; }
+        // pay by bonus
         public Double? BonusPrice { get; set; }
         public Double TotalPrice { get; set; }
         public int CustomerId { get; set; }
@@ -34,6 +35,7 @@ namespace Parfume.Models
         public int Cost { get; set; }
         public bool IsCredite { get; set; }
         public bool? HasBonus { get; set; }
+        
         public DateTime CreateDate   { get; set; }
         public DateTime? PaymentDate { get; set; }
         public DateTime? CreateOn { get; set; }

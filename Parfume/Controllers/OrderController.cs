@@ -141,7 +141,6 @@ namespace Parfume.Controllers
                     {
                         Name = productName,
                         Quantity = quantity
-
                     };
                     _context.Products.Add(product).GetDatabaseValues();
                     _context.SaveChanges();
@@ -151,7 +150,7 @@ namespace Parfume.Controllers
                 {
                     productId = _context.Products.Where(c => c.Name == productName).FirstOrDefault().Id;
                 }
-                //customerId
+                //customerId 
                 var order = new Order();
                 if (bonusPriceCovert == 0)
                 {
@@ -208,7 +207,7 @@ namespace Parfume.Controllers
                             Price = Convert.ToDouble(price),
                             Cost = cost,
                             FirstPrice = Convert.ToDouble(firstPrice),
-                            BonusPrice = Convert.ToDouble(bonusPrice),
+                            BonusPrice = bonusPriceCovert,
                             ProductId = productId,
                             TotalPrice = Convert.ToDouble(totalPrice),
                             UserId = UserId,
@@ -452,6 +451,7 @@ namespace Parfume.Controllers
                             Name = productName,
                             Quantity = quantity,
                             HasBonus = IsBonus,
+                            BonusPrice=bonusPriceCovert,
                             Price = Convert.ToDouble(price),
                             Cost = Convert.ToInt32(cost),
                             ProductId = productId,
@@ -505,11 +505,12 @@ namespace Parfume.Controllers
 
             try
             {
-                var format = "dd/MM/yyyy";
+                var format = "dd/MM/yyyy hh:mm";
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 var CreateDate = DateTime.Now;
                 if (dateCreate != null)
                 {
+                    dateCreate += " " + CreateDate.ToShortTimeString();
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
 
                 }
@@ -855,7 +856,7 @@ namespace Parfume.Controllers
 
         public IActionResult Cashbox()
         {
-           var model= _context.Users.Where(c => c.RoleId != 2).ToList();
+           var model= _context.Users.Where(c => c.RoleId != 2 || c.Id==3).ToList();
             return View(model);
         }
         [HttpPost]
