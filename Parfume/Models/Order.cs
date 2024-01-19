@@ -9,9 +9,11 @@ namespace Parfume.Models
     {
         public Order()
         {
-             CrediteHistories = new HashSet<CrediteHistory>();
+            CrediteHistories = new HashSet<CrediteHistory>();
             PaymentHistories=new HashSet<PaymentHistory>();
             BonusHistories = new HashSet<BonusHistory>();
+            BonusCardHistories = new HashSet<BonusCardHistory>();
+            SellerByOrders = new HashSet<SellerByOrderHistory>();
         }
         public int Id { get; set; }
         public string Name { get; set; }
@@ -30,6 +32,12 @@ namespace Parfume.Models
         public string Quantity { get; set; }
         public int? ProductId { get; set; }
         public virtual Product Product { get; set; }
+        public int? PayByBonusCard { get; set; }
+        public int? BonusCardId { get; set; }
+        public virtual BonusCard BonusCard { get; set; }
+
+        public int? SellerId { get; set; }
+        public virtual Seller Seller { get; set; }
         public int UserId { get; set; }
         public virtual User User { get; set; }
         public int Cost { get; set; }
@@ -39,7 +47,7 @@ namespace Parfume.Models
         public DateTime CreateDate   { get; set; }
         public DateTime? PaymentDate { get; set; }
         public DateTime? CreateOn { get; set; }
-
+        public double? BonusCardAmount { get; set; } 
         // 2-borclu 1-borcu bitib
         public int Status { get; set; }
         // 1-gonderilir 2-gonderilmir
@@ -49,6 +57,8 @@ namespace Parfume.Models
         public virtual ICollection<CrediteHistory>  CrediteHistories { get; set; }
         public virtual ICollection<PaymentHistory>   PaymentHistories { get; set; }
         public virtual ICollection<BonusHistory>    BonusHistories { get; set; }
+        public virtual ICollection<BonusCardHistory>    BonusCardHistories { get; set; }
+        public virtual ICollection<SellerByOrderHistory>    SellerByOrders { get; set; }
 
     }
 }

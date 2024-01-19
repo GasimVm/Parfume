@@ -25,7 +25,12 @@ namespace Parfume.DAL
         public DbSet<PaymentHistory> PaymentHistories { get; set; }
         public DbSet<UserWebPushCredentials> userWebPushCredentials { get; set; }
         public DbSet<Bonus> Bonus { get; set; }
+        public DbSet<BonusCard> BonusCards { get; set; }
+        public DbSet<BonusCardType> BonusCardTypes { get; set; }
         public DbSet<BonusHistory> BonusHistories { get; set; }
+        public DbSet<BonusCardHistory> BonusCardHistories { get; set; }
+        public DbSet<Seller> Sellers { get; set; }
+        public DbSet<SellerByOrderHistory> SellerByOrderHistories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -49,6 +54,12 @@ namespace Parfume.DAL
             modelBuilder.Entity<CrediteHistory>()
                   .Property(b => b.CreateDate)
                   .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<BonusCardHistory>()
+                  .Property(b => b.CreateDate)
+                  .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<SellerByOrderHistory>()
+                 .Property(b => b.CreateDate)
+                 .HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Customer>()
                 .Property(b => b.CreateDate)
                 .HasDefaultValueSql("GETDATE()");
@@ -61,11 +72,20 @@ namespace Parfume.DAL
             modelBuilder.Entity<BonusHistory>()
                 .Property(b => b.CreateDate)
                 .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<BonusCard>()
+               .Property(b => b.CreateDate)
+               .HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Customer>()
                .Property(b => b.IsActive)
                .HasDefaultValue(true);
             modelBuilder.Entity<Card>()
                .Property(b => b.Active)
+               .HasDefaultValue(true);
+            modelBuilder.Entity<BonusCard>()
+               .Property(b => b.IsActive)
+               .HasDefaultValue(true);
+            modelBuilder.Entity<Seller>()
+               .Property(b => b.IsActive)
                .HasDefaultValue(true);
             modelBuilder.Entity<Customer>()
                .Property(b => b.IsBlock)

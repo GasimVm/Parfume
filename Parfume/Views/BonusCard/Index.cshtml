@@ -1,0 +1,139 @@
+﻿@model IEnumerable<Parfume.Models.BonusCard>
+@{
+    ViewData["Title"] = "Card";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $('.page-loading').fadeOut('slow');
+        $("ul:not(.components) li a").click(function () {
+            $('.page-loading').fadeIn('slow');
+        })
+        var table = $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5'
+            ],
+            "language": {
+                "search": "",
+                "emptyTable": "Heç bir məlumat yoxdur",
+                "sSearchPlaceholder": "Axtar",
+                "sLengthMenu": "_MENU_ sətir göstər",
+                "paginate": {
+                    "previous": "Əvvəlki",
+                    "next": "Sonrakı",
+                    "first": "Birinci",
+                    "last": "Axırıncı"
+                },
+                "info": "_TOTAL_ sətirdən _START_-dən _END_-kimi göstərir",
+                "infoEmpty": "0 nəticə",
+                "infoFiltered": "( _MAX_ sətirdən filter olunub)",
+                "zeroRecords": "Uyğun nətica tapılmadı",
+            }
+        });
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.header()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('#table th input').on('click', function () {
+            return false;
+        });
+        $(".cardDelete").click(function () {
+
+            var formData = new FormData();
+
+            var cardId = $(this).attr("data-cardId");
+
+            formData.append('id', cardId)
+            $.ajax({
+                type: 'POST',
+                url: '/BonusCard/DeleteBonusCard',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status === "success") {
+
+                        alert("Qeydə alındı!")
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+
+                    }
+                }
+            });
+        })
+    })</script>
+ 
+<div class="row">
+    <div class="col-3">
+        <a class=" btn btn-success addCard" data-href="@Url.Action("CreateBonusCard","BonusCard")">Yeni bonus kard</a>
+    </div>
+</div>
+<div class="card" style="overflow:auto">
+    <div class="card-body pb-4">
+        <table id="table" class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Musterinin adi soyadi <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Musterinin nomresi   <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:280px; ">Kartin nomresi <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th style="width:180px; ">Kartin miqdari <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Kartin balansi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+
+                    <th>Tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Əməliyyat<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                </tr>
+            </thead>
+            <tbody class="TableBodyDetails">
+                @{ var index = 1; }
+                @foreach (var item in Model)
+                {
+                     
+                     
+                <tr data-href="@Url.Action("HistoryByOrder","BonusCard",new {id=item.Id })">
+                    <td>@index</td>
+                    <td>@item.Customer.Name @item.Customer.Surname @item.Customer.FatherName</td>
+                    <td>@item.Customer.BaseNumber</td>
+                    <td>@item.CardNumber</td>
+                    <td>@item.BonusCardType.Amount</td>
+                    <td>@item.Balans</td>
+
+
+                    <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <button type="button" class="btn  cardDelete " data-cardId="@item.Id" style="background: #c79957; width:80px; ">
+                            Silmək
+                        </button>
+                    </td>
+
+                </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    $(document).on("dblclick", ".TableBodyDetails tr", function () {
+        window.location.href = $(this).attr('data-href');
+    })
+    $(document).on("click", ".addCard", function () {
+        window.location.href = $(this).attr('data-href');
+    })
+    $(document).on("click", ".infoCard", function () {
+        window.location.href = $(this).attr('data-href');
+    })
+
+
+</script>

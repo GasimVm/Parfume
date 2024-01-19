@@ -324,146 +324,239 @@ namespace Parfume.Controllers
         public JsonResult Users(string search, int page, string blackList,
                          bool selfAccess = false, bool fullAccess = false, bool isDelegation = false, bool selfInner = false)
         {
-            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
-            string fincode;
-            fincode = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-
-
-            if (!String.IsNullOrEmpty(search))
+            try
             {
-                search = search.Trim().Replace(" ", "");
+                int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+                string fincode;
+                fincode = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+
+                if (!String.IsNullOrEmpty(search))
+                {
+                    search = search.Trim().Replace(" ", "");
+                }
+                List<int> _blackList = new List<int>();
+                if (!string.IsNullOrEmpty(blackList))
+                {
+                    _blackList = blackList.Split(',').Select(Int32.Parse).ToList();
+                }
+
+
+                (IEnumerable<CustomerModel> employees, int rowCount) employeesAndRowCount = _userService.GetCustomer(fincode, page, 100, search);
+
+                IEnumerable<Customer> users =
+                     employeesAndRowCount.employees
+                     .Select(e => new Customer
+                     {
+                         Id = e.Id,
+                         Fincode = e.Fincode,
+                         Name = e.Name,
+                         Surname = e.Surname,
+                         Address = e.Address,
+                         BaseNumber = e.BaseNumber,
+                         FatherName = e.FatherName,
+                         FirstNumber = e.FirstNumber,
+                         FirstNumberWho = e.FirstNumberWho,
+                         InstagramAddress = e.InstagramAddress,
+                         SecondNumber = e.SecondNumber,
+                         SecondNumberWho = e.SecondNumberWho,
+                         ThirdNumber = e.ThirdNumber,
+                         ThirdNumberWho = e.ThirdNumberWho,
+                         WorkAddress = e.WorkAddress,
+                         WhoIsOkey = e.WhoIsOkey,
+                         BonusAmount = e.BonusAmount == "" ? 0 : Convert.ToDouble(e.BonusAmount),
+                         CardId = e.CardId == "" ? 0 : Convert.ToInt32(e.CardId),
+                         ReferencesId = e.ReferencesId == "" ? 0 : Convert.ToInt32(e.ReferencesId)
+                     }).ToList();
+
+                List<Select2Result> results = users.Select(u =>
+                new Select2Result
+                {
+                    id = u.Id.ToString(),
+                    text = u.Name + " /" + u.Fincode,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    FatherName = u.FatherName,
+                    Fincode = u.Fincode,
+                    Address = u.Address,
+                    WorkAddress = u.WorkAddress,
+                    InstagramAddress = u.InstagramAddress,
+                    BaseNumber = u.BaseNumber,
+                    FirstNumber = u.FirstNumber,
+                    FirstNumberWho = u.FirstNumberWho,
+                    SecondNumber = u.SecondNumber,
+                    SecondNumberWho = u.SecondNumberWho,
+                    ThirdNumber = u.ThirdNumber,
+                    ThirdNumberWho = u.ThirdNumberWho,
+                    WhoIsOkey = u.WhoIsOkey,
+                    BonusAmount = u.BonusAmount,
+                    CardId = u.CardId,
+                    ReferencesId = u.ReferencesId
+
+                }).ToList();
+                return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
             }
-            List<int> _blackList = new List<int>();
-            if (!string.IsNullOrEmpty(blackList))
+            catch (Exception ex)
             {
-                _blackList = blackList.Split(',').Select(Int32.Parse).ToList();
+
+                _context.Logs.Add(new Log()
+                {
+                    Error = $"user get error: {ex.Message} ",
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                throw;
             }
-
-
-            (IEnumerable<CustomerModel> employees, int rowCount) employeesAndRowCount = _userService.GetCustomer(fincode, page, 100, search);
-
-            IEnumerable<Customer> users =
-                 employeesAndRowCount.employees
-                 .Select(e => new Customer
-                 {
-                     Id = e.Id,
-                     Fincode = e.Fincode,
-                     Name = e.Name,
-                     Surname = e.Surname,
-                     Address = e.Address,
-                     BaseNumber = e.BaseNumber,
-                     FatherName = e.FatherName,
-                     FirstNumber = e.FirstNumber,
-                     FirstNumberWho = e.FirstNumberWho,
-                     InstagramAddress = e.InstagramAddress,
-                     SecondNumber = e.SecondNumber,
-                     SecondNumberWho = e.SecondNumberWho,
-                     ThirdNumber = e.ThirdNumber,
-                     ThirdNumberWho = e.ThirdNumberWho,
-                     WorkAddress = e.WorkAddress,
-                     WhoIsOkey = e.WhoIsOkey ,
-                     BonusAmount= e.BonusAmount == "" ? 0 : Convert.ToDouble(e.BonusAmount),
-                      CardId= e.CardId=="" ? 0: Convert.ToInt32( e.CardId),
-                      ReferencesId= e.ReferencesId == "" ? 0: Convert.ToInt32( e.ReferencesId)
-                 }).ToList();
-
-            List<Select2Result> results = users.Select(u =>
-            new Select2Result
-            {
-                id = u.Id.ToString(),
-                text = u.Name + " /" + u.Fincode,
-                Name = u.Name,
-                Surname = u.Surname,
-                FatherName = u.FatherName,
-                Fincode = u.Fincode,
-                Address = u.Address,
-                WorkAddress = u.WorkAddress,
-                InstagramAddress = u.InstagramAddress,
-                BaseNumber = u.BaseNumber,
-                FirstNumber = u.FirstNumber,
-                FirstNumberWho = u.FirstNumberWho,
-                SecondNumber = u.SecondNumber,
-                SecondNumberWho = u.SecondNumberWho,
-                ThirdNumber = u.ThirdNumber,
-                ThirdNumberWho = u.ThirdNumberWho,
-                WhoIsOkey = u.WhoIsOkey,
-                BonusAmount = u.BonusAmount,
-                CardId=u.CardId,
-                ReferencesId=u.ReferencesId
-                
-            }).ToList();
-            return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
+           
         }
 
         public JsonResult UsersWithPhone(string search, int page, string blackList,
                          bool selfAccess = false, bool fullAccess = false, bool isDelegation = false, bool selfInner = false)
         {
-            int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
-            string fincode;
-            fincode = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-
-
-            if (!String.IsNullOrEmpty(search))
+            try
             {
-                search = search.Trim().Replace(" ", "");
+                int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+                string fincode;
+                fincode = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+
+                if (!String.IsNullOrEmpty(search))
+                {
+                    search = search.Trim().Replace(" ", "");
+                }
+                List<int> _blackList = new List<int>();
+                if (!string.IsNullOrEmpty(blackList))
+                {
+                    _blackList = blackList.Split(',').Select(Int32.Parse).ToList();
+                }
+
+
+                (IEnumerable<CustomerModel> employees, int rowCount) employeesAndRowCount = _userService.GetCustomerWithPhone(fincode, page, 100, search);
+
+                IEnumerable<Customer> users =
+                     employeesAndRowCount.employees
+                     .Select(e => new Customer
+                     {
+                         Id = e.Id,
+                         Fincode = e.Fincode,
+                         Name = e.Name,
+                         Surname = e.Surname,
+                         Address = e.Address,
+                         BaseNumber = e.BaseNumber,
+                         FatherName = e.FatherName,
+                         FirstNumber = e.FirstNumber,
+                         FirstNumberWho = e.FirstNumberWho,
+                         InstagramAddress = e.InstagramAddress,
+                         SecondNumber = e.SecondNumber,
+                         SecondNumberWho = e.SecondNumberWho,
+                         ThirdNumber = e.ThirdNumber,
+                         ThirdNumberWho = e.ThirdNumberWho,
+                         WorkAddress = e.WorkAddress,
+                         WhoIsOkey = e.WhoIsOkey,
+                         BonusAmount = e.BonusAmount == "" ? 0 : Convert.ToDouble(e.BonusAmount),
+                         ReferencesId = e.ReferencesId == "" ? 0 : Convert.ToInt32(e.ReferencesId)
+                     }).ToList();
+
+                List<Select2Result> results = users.Select(u =>
+                new Select2Result
+                {
+                    id = u.Id.ToString(),
+                    text = u.Name + " /" + u.Fincode + " /" + u.BaseNumber,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    FatherName = u.FatherName,
+                    Fincode = u.Fincode,
+                    Address = u.Address,
+                    WorkAddress = u.WorkAddress,
+                    InstagramAddress = u.InstagramAddress,
+                    BaseNumber = u.BaseNumber,
+                    FirstNumber = u.FirstNumber,
+                    FirstNumberWho = u.FirstNumberWho,
+                    SecondNumber = u.SecondNumber,
+                    SecondNumberWho = u.SecondNumberWho,
+                    ThirdNumber = u.ThirdNumber,
+                    ThirdNumberWho = u.ThirdNumberWho,
+                    WhoIsOkey = u.WhoIsOkey,
+                    BonusAmount = u.BonusAmount,
+                    ReferencesId = u.ReferencesId
+                }).ToList();
+                return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
             }
-            List<int> _blackList = new List<int>();
-            if (!string.IsNullOrEmpty(blackList))
+            catch (Exception ex)
             {
-                _blackList = blackList.Split(',').Select(Int32.Parse).ToList();
+
+                _context.Logs.Add(new Log()
+                {
+                    Error = $"user get error: {ex.Message} ",
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                throw;
+            }
+
+           
+        }
+
+        public JsonResult BonusCardFilter(string search, int page, string blackList,
+                         bool selfAccess = false, bool fullAccess = false, bool isDelegation = false, bool selfInner = false)
+        {
+            try
+            {
+                int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
+                string fincode;
+                fincode = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+
+                if (!String.IsNullOrEmpty(search))
+                {
+                    search = search.Trim().Replace(" ", "");
+                }
+                List<int> _blackList = new List<int>();
+                if (!string.IsNullOrEmpty(blackList))
+                {
+                    _blackList = blackList.Split(',').Select(Int32.Parse).ToList();
+                }
+
+
+                (IEnumerable<BonusCardModel> employees, int rowCount) employeesAndRowCount = _userService.GetBonusCard( page, 100, search);
+
+                IEnumerable<BonusCard> users =
+                     employeesAndRowCount.employees
+                     .Select(e => new BonusCard
+                     {
+                         Id = e.Id,
+                         Balans=e.Amount,
+                         CardNumber=e.CardNumber
+                     }).ToList();
+
+                List<Select2Result> results = users.Select(u =>
+                new Select2Result
+                {
+                    id = u.Id.ToString(),
+                    text = u.CardNumber.ToString(),
+                    Amount=u.Balans
+                }).ToList();
+                return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
+            }
+            catch (Exception ex)
+            {
+
+                _context.Logs.Add(new Log()
+                {
+                    Error = $"user get error: {ex.Message} ",
+                    Success = false,
+                    Type = 1,
+                    Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
+                });
+                _context.SaveChanges();
+                throw;
             }
 
 
-            (IEnumerable<CustomerModel> employees, int rowCount) employeesAndRowCount = _userService.GetCustomerWithPhone(fincode, page, 100, search);
-
-            IEnumerable<Customer> users =
-                 employeesAndRowCount.employees
-                 .Select(e => new Customer
-                 {
-                     Id = e.Id,
-                     Fincode = e.Fincode,
-                     Name = e.Name,
-                     Surname = e.Surname,
-                     Address = e.Address,
-                     BaseNumber = e.BaseNumber,
-                     FatherName = e.FatherName,
-                     FirstNumber = e.FirstNumber,
-                     FirstNumberWho = e.FirstNumberWho,
-                     InstagramAddress = e.InstagramAddress,
-                     SecondNumber = e.SecondNumber,
-                     SecondNumberWho = e.SecondNumberWho,
-                     ThirdNumber = e.ThirdNumber,
-                     ThirdNumberWho = e.ThirdNumberWho,
-                     WorkAddress = e.WorkAddress,
-                     WhoIsOkey = e.WhoIsOkey,
-                     BonusAmount= e.BonusAmount == "" ? 0 :  Convert.ToDouble( e.BonusAmount),
-                     ReferencesId = e.ReferencesId == "" ? 0 : Convert.ToInt32(e.ReferencesId)
-                 }).ToList();
-
-            List<Select2Result> results = users.Select(u =>
-            new Select2Result
-            {
-                id = u.Id.ToString(),
-                text = u.Name + " /" + u.Fincode +" /" + u.BaseNumber,
-                Name = u.Name,
-                Surname = u.Surname,
-                FatherName = u.FatherName,
-                Fincode = u.Fincode,
-                Address = u.Address,
-                WorkAddress = u.WorkAddress,
-                InstagramAddress = u.InstagramAddress,
-                BaseNumber = u.BaseNumber,
-                FirstNumber = u.FirstNumber,
-                FirstNumberWho = u.FirstNumberWho,
-                SecondNumber = u.SecondNumber,
-                SecondNumberWho = u.SecondNumberWho,
-                ThirdNumber = u.ThirdNumber,
-                ThirdNumberWho = u.ThirdNumberWho,
-                WhoIsOkey = u.WhoIsOkey,
-                BonusAmount=u.BonusAmount,
-                ReferencesId=u.ReferencesId
-            }).ToList();
-            return Json(new { results = results, count_filtered = employeesAndRowCount.rowCount });
         }
 
     }

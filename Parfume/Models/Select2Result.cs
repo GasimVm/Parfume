@@ -29,5 +29,6 @@ namespace Parfume.Models
         public double? BonusAmount { get; set; }
         public int? CardId { get; set; }
         public int? ReferencesId { get; set; }
+        public double? Amount { get; set; }
     }
 }

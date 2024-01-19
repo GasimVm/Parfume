@@ -55,6 +55,17 @@
             </select>
         </div>
         <div class="col-3 mt-3">
+            <label class="labelColor">Satıçı</label>
+            <select class="form-control sellers ">
+                <option value="0">Sec</option>
+                @foreach (var item in Model.Sellers)
+                {
+                    <option value="@item.Id">@item.Name </option>
+
+                }
+            </select>
+        </div>
+        <div class="col-3 mt-3">
             <label class="labelColor">Doğum tarixı</label>
             <div class="input-group date" id="Birthdate" data-target-input="nearest">
                 <input type="text" required data-val-required="Vaxtı qeyd etməlisiz" id="Birth_Date" class="form-control datetimepicker-input" data-target="#Birthdate" />
@@ -132,7 +143,7 @@
             <label class="labelColor">Ilkin ödəniş</label>
             <input type="number" class="form-control firstPrice " />
         </div>
-        <div class="col-3">
+        <div class="col-3 ">
             <label class="labelColor">Bonusdan ödəniş</label>
             <input type="number" class="form-control bonusPrice " />
         </div>
@@ -155,7 +166,15 @@
             <label class="labelColor">Aylıq ödəniş</label>
             <input type="text" readonly class="form-control monthlyPayment " />
         </div>
-
+        <div class="col-3 mt-3">
+            <label class="labelColor">Bonus kartdan secim</label>
+            <select class="bonusCard-Directly" style="width: 100% !important;" id="bonusCardDirectly"></select>
+        </div>
+        <input class="bonusCardId" hidden />
+        <div class="col-3 mt-3">
+            <label class="labelColor">Bonus kartdan ödəniş miqdari</label>
+            <input type="number" class="form-control bonusCardAmount" />
+        </div>
         <div class="col-3 mt-3">
             <label class="labelColor">Toplam qiymət</label>
             <input type="number" class="form-control totalPrice " />

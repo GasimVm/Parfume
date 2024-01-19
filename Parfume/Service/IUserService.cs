@@ -12,6 +12,7 @@ namespace Parfume.Service
         (IEnumerable<CustomerModel> customers, int rowCount) GetCustomerWithPhone(string fincode, int page, int length, string search);
 
         public IEnumerable<CustomerModel> GetCustomerWithDebt(   int type);
+        public (IEnumerable<BonusCardModel> bonusCards, int rowCount) GetBonusCard(int page, int length, string search);
     }
 
 

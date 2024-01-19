@@ -1,0 +1,95 @@
+﻿@model IEnumerable<Parfume.Models.Order>
+
+@{
+    ViewData["Title"] = "Pay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class=" contairner">
+    <h3 class="mb-3 mt-5 text-center">Sifariş tarixi</h3>
+    <div class="row text-center mt-3">
+        <table id="table" class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Satışı qeydə alan <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Məhsulun adı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Qiymət<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Bonus kartdan ödənilən<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Total qiymət<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Borc<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Aylıq ödəniş<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Ödəniş tarixi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                    <th>Satışın qeydə alındığı tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                </tr>
+            </thead>
+            <tbody class="TableBodyDetails">
+                @{var index = 1; }
+                @foreach (var item in Model)
+                {
+
+                    <tr data-href="@Url.Action("HistoryDetails", "Home", new { orderId = item.Id })">
+                        <td>@index</td>
+                        <td>@item.User.Name @item.User.Surname </td>
+                        <td>@item.Name</td>
+                        <td>@item.Price</td>
+                        <td>@item.BonusCardAmount</td>
+                        <td>@item.TotalPrice</td>
+                        <td>@item.Debt</td>
+                        <td>@item.MonthPrice</td>
+                        <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+</div>
+<script>
+    $(document).ready(function () {
+
+        var table = $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5'
+            ],
+            "language": {
+                "search": "",
+                "emptyTable": "Heç bir məlumat yoxdur",
+                "sSearchPlaceholder": "Axtar",
+                "sLengthMenu": "_MENU_ sətir göstər",
+                "paginate": {
+                    "previous": "Əvvəlki",
+                    "next": "Sonrakı",
+                    "first": "Birinci",
+                    "last": "Axırıncı"
+                },
+                "info": "_TOTAL_ sətirdən _START_-dən _END_-kimi göstərir",
+                "infoEmpty": "0 nəticə",
+                "infoFiltered": "( _MAX_ sətirdən filter olunub)",
+                "zeroRecords": "Uyğun nətica tapılmadı",
+            }
+        });
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.header()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('#table th input').on('click', function () {
+            return false;
+        });
+        $(document).on("dblclick", ".TableBodyDetails tr", function () {
+            window.location.href = $(this).attr('data-href');
+        })
+    })</script>

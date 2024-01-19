@@ -187,6 +187,45 @@ namespace Parfume.Service
             return (employees, rowCount);
         }
 
+        public (IEnumerable<BonusCardModel> bonusCards, int rowCount) GetBonusCard(  int page, int length, string search)
+        {
+            List<BonusCardModel> bonusCards = new List<BonusCardModel>();
+            int rowCount = 0;
+            search = search?.ToLower().Replace(" ", "");
+            using (SqlConnection con = new SqlConnection(AppConfig.ConnectionString))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand("SP_GET_BonusCard", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@page", page);
+                    cmd.Parameters.AddWithValue("@length", length);
+                    cmd.Parameters.AddWithValue("@search", (object)search ?? DBNull.Value);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            bonusCards.Add(new BonusCardModel
+                            {
+                                Id = (int)reader[0],
+                                Amount=(double)reader[1],
+                                 CardNumber=reader[2].ToString()
+                            });
+                        }
+
+                        if (reader.NextResult()
+                            && reader.HasRows
+                            && reader.Read())
+                        {
+                            rowCount = (int)reader["ROW_COUNT"];
+                        }
+                    }
+                }
+            }
+            return (bonusCards, rowCount);
+        }
+
         public string NameProsedur(int type)
         {
            string prosedurName = "";

@@ -4,6 +4,7 @@ var searching = 'Axtarılır...';
 var noResults = 'Uyğun nəticə tapılmadı.';
 $(document).ready(function () {
     Select2Plugin();
+    Select2PluginForBonus();
     SendOrder();
     $('#Birthdate').datetimepicker({
         format: 'DD/MM/YYYY'
@@ -34,7 +35,9 @@ function SendOrder() {
         var duration = $(".duration option:selected").val();
         var firstPrice = $(".firstPrice").val();
         var bonusPrice = $(".bonusPrice").val();
-        var total = $(".totalPrice").val() - firstPrice - bonusPrice;
+        var bonusCardAmount = $(".bonusCardAmount").val();
+
+        var total = $(".totalPrice").val() - firstPrice - bonusPrice - bonusCardAmount;
         var monthlyPayment = total / duration;
         $(".monthlyPayment").val(monthlyPayment)
     })
@@ -42,19 +45,30 @@ function SendOrder() {
         var firstPrice = $(".firstPrice").val();
         var duration = $(".duration option:selected").val();
         var bonusPrice = $(".bonusPrice").val();
+        var bonusCardAmount = $(".bonusCardAmount").val();
         var total = $(".totalPrice").val() ;
-        var monthlyPayment = (total - firstPrice - bonusPrice)/ duration;
+        var monthlyPayment = (total - firstPrice - bonusPrice - bonusCardAmount)/ duration;
         $(".monthlyPayment").val(monthlyPayment)
     })
     $(".bonusPrice").change(function () {
         var firstPrice = $(".firstPrice").val();
         var duration = $(".duration option:selected").val();
         var bonusPrice = $(".bonusPrice").val();
+        var bonusCardAmount = $(".bonusCardAmount").val();
         var total = $(".totalPrice").val();
-        var monthlyPayment = (total - firstPrice - bonusPrice) / duration;
+        var monthlyPayment = (total - firstPrice - bonusPrice - bonusCardAmount) / duration;
         $(".monthlyPayment").val(monthlyPayment)
     })
-
+    $(".bonusCardAmount").change(function () {
+        var firstPrice = $(".firstPrice").val();
+        var duration = $(".duration option:selected").val();
+        var bonusPrice = $(".bonusPrice").val();
+        var bonusCardAmount = $(".bonusCardAmount").val();
+        var total = $(".totalPrice").val();
+        var bonusCardAmount = $(".bonusCardAmount").val();
+        var monthlyPayment = (total - firstPrice - bonusPrice - bonusCardAmount) / duration;
+        $(".monthlyPayment").val(monthlyPayment)
+    })
     $(".sendOrder").click(function () {
         var formData = new FormData();
         var fincode = $("#UsersDirectly option:selected").text();
@@ -68,6 +82,7 @@ function SendOrder() {
         var surname = $(".surname").val();
         var duration = $(".duration").children("option:selected").val();
         var cardId = $(".cardInfo").children("option:selected").val();
+        var sellerId = $(".sellers").children("option:selected").val();
         var fatherName = $(".fatherName").val();
         var baseNumber = $(".baseNumber").val();
         var name = $(".name").val();
@@ -90,7 +105,8 @@ function SendOrder() {
         var workAddress = $(".workAddress").val();
         var InstagramAddress = $(".InstagramAddress").val();
         var BonusAmount = $(".BonusAmount").val();
-        
+        var bonusCardId = $("#bonusCardDirectly").val();
+        var bonusCardAmount = $(".bonusCardAmount").val();
 
         if (name.length == 0) {
             alert("Ad yazmaq mecburidi")
@@ -145,7 +161,9 @@ function SendOrder() {
         formData.append('referencesId', referencesId)
         formData.append('hasBonus', hasbonus)
         formData.append('InstagramAddress', InstagramAddress)
-
+        formData.append('bonusCardId', bonusCardId)
+        formData.append('bonusCardAmount', bonusCardAmount)
+        formData.append('sellerId', sellerId)
         if (confirm('Sifarişi qeydə almaq istiyirsiz?')) {
             $(".sendOrder").hide();
             $.ajax({
@@ -268,4 +286,73 @@ function Select2Plugin() {
     
     
      
+}
+
+function Select2PluginForBonus() {
+
+    $('.bonusCard-Directly').select2({
+        placeholder: selectPlaceholder,
+        allowClear: true,
+        //minimumInputLength: 3,
+        language: {
+            inputTooShort: function () {
+                return inputTooShort;
+            },
+            searching: function () {
+                return searching;
+            },
+            noResults: function () {
+                return;
+            },
+            loadingMore: function () {
+                return noResults;
+            }
+        },
+        tags: true,
+        createTag: function (params) {
+            return undefined;
+        },
+        ajax: {
+            delay: 500,
+            url: '/Customer/BonusCardFilter',
+            data: function (params) {
+                var query = {
+                    search: params.term,
+                    page: params.page || 1
+                };
+                // Query parameters will be ?search=[term]&page=[page]
+                return query;
+            },
+            processResults: function (data, params) {
+
+                $('.bonusCard-Directly').change("select2:closing", function (e) {
+
+                    var selectedUserId = $(".bonusCard-Directly").val();
+                    console.log(data.results)
+                    $.each(data.results, function (i, item) {
+
+                        if (selectedUserId == item['id']) {
+
+                            $(".bonusCardAmount").val(data.results[i]['amount'])
+                            $(".bonusCardId").val(data.results[i]['id'])
+                        }
+
+
+                    });
+                    data.results = []
+                });
+                params.page = params.page || 1;
+
+                return {
+
+                    results: data.results,
+                    pagination: {
+                        more: (params.page * 20) < data.count_filtered
+
+                    }
+                };
+            }
+
+        }
+    });
 }

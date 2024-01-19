@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Parfume.Models.BonusCardType>
+
+@{
+    ViewData["Title"] = "CreateCard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="~/CustomScript/Scripts/CreateBonusCard.js"></script>
+<div class=" contairner">
+    <h3 class="mb-3   text-center">Bonus kartın əlavə olunması</h3>
+    <div class="row text-center">
+        <div   class="col-3 mt-3">
+            <label class="labelColor">Bonus kart</label>
+            <select class="form-control cardType ">
+                <option value="0">Sec</option>
+                @foreach (var item in Model)
+                {
+                    <option value="@item.Id">@item.Amount </option>
+
+                }
+            </select>
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Bonus kartin nömrəsi</label>
+            <input class="form-control cardNumber" />
+        </div>
+        <div class="col-3  mt-3">
+            <label class="labelColor">Fin</label>
+            <select class="users-Directly" style="width: 100% !important;" id="UsersDirectly"></select>
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Müştərinin adı</label>
+            <input class="form-control name" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Müştərinin soyadı</label>
+            <input class="form-control surname" />
+        </div>
+        <div class="col-3 mt-3">
+            <label class="labelColor">Müştərinin ata adı</label>
+            <input class="form-control fatherName" />
+        </div>
+
+        <div class="col-3 mt-3">
+            <label class="labelColor">Müştərinin mobil nömrə</label>
+            <input class="form-control baseNumber" />
+        </div>
+        <div class="col-3 mt-3">
+            <button style="height: 50%; margin-top: 13%;" class="btn btn-success addBonusCard">Yadda saxla</button>
+        </div>
+
+    </div>
+</div>
+
+
+

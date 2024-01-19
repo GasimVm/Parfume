@@ -9,5 +9,6 @@ namespace Parfume.Models
     {
         public List<Card> Cards { get; set; }
         public List<Customer> Customers { get; set; }
+        public List<Seller> Sellers { get; set; }
     }
 }

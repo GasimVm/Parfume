@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parfume.DAL;
 
 namespace Parfume.Migrations
 {
     [DbContext(typeof(ParfumeContext))]
-    partial class ParfumeContextModelSnapshot : ModelSnapshot
+    [Migration("20231226141616_AddedBonusCardType")]
+    partial class AddedBonusCardType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,14 +59,14 @@ namespace Parfume.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double?>("Balans")
-                        .HasColumnType("float");
+                    b.Property<int?>("Balans")
+                        .HasColumnType("int");
 
                     b.Property<int>("BonusCardTypeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CardNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CardNumber")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .ValueGeneratedOnAdd()
@@ -86,41 +88,6 @@ namespace Parfume.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("BonusCards");
-                });
-
-            modelBuilder.Entity("Parfume.Models.BonusCardHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double?>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("BonusCardId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BonusCardId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("BonusCardHistories");
                 });
 
             modelBuilder.Entity("Parfume.Models.BonusCardType", b =>
@@ -427,9 +394,6 @@ namespace Parfume.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<double?>("BonusCardAmount")
-                        .HasColumnType("float");
-
                     b.Property<int?>("BonusCardId")
                         .HasColumnType("int");
 
@@ -495,9 +459,6 @@ namespace Parfume.Migrations
                     b.Property<string>("Quantity")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SellerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -520,8 +481,6 @@ namespace Parfume.Migrations
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("SellerId");
 
                     b.HasIndex("UserId");
 
@@ -605,53 +564,6 @@ namespace Parfume.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("Parfume.Models.Seller", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sellers");
-                });
-
-            modelBuilder.Entity("Parfume.Models.SellerByOrderHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreateDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SellerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("SellerId");
-
-                    b.ToTable("SellerByOrderHistories");
                 });
 
             modelBuilder.Entity("Parfume.Models.User", b =>
@@ -759,31 +671,6 @@ namespace Parfume.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Parfume.Models.BonusCardHistory", b =>
-                {
-                    b.HasOne("Parfume.Models.BonusCard", "BonusCard")
-                        .WithMany("BonusCardHistories")
-                        .HasForeignKey("BonusCardId");
-
-                    b.HasOne("Parfume.Models.Customer", "Customer")
-                        .WithMany("BonusCardHistories")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Parfume.Models.Order", "Order")
-                        .WithMany("BonusCardHistories")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BonusCard");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("Parfume.Models.BonusHistory", b =>
                 {
                     b.HasOne("Parfume.Models.Bonus", "Bonus")
@@ -876,10 +763,6 @@ namespace Parfume.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.HasOne("Parfume.Models.Seller", "Seller")
-                        .WithMany()
-                        .HasForeignKey("SellerId");
-
                     b.HasOne("Parfume.Models.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
@@ -893,8 +776,6 @@ namespace Parfume.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Product");
-
-                    b.Navigation("Seller");
 
                     b.Navigation("User");
                 });
@@ -916,23 +797,6 @@ namespace Parfume.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("Parfume.Models.SellerByOrderHistory", b =>
-                {
-                    b.HasOne("Parfume.Models.Order", "Order")
-                        .WithMany("SellerByOrders")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Parfume.Models.Seller", "Seller")
-                        .WithMany("SellerByOrders")
-                        .HasForeignKey("SellerId");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("Parfume.Models.User", b =>
@@ -962,11 +826,6 @@ namespace Parfume.Migrations
                     b.Navigation("BonusHistories");
                 });
 
-            modelBuilder.Entity("Parfume.Models.BonusCard", b =>
-                {
-                    b.Navigation("BonusCardHistories");
-                });
-
             modelBuilder.Entity("Parfume.Models.BonusCardType", b =>
                 {
                     b.Navigation("BonusCard");
@@ -985,8 +844,6 @@ namespace Parfume.Migrations
 
                     b.Navigation("BonusCard");
 
-                    b.Navigation("BonusCardHistories");
-
                     b.Navigation("BonusHistories");
 
                     b.Navigation("Orders");
@@ -996,15 +853,11 @@ namespace Parfume.Migrations
 
             modelBuilder.Entity("Parfume.Models.Order", b =>
                 {
-                    b.Navigation("BonusCardHistories");
-
                     b.Navigation("BonusHistories");
 
                     b.Navigation("CrediteHistories");
 
                     b.Navigation("PaymentHistories");
-
-                    b.Navigation("SellerByOrders");
                 });
 
             modelBuilder.Entity("Parfume.Models.PaymentHistory", b =>
@@ -1015,11 +868,6 @@ namespace Parfume.Migrations
             modelBuilder.Entity("Parfume.Models.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Parfume.Models.Seller", b =>
-                {
-                    b.Navigation("SellerByOrders");
                 });
 
             modelBuilder.Entity("Parfume.Models.User", b =>

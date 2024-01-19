@@ -21,7 +21,7 @@ namespace Parfume.Controllers
         private readonly ParfumeContext _context;
         private readonly ICreatePdfService _createPdfService;
         private readonly IBonusService _bonusService;
-        public OrderController(ParfumeContext context, ICreatePdfService createPdfService,IBonusService bonusService)
+        public OrderController(ParfumeContext context, ICreatePdfService createPdfService, IBonusService bonusService)
         {
             _context = context;
             _createPdfService = createPdfService;
@@ -35,14 +35,15 @@ namespace Parfume.Controllers
         public JsonResult CreateOrder(string name, string surname, string duration, string fatherName, string baseNumber, string fincode, string firstName, string firstNumber, string secondName,
             string secondNumber, string thirdName, string thirdNumber, string quantity, string price, string firstPrice, string amount, double monthlyPayment, string productName, string totalPrice, string address,
             string workAddress, string InstagramAddress, string CustomerId, string dateCreate, string WhoIsOkey,
-            int cost,string dateBirth,int cardId,int referencesId,string bonusPrice,string hasBonus)
+            int cost, string dateBirth, int cardId, int referencesId, string bonusPrice, string hasBonus,
+            int? bonusCardId, double? bonusCardAmount, int? sellerId)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
             try
             {
                 var ctsId = 0;
-                var IsBonus = Convert.ToBoolean(hasBonus);
+                var IsBonus = Convert.ToBoolean(hasBonus) && Convert.ToDouble(price) < 300;
                 if (fincode.Contains('/'))
                 {
                     fincode = fincode.Split('/')[1].ToString();
@@ -58,21 +59,32 @@ namespace Parfume.Controllers
                 }
 
                 var format = "dd/MM/yyyy";
-                 
+
                 CultureInfo provider = CultureInfo.InvariantCulture;
-                var debt = Convert.ToDouble(totalPrice) - Convert.ToDouble(firstPrice);
-                monthlyPayment = Math.Round(debt/Convert.ToDouble(duration));
                 var bonusPriceCovert = Convert.ToDouble(bonusPrice);
-                 
+                var debt = Convert.ToDouble(totalPrice) - Convert.ToDouble(firstPrice) - Convert.ToDouble(bonusCardAmount) - bonusPriceCovert;
+
+                monthlyPayment = Math.Round(debt / Convert.ToDouble(duration));
+
+
                 var CreateDate = DateTime.Now;
                 var BirthDate = DateTime.Now;
+                if (bonusCardId != null)
+                {
+                    if (!_bonusService.CheckBonusCardAmount((int)bonusCardId, bonusCardAmount))
+                    {
+                        return Json(new { status = "error", message = " Sizin kifayət qədər balansiniz yoxdur bonus kartda! " });
+
+                    }
+
+                }
                 if (dateCreate != null)
                 {
-                    
+
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
 
                 }
-                if (dateBirth!=null)
+                if (dateBirth != null)
                 {
                     BirthDate = DateTime.ParseExact(dateBirth, format, provider);
                 }
@@ -122,8 +134,8 @@ namespace Parfume.Controllers
                         ThirdNumberWho = thirdName,
                         WorkAddress = workAddress,
                         Birthday = BirthDate,
-                        CardId=cardId,
-                        BonusAmount=0
+                        CardId = cardId,
+                        BonusAmount = 0
                     };
                     _context.Customers.Add(customer).GetDatabaseValues();
                     _context.SaveChanges();
@@ -154,7 +166,7 @@ namespace Parfume.Controllers
                 var order = new Order();
                 if (bonusPriceCovert == 0)
                 {
-                      order = new Order()
+                    order = new Order()
                     {
                         Amount = Convert.ToInt32(amount),
                         CustomerId = customerId,
@@ -168,7 +180,7 @@ namespace Parfume.Controllers
                         PaymentDate = CreateDate.AddMonths(1),
                         Price = Convert.ToDouble(price),
                         Cost = cost,
-                        HasBonus= IsBonus,
+                        HasBonus = IsBonus,
                         FirstPrice = Convert.ToDouble(firstPrice),
                         ProductId = productId,
                         TotalPrice = Convert.ToDouble(totalPrice),
@@ -176,21 +188,22 @@ namespace Parfume.Controllers
                         CreateDate = CreateDate,
                         Status = 2,
                         StatusNotification = 1,
-                        CardId = cardId ,
-
+                        CardId = cardId,
+                        BonusCardId = bonusCardId,
+                        BonusCardAmount = bonusCardAmount,
+                        SellerId = sellerId
                     };
                     _context.Orders.Add(order).GetDatabaseValues();
                     _context.SaveChanges();
                 }
                 else
                 {
-                    if (_bonusService.CheckBonus(customerId,bonusPriceCovert))
+                    if (_bonusService.CheckBonus(customerId, bonusPriceCovert))
                     {
                         return Json(new { status = "error", message = " Sizin kifayət qədər bonus balansiniz yoxdur! " });
                     }
                     else
                     {
-                        
                         order = new Order()
                         {
                             Amount = Convert.ToInt32(amount),
@@ -215,25 +228,27 @@ namespace Parfume.Controllers
                             Status = 2,
                             StatusNotification = 1,
                             CardId = cardId,
-
+                            BonusCardId = bonusCardId,
+                            BonusCardAmount = bonusCardAmount,
+                            SellerId = sellerId
                         };
                         _context.Orders.Add(order).GetDatabaseValues();
                         _context.SaveChanges();
                         _bonusService.RemoveBonus(customerId, bonusPriceCovert, order.Id);
                     }
                 }
-               
+
 
                 var paymentHistory = new List<PaymentHistory>();
                 for (int i = 1; i <= Convert.ToInt32(duration); i++)
                 {
-                    if (i== Convert.ToInt32(duration))
+                    if (i == Convert.ToInt32(duration))
                     {
                         paymentHistory.Add(new PaymentHistory()
                         {
                             CustomerId = customerId,
                             OrderId = order.Id,
-                            MonthPrice = debt- monthlyPayment*(i-1),
+                            MonthPrice = debt - monthlyPayment * (i - 1),
                             Status = false,
                             Queue = i,
                             Debt = debt,
@@ -248,7 +263,7 @@ namespace Parfume.Controllers
                         {
                             CustomerId = customerId,
                             OrderId = order.Id,
-                            MonthPrice = monthlyPayment  ,
+                            MonthPrice = monthlyPayment,
                             Status = false,
                             Queue = i,
                             Debt = debt,
@@ -257,7 +272,7 @@ namespace Parfume.Controllers
 
                         });
                     }
-                   
+
 
                 }
                 _context.PaymentHistories.AddRange(paymentHistory);
@@ -277,8 +292,8 @@ namespace Parfume.Controllers
                     _context.Customers.Update(customerDbase);
                     _context.SaveChanges();
                 }
-               
-                if (referencesId!=0 && false)
+
+                if (referencesId != 0 && false)
                 {
                     var customerDbRef = _context.Customers.Where(c => c.Id == customerId).First();
                     customerDbRef.ReferencesId = referencesId;
@@ -286,9 +301,22 @@ namespace Parfume.Controllers
                     _bonusService.AddBonus(referencesId, order.TotalPrice, order.Id);
                 }
 
+                if (bonusCardId != null)
+                {
+                    _bonusService.AddBonusCardHistory((int)bonusCardId, (double)bonusCardAmount, order.Id, customerId);
+                    _bonusService.RemoveBonusCard((double)bonusCardAmount, (int)bonusCardId);
+                }
+
+                _context.SellerByOrderHistories.Add(new SellerByOrderHistory()
+                {
+
+                    SellerId = sellerId,
+                    OrderId = order.Id
+                });
+                _context.SaveChanges();
                 _context.Logs.Add(new Log()
                 {
-                    Error =   $"Sifaris ugurla yerine yetrildi.Məhsulun adı{order.Product.Name} alanin fini: {order.Customer.Fincode}, sifarisin nomresi{order.Id} ,bonus eelave olunsun {hasBonus}   ",
+                    Error = $"Sifaris ugurla yerine yetrildi.Məhsulun adı{order.Product.Name} alanin fini: {order.Customer.Fincode}, sifarisin nomresi{order.Id} ,bonus eelave olunsun {hasBonus}   ",
                     UserId = UserId,
                     Success = true,
                     Type = 1,
@@ -320,14 +348,14 @@ namespace Parfume.Controllers
         public JsonResult CreateOrderCash(string name, string surname, string fatherName, string baseNumber, string fincode,
              string quantity, string price, string amount, string productName, string totalPrice,
              string InstagramAddress, string CustomerId, string dateCreate, string cost, string dateBirth,
-             int referencesId, string bonusPrice,string hasBonus)
+             int referencesId, string bonusPrice, string hasBonus, int? bonusCardId, double? bonusCardAmount, int? sellerId)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
 
             try
             {
                 fincode = fincode ?? "";
-                var IsBonus = Convert.ToBoolean(hasBonus);
+                var IsBonus = Convert.ToBoolean(hasBonus) && Convert.ToDouble(price) < 300;
                 if (fincode.Contains('/'))
                 {
                     fincode = fincode.Split('/')[1].ToString();
@@ -341,12 +369,22 @@ namespace Parfume.Controllers
                 var bonusPriceCovert = Convert.ToDouble(bonusPrice);
 
                 var CreateDate = DateTime.Now;
-                DateTime? BirthDate =null;
+                DateTime? BirthDate = null;
+                if (bonusCardId != null)
+                {
+                    if (!_bonusService.CheckBonusCardAmount((int)bonusCardId, bonusCardAmount))
+                    {
+                        return Json(new { status = "error", message = " Sizin kifayət qədər balansiniz yoxdur bonus kartda! " });
+
+                    }
+
+                }
+
                 if (dateCreate != null)
                 {
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
                 }
-                if (dateBirth!=null)
+                if (dateBirth != null)
                 {
                     BirthDate = DateTime.ParseExact(dateBirth, format, provider);
                 }
@@ -429,8 +467,9 @@ namespace Parfume.Controllers
                         CreateDate = CreateDate,
                         Status = 2,
                         StatusNotification = 1,
-                         
-
+                        BonusCardId = bonusCardId,
+                        BonusCardAmount = bonusCardAmount,
+                        SellerId = sellerId
                     };
                     _context.Orders.Add(order).GetDatabaseValues();
                     _context.SaveChanges();
@@ -451,7 +490,7 @@ namespace Parfume.Controllers
                             Name = productName,
                             Quantity = quantity,
                             HasBonus = IsBonus,
-                            BonusPrice=bonusPriceCovert,
+                            BonusPrice = bonusPriceCovert,
                             Price = Convert.ToDouble(price),
                             Cost = Convert.ToInt32(cost),
                             ProductId = productId,
@@ -460,6 +499,9 @@ namespace Parfume.Controllers
                             CreateDate = CreateDate,
                             Status = 2,
                             StatusNotification = 1,
+                            BonusCardId = bonusCardId,
+                            BonusCardAmount = bonusCardAmount,
+                            SellerId = sellerId
                         };
                         _context.Orders.Add(order).GetDatabaseValues();
                         _context.SaveChanges();
@@ -471,9 +513,9 @@ namespace Parfume.Controllers
                     var customerDbRef = _context.Customers.Where(c => c.Id == customerId).First();
                     customerDbRef.ReferencesId = referencesId;
                     _context.Customers.Update(customerDbRef);
-                   
+
                     _bonusService.AddBonus(referencesId, order.TotalPrice, order.Id);
-                   
+
                 }
                 if (IsBonus)
                 {
@@ -491,9 +533,22 @@ namespace Parfume.Controllers
                     Url = ControllerContext.ActionDescriptor.ControllerName + "/" + ControllerContext.ActionDescriptor.ActionName
                 });
                 _context.SaveChanges();
+
+                if (bonusCardId != null)
+                {
+                    _bonusService.AddBonusCardHistory((int)bonusCardId, (double)bonusCardAmount, order.Id, customerId);
+                    _bonusService.RemoveBonusCard((double)bonusCardAmount, (int)bonusCardId);
+                }
+
+                _context.SellerByOrderHistories.Add(new SellerByOrderHistory()
+                {
+                    SellerId = sellerId,
+                    OrderId = order.Id
+                });
+                _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception  )
+            catch (Exception)
             {
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
@@ -505,8 +560,10 @@ namespace Parfume.Controllers
 
             try
             {
-                var format = "dd/MM/yyyy hh:mm";
-                CultureInfo provider = CultureInfo.InvariantCulture;
+                //var format = "dd/MM/yyyy hh:mm";
+                var format = "g";
+                //CultureInfo provider = CultureInfo.InvariantCulture;
+                CultureInfo provider = new CultureInfo("fr-FR");
                 var CreateDate = DateTime.Now;
                 if (dateCreate != null)
                 {
@@ -523,25 +580,25 @@ namespace Parfume.Controllers
                 order.PaymentDate = order.PaymentDate?.AddMonths(1);
                 _context.Orders.Update(order);
                 _context.SaveChanges();
-                if (order.Debt ==0 || order.Debt<0)
+                if (order.Debt == 0 || order.Debt < 0)
                 {
-                   
+
                     order.Status = 1;
                     order.StatusNotification = 2;
-                    
+
                     _context.Orders.Update(order);
                     _context.SaveChanges();
 
-                     if (_context.Cards.Any(c => c.Id == order.CardId) )
-                {
-                    var cardDb = _context.Cards.Where(c => c.Id == order.CardId).First();
-                    cardDb.Limit = cardDb.Limit - (int)order.MonthPrice;
-                    _context.Cards.Update(cardDb);
-                    _context.SaveChanges();
-                }
+                    if (_context.Cards.Any(c => c.Id == order.CardId))
+                    {
+                        var cardDb = _context.Cards.Where(c => c.Id == order.CardId).First();
+                        cardDb.Limit = cardDb.Limit - (int)order.MonthPrice;
+                        _context.Cards.Update(cardDb);
+                        _context.SaveChanges();
+                    }
                 }
 
-               
+
                 if (_context.PaymentHistories.Any(c => c.OrderId == orderId && c.Status == false))
                 {
                     var paymentHistory = _context.PaymentHistories.Where(c => c.OrderId == orderId && c.Status == false).FirstOrDefault();
@@ -591,7 +648,7 @@ namespace Parfume.Controllers
                     };
                     _context.CrediteHistories.Add(crediteHistory);
                     _context.SaveChanges();
-                     
+
                 }
 
                 _context.Logs.Add(new Log()
@@ -631,10 +688,10 @@ namespace Parfume.Controllers
             try
             {
                 var orderId = Convert.ToInt32(OrderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.PaymentHistories).FirstOrDefault();
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c => c.PaymentHistories).FirstOrDefault();
                 order.PaymentDate = order.PaymentDate?.AddDays(changeDay);
                 var history = order.PaymentHistories;
-                foreach (var item in history.Where(c=>c.Status==false))
+                foreach (var item in history.Where(c => c.Status == false))
                 {
                     item.PaymentDate = item.PaymentDate?.AddDays(changeDay);
                     item.PayDate = item.PayDate?.AddDays(changeDay);
@@ -657,14 +714,14 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception  )
+            catch (Exception)
             {
-                
+
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
-        
-             [HttpPost]
+
+        [HttpPost]
         public JsonResult ChangeCost(string OrderId, int changeCost)
         {
             int UserId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid).Value);
@@ -675,13 +732,13 @@ namespace Parfume.Controllers
                 var order = _context.Orders.Where(c => c.Id == orderId).FirstOrDefault();
                 var orderCost = order.Cost;
                 order.Cost = changeCost;
-              
+
                 _context.Orders.Update(order);
                 _context.SaveChanges();
 
                 _context.Logs.Add(new Log()
                 {
-                    Error = "Maya deyerin deyisdirmesi  yeni qiymet" + changeCost.ToString()+" kohne qiymet:"+ orderCost,
+                    Error = "Maya deyerin deyisdirmesi  yeni qiymet" + changeCost.ToString() + " kohne qiymet:" + orderCost,
                     UserId = UserId,
                     BrowserInfo = "order id=" + OrderId.ToString(),
                     Success = true,
@@ -691,7 +748,7 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception  )
+            catch (Exception)
             {
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
@@ -712,7 +769,7 @@ namespace Parfume.Controllers
             try
             {
                 var orderId = Convert.ToInt32(OrderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.Customer).First();
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c => c.Customer).First();
                 var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
                 var oldMany = payHistory.PayPrice;
                 if (_context.CrediteHistories.Any(c => c.PaymentHistoryId == payHistoryId))
@@ -744,9 +801,9 @@ namespace Parfume.Controllers
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception  )
+            catch (Exception)
             {
-                 
+
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -758,7 +815,7 @@ namespace Parfume.Controllers
             try
             {
                 var orderId = Convert.ToInt32(OrderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.Customer).First();
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c => c.Customer).First();
                 var payHistory = _context.PaymentHistories.Where(c => c.Id == payHistoryId).First();
                 var newMany = payHistory.PayPrice;
                 if (_context.CrediteHistories.Any(c => c.PaymentHistoryId == payHistoryId))
@@ -793,9 +850,9 @@ namespace Parfume.Controllers
 
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception  )
+            catch (Exception)
             {
-                 
+
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
@@ -812,19 +869,19 @@ namespace Parfume.Controllers
                 var Paymenthistory = _context.PaymentHistories.Where(c => c.OrderId == orderId);
                 var creadit = _context.CrediteHistories.Where(c => c.OrderId == orderId);
                 var bonushistory = _context.BonusHistories.Where(c => c.OrderId == orderId);
-                var order = _context.Orders.Where(c => c.Id == orderId).Include(c=>c.Customer).FirstOrDefault();
-                if (order.CardId!=null && order.MonthPrice!=null)
+                var order = _context.Orders.Where(c => c.Id == orderId).Include(c => c.Customer).FirstOrDefault();
+                if (order.CardId != null && order.MonthPrice != null)
                 {
                     var card = _context.Cards.Where(c => c.Id == order.CardId).First();
                     card.Limit -= Convert.ToInt32(order.MonthPrice);
                     _context.Cards.Update(card);
                     _context.SaveChanges();
                 }
-                if (order.Customer.BonusAmount>0 && order.HasBonus==true)
+                if (order.Customer.BonusAmount > 0 && order.HasBonus == true)
                 {
                     var d = Convert.ToDecimal((order.Customer.BonusAmount - order.TotalPrice / 50));
-                    order.Customer.BonusAmount = (double?)Math.Round(d,2);
-                    
+                    order.Customer.BonusAmount = (double?)Math.Round(d, 2);
+
                 }
                 _context.CrediteHistories.RemoveRange(creadit);
                 _context.SaveChanges();
@@ -847,20 +904,20 @@ namespace Parfume.Controllers
                 _context.SaveChanges();
                 return Json(new { status = "success", message = "Uğurla yerinə yetirildi " });
             }
-            catch (Exception  )
+            catch (Exception)
             {
-                 
+
                 return Json(new { status = "error", message = "Xəta baş verdi" });
             }
         }
 
         public IActionResult Cashbox()
         {
-           var model= _context.Users.Where(c => c.RoleId != 2 || c.Id==3).ToList();
+            var model = _context.Users.Where(c => c.RoleId != 2 || c.Id == 3).ToList();
             return View(model);
         }
         [HttpPost]
-        public IActionResult CashboxState(string dateRange,int userId)
+        public IActionResult CashboxState(string dateRange, int userId)
         {
             try
             {
@@ -874,23 +931,23 @@ namespace Parfume.Controllers
                 {
                     endDateTime = DateTime.ParseExact(dateRange.Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
                 }
-                crediteHistory = _context.CrediteHistories.Where(c => c.CreateDate.Date == endDateTime.Date && c.UserId==userId)
-                    .Include(c=>c.Order).ThenInclude(c=>c.Customer)
+                crediteHistory = _context.CrediteHistories.Where(c => c.CreateDate.Date == endDateTime.Date && c.UserId == userId)
+                    .Include(c => c.Order).ThenInclude(c => c.Customer)
                     .Include(c => c.Order)
-                    .ThenInclude(c=>c.Card)
+                    .ThenInclude(c => c.Card)
                     .OrderBy(c => c.CreateDate).ToList();
                 foreach (var item in crediteHistory)
                 {
                     cachOrder += item.CachMany;
                 }
-                 model.CrediteHistories=crediteHistory;
+                model.CrediteHistories = crediteHistory;
                 model.Money = cachOrder;
                 ViewBag.Cashmoney = cachOrder;
 
                 return PartialView("_PartialTableCashbox", model);
-               
+
             }
-            catch (Exception  )
+            catch (Exception)
             {
                 return Json(new { status = "error" });
             }

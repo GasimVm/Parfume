@@ -1,0 +1,112 @@
+﻿@model SellerReportModel
+
+@if (Model.Count != 0)
+{
+    <div class="row mt-5">
+        <div class="col-6 offset-3">
+            <label class="col-form-label">Satiş sayı</label>
+            <input style=" width: 70px;" class=" form-control CachOrder" value="@Model.Count" />
+        </div>
+    </div>
+
+    <div class="row mt-5 result">
+        <div class="col">
+            <div class="card" style="overflow:auto">
+                <div class="card-body pb-4">
+                    <table id="table" class="table table-hover table-bordered ">
+                        <thead>
+                            <tr>
+                                <th style="width:80px; ">№<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th style="width:180px; ">Alıcının adı, soyadı, ata adı <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Alıcının fin kodu<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Alıcının nömrəsi<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Məhsulun adı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Miqdarı  <br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Qiyməti<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Toplam qiyməti<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Borcu<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                                <th>Tarix<br /><input type="text" placeholder="Axtar" class="form-control" /></th>
+                            </tr>
+                        </thead>
+                        <tbody class="TableBodyDetails">
+                            @{ var index = 1;}
+                            @foreach (var item in Model.Orders)
+                            {
+
+                                <tr data-href="@Url.Action("HistoryDetails","Home",new {orderId=item.Id })">
+                                    <td>@index</td>
+                                    <td>@item.Customer.Name @item.Customer.Surname @item.Customer.FatherName </td>
+                                    <td>@item.Customer.Fincode</td>
+                                    <td>@item.Customer.BaseNumber</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.Amount</td>
+                                    <td>@item.Price</td>
+                                    <td>@item.TotalPrice</td>
+                                    <td>@item.Debt</td>
+                                    <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+
+                                </tr>
+                                index++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-6 offset-3">
+        <h5 class=" mt-5 message">Melumat yoxdur</h5>
+    </div>
+}
+
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excelHtml5'
+            ],
+            "language": {
+                "search": "",
+                "emptyTable": "Heç bir məlumat yoxdur",
+                "sSearchPlaceholder": "Axtar",
+                "sLengthMenu": "_MENU_ sətir göstər",
+                "paginate": {
+                    "previous": "Əvvəlki",
+                    "next": "Sonrakı",
+                    "first": "Birinci",
+                    "last": "Axırıncı"
+                },
+                "info": "_TOTAL_ sətirdən _START_-dən _END_-kimi göstərir",
+                "infoEmpty": "0 nəticə",
+                "infoFiltered": "( _MAX_ sətirdən filter olunub)",
+                "zeroRecords": "Uyğun nətica tapılmadı",
+            }
+        });
+
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.header()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+        $('#table th input').on('click', function () {
+            return false;
+        });
+
+        $(document).on("dblclick", ".TableBodyDetails tr", function () {
+            window.location.href = $(this).attr('data-href');
+        })
+    });
+
+</script>
+

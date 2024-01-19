@@ -166,14 +166,16 @@
                                     <i class="fas fa-users-cog"></i> Müştərilər yarat
                                 </a>
                             </li>
+                            <li>
+                                <a asp-controller="Customer" asp-action="BlockCustomer">
+                                    <i class="fas fa-user-lock"></i> Blok olunan müştərilər
+                                </a>
+                            </li>
                         </ul>
 
                     </li>
-                    <li>
-                        <a asp-controller="Customer" asp-action="BlockCustomer">
-                            <i class="fas fa-user-lock"></i> Blok olunan müştərilər
-                        </a>
-                    </li>
+
+
                     <li class="">
 
                         <a href="#CardInfo" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
@@ -200,113 +202,166 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="">
-                        <a href="#BonusInfo" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
-                            <i class="fas fa-money-check-alt"></i> Bonus
-                        </a>
-                        <ul class="collapse list-unstyled" id="BonusInfo">
-                            <li>
-                                <a asp-controller="Bonus" asp-action="Index">
-                                    <i class="fas fa-money-bill"></i>
-                                    Vip Müştəri
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Bonus" asp-action="CreateVip">
-                                    <i class="fas fa-cash-register"></i>
-                                    Vip Müştəri əlavə et
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Bonus" asp-action="History">
-                                    <i class="fas fa-cash-register"></i>
-                                    Bonus tarixçəsi
-                                </a>
-                            </li>
 
-                        </ul>
-                    </li>
-
-                    <li>
-                        <a href="#Generalcustomer" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
-                            <i class="fas fa-users-cog"></i>Ümümi müştərilər
-                        </a>
-                        <ul class="collapse list-unstyled" id="Generalcustomer">
-                            <li>
-                                <a asp-controller="Customer" asp-action="GeneralCustomer">
-                                    <i class="fas fa-user-friends"></i>
-                                    Butun müştərilər
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Customer" asp-action="GeneralActiveCustomer">
-                                    <i class="fas fa-user-graduate"></i>
-                                    Aktive müştərilər
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Customer" asp-action="GeneralPassiveCustomer">
-                                    <i class="fas fa-user-edit"></i>
-                                    Passiv müştərilər
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#history" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
-                            <i class="fas fa-history"></i> Tarixçə
-                        </a>
-                        <ul class="collapse list-unstyled" id="history">
-                            <li>
-                                <a asp-controller="Home" asp-action="HistoryCredite">
-                                    <i class="fas fa-credit-card"></i>
-                                    Kredit
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Home" asp-action="History">
-                                    <i class="fas fa-cash-register"></i>
-                                    Nağd
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Home" asp-action="HistoryAll">
-                                    <i class="fas fa-file-medical-alt"></i>
-                                    Ümümi satış
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
                     @if (User.IsInRole("Admin"))
                     {
-                        <li>
-                            <a href="#Report" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
-                                <i class="fas fa-history"></i> Hesabat
+                        <li class="">
+
+                            <a href="#Seller" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                                <i class="fas fa-credit-card"></i> Satıçılar
                             </a>
-                            <ul class="collapse list-unstyled" id="Report">
+                            <ul class="collapse list-unstyled" id="Seller">
                                 <li>
-                                    <a asp-controller="Report" asp-action="ReportPayment">
-                                        <i class="fas fa-wallet"></i>
-                                        Hesabat aylıq üzrə
+                                    <a asp-controller="Seller" asp-action="Index">
+                                        <i class="fas fa-money-bill"></i>
+                                        Satıçılar
                                     </a>
                                 </li>
                                 <li>
-                                    <a asp-controller="Report" asp-action="ReportCreateNew">
-                                        <i class="fas fa-wallet"></i>
-                                        Hesabat hamsı
-                                    </a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Report" asp-action="ReportState">
-                                        <i class="fas fa-wallet"></i>
-                                        Hesabat Son
+                                    <a asp-controller="Seller" asp-action="Report">
+                                        <i class="fas fa-cash-register"></i>
+                                        Hesabat
                                     </a>
                                 </li>
 
                             </ul>
                         </li>
-                    }}
-            </ul>
+                    }
+                        <li class="">
+                            <a href="#BonusInfo" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                                <i class="fas fa-money-check-alt"></i> Bonus
+                            </a>
+                            <ul class="collapse list-unstyled" id="BonusInfo">
+                                <li>
+                                    <a asp-controller="Bonus" asp-action="Index">
+                                        <i class="fas fa-money-bill"></i>
+                                        Vip Müştəri
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Bonus" asp-action="CreateVip">
+                                        <i class="fas fa-cash-register"></i>
+                                        Vip Müştəri əlavə et
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Bonus" asp-action="History">
+                                        <i class="fas fa-cash-register"></i>
+                                        Bonus tarixçəsi
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <li class="">
+                            <a href="#BonusCardInfo" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                                <i class="fas fa-money-check-alt"></i> Bonus Kart
+                            </a>
+                            <ul class="collapse list-unstyled" id="BonusCardInfo">
+                                <li>
+                                    <a asp-controller="BonusCard" asp-action="Index">
+                                        <i class="fas fa-money-bill"></i>
+                                        Bonus Kart
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="BonusCard" asp-action="UseBonusCard">
+                                        <i class="fas fa-cash-register"></i>
+                                        İstifadə olunmuş bitmiş
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="BonusCard" asp-action="History">
+                                        <i class="fas fa-cash-register"></i>
+                                        Tarixçə
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="#Generalcustomer" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                                <i class="fas fa-users-cog"></i>Ümümi müştərilər
+                            </a>
+                            <ul class="collapse list-unstyled" id="Generalcustomer">
+                                <li>
+                                    <a asp-controller="Customer" asp-action="GeneralCustomer">
+                                        <i class="fas fa-user-friends"></i>
+                                        Butun müştərilər
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Customer" asp-action="GeneralActiveCustomer">
+                                        <i class="fas fa-user-graduate"></i>
+                                        Aktive müştərilər
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Customer" asp-action="GeneralPassiveCustomer">
+                                        <i class="fas fa-user-edit"></i>
+                                        Passiv müştərilər
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#history" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                                <i class="fas fa-history"></i> Tarixçə
+                            </a>
+                            <ul class="collapse list-unstyled" id="history">
+                                <li>
+                                    <a asp-controller="Home" asp-action="HistoryCredite">
+                                        <i class="fas fa-credit-card"></i>
+                                        Kredit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Home" asp-action="History">
+                                        <i class="fas fa-cash-register"></i>
+                                        Nağd
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Home" asp-action="HistoryAll">
+                                        <i class="fas fa-file-medical-alt"></i>
+                                        Ümümi satış
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li>
+                                <a href="#Report" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle menu collapsed">
+                                    <i class="fas fa-history"></i> Hesabat
+                                </a>
+                                <ul class="collapse list-unstyled" id="Report">
+                                    <li>
+                                        <a asp-controller="Report" asp-action="ReportPayment">
+                                            <i class="fas fa-wallet"></i>
+                                            Hesabat aylıq üzrə
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Report" asp-action="ReportCreateNew">
+                                            <i class="fas fa-wallet"></i>
+                                            Hesabat hamsı
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Report" asp-action="ReportState">
+                                            <i class="fas fa-wallet"></i>
+                                            Hesabat Son
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        }
+                    }
+                </ul>
             <div class="ml-2 position-fixed" style="bottom:0;left:5px;font-weight:bold;">
                 <span class="text-left">©Parfume de euro</span>
             </div>

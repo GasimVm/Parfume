@@ -11,8 +11,10 @@ namespace Parfume.Models
         {
             Orders = new HashSet<Order>();
             Bonus = new HashSet<Bonus>();
+            BonusCard = new HashSet<BonusCard>();
             PaymentHistories = new HashSet<PaymentHistory>();
             BonusHistories = new HashSet<BonusHistory>();
+            BonusCardHistories = new HashSet<BonusCardHistory>();
         }
         public int Id { get; set; }
         public string Name { get; set; }
@@ -47,8 +49,10 @@ namespace Parfume.Models
         public virtual Customer ReferencesCustomer { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Bonus> Bonus { get; set; }
+        public virtual ICollection<BonusCard> BonusCard { get; set; }
         public virtual ICollection<PaymentHistory> PaymentHistories { get; set; }
         public virtual ICollection<BonusHistory> BonusHistories { get; set; }
+        public virtual ICollection<BonusCardHistory> BonusCardHistories { get; set; }
 
 
 

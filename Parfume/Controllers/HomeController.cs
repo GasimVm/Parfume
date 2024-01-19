@@ -34,6 +34,7 @@ namespace Parfume.Controllers
         public IActionResult SaleCredite()
         {
             var cards = _context.Cards.Where(c => c.Active && c.Limit <= 4000).ToList();
+            var sallers = _context.Sellers.Where(c => c.IsActive ).ToList();
             List<Customer> customers = new List<Customer>();
             foreach (var item in _context.Bonus.ToList())
             {
@@ -43,20 +44,29 @@ namespace Parfume.Controllers
             SaleModel model = new SaleModel()
             {
                 Cards = cards,
-                Customers = customers
+                Customers = customers,
+                Sellers= sallers
 
             };
             return View(model);
         }
         public IActionResult SaleCash()
         {
+            var sallers = _context.Sellers.Where(c => c.IsActive).ToList();
             List<Customer> customers = new List<Customer>();
             foreach (var item in _context.Bonus.ToList())
             {
                 customers.Add(item.Customer);
             }
             var customer = _context.Bonus.ToList();
-            return View(customer);
+
+            SaleModel model = new SaleModel()
+            {
+                Customers = customers,
+                Sellers = sallers
+
+            };
+            return View(model);
         }
         public IActionResult Pay(int orderId)
         {
@@ -99,7 +109,13 @@ namespace Parfume.Controllers
         }
         public IActionResult HistoryDetails(int orderId)
         {
-            var model = _context.Orders.Where(c => c.Id == orderId).Include(c => c.Customer).Include(c=>c.PaymentHistories).Include(c=>c.User).Include(c=>c.Card).FirstOrDefault();
+            var model = _context.Orders.Where(c => c.Id == orderId)
+                .Include(c => c.Customer)
+                .Include(c=>c.PaymentHistories)
+                .Include(c=>c.User)
+                .Include(c=>c.Card)
+                .Include(c=>c.Seller)
+                .FirstOrDefault();
             return View(model);
         }
         [Authorize(Roles = "Admin")]
