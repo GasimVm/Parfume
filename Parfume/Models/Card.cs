@@ -12,6 +12,7 @@ namespace Parfume.Models
         {
             Customers = new HashSet<Customer>();
             Orders = new HashSet<Order>();
+            PaymentHistories = new HashSet<PaymentHistory>();
         }
         public int Id { get; set; }
         public string Name { get; set; }
@@ -21,5 +22,6 @@ namespace Parfume.Models
         public DateTime CreateDate { get; set; }
         public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<PaymentHistory>   PaymentHistories { get; set; }
     }
 }

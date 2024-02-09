@@ -69,7 +69,7 @@
     <div class="row text-center">
         <div class="col-2 mt-3">
             <label class="labelColor">Satıcının adı</label>
-            <input type="text" readonly class="form-control  text-center  " value="@Model.Seller.Name " />
+            <input type="text" readonly class="form-control  text-center  " value="@Model.Seller?.Name " />
         </div>
         <div class="col-2 mt-3">
             <label class="labelColor">Daxil edenin adı</label>
@@ -133,7 +133,7 @@
             <input type="text" readonly class="form-control text-center  " value="@Model.BonusPrice" />
         </div>
         <div class="col-2 mt-3">
-            <label class="labelColor">Bonus kartdan cixilan</label>
+            <label class="labelColor">Hədiyyə kartdan cixilan</label>
             <input type="text" readonly class="form-control text-center  " value="@Model.BonusCardAmount" />
         </div>
         <div class="col-2 mt-3">
@@ -142,7 +142,7 @@
         </div>
         <div class="col-2 mt-3">
             <label class="labelColor">Ödəniş tarixi</label>
-            <input type="text" readonly class="form-control text-center  " value="@Model.PaymentDate?.ToString("dd/MM/yyyy")" />
+            <input type="text" readonly class="form-control text-center  " value="@Model.PaymentDate?.ToString("dd/MM/yyyy HH :mm")" />
         </div>
 
         <div class="col-3 mt-3">
@@ -151,7 +151,7 @@
         </div>
         <div class="col-3 mt-3">
             <label class="labelColor">Satışın qeydə alındığı tarix</label>
-            <input type="text" readonly class="form-control  text-center  " value="@Model.CreateDate.ToString("dd/MM/yyyy")" />
+            <input type="text" readonly class="form-control  text-center  " value="@Model.CreateDate.ToString("dd/MM/yyyy HH:mm")" />
         </div>
 
     </div>
@@ -178,8 +178,8 @@
                         <td>@item.MonthPrice</td>
                         <td>@item.PayPrice</td>
                         <td>@item.Note</td>
-                        <td>@item.PayDate?.ToString("dd/MM/yyyy")</td>
-                        <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@item.PayDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.PaymentDate?.ToString("dd/MM/yyyy HH:mm")</td>
                     </tr>
                     index++;
                 }

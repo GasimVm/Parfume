@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     $('#datetimepicker3').datetimepicker({
-        format: 'DD/MM/YYYY',
+        format: 'DD/MM/YYYY HH:mm',
         sideBySide: false
     });
     ChangePay();
@@ -80,7 +80,7 @@ function Pay() {
                         window.location.reload();
                     }
                     else {
-                        alert("Xəta baş verdi,şəbəkəni yoxluyun!")
+                        alert(response.message)
                         $(".PayOrder").show();
 
                     }

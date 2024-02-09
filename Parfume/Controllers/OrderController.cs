@@ -252,6 +252,7 @@ namespace Parfume.Controllers
                             Status = false,
                             Queue = i,
                             Debt = debt,
+                            CardId=order.CardId,
                             PaymentDate = CreateDate.AddMonths(i),
                             PayDate = CreateDate.AddMonths(i)
 
@@ -267,6 +268,7 @@ namespace Parfume.Controllers
                             Status = false,
                             Queue = i,
                             Debt = debt,
+                            CardId = order.CardId,
                             PaymentDate = CreateDate.AddMonths(i),
                             PayDate = CreateDate.AddMonths(i)
 
@@ -560,21 +562,30 @@ namespace Parfume.Controllers
 
             try
             {
-                //var format = "dd/MM/yyyy hh:mm";
-                var format = "g";
+                var format = "dd/MM/yyyy HH:mm";
+               // var format = "g";
                 //CultureInfo provider = CultureInfo.InvariantCulture;
                 CultureInfo provider = new CultureInfo("fr-FR");
                 var CreateDate = DateTime.Now;
                 if (dateCreate != null)
                 {
-                    dateCreate += " " + CreateDate.ToShortTimeString();
+                   // dateCreate += " " + CreateDate.ToShortTimeString();
                     CreateDate = DateTime.ParseExact(dateCreate, format, provider);
 
                 }
                 var orderId = Convert.ToInt32(OrderId);
                 var Price = Convert.ToDouble(price);
 
-                var order = _context.Orders.Where(c => c.Id == orderId).FirstOrDefault();
+                var order = _context.Orders.Where(c => c.Id == orderId)
+                    .Include(c=>c.Customer)
+                    .FirstOrDefault();
+                var check = _context.PaymentHistories.Where(c => c.CardId == order.CardId && c.PayDate.Value.Date == CreateDate.Date && c.PayPrice == Price).FirstOrDefault();
+
+                if (_context.PaymentHistories.Any(c => c.CardId == order.CardId && c.PayDate == CreateDate && c.PayPrice == Price))
+                {
+                    return Json(new { status = "error", message = $"Bu çək istifadə olunub  müştəri fini:{order.Customer.Fincode} " });
+                }
+
                 order.Debt = order.Debt - Price;
                 order.StatusNotification = 1;
                 order.PaymentDate = order.PaymentDate?.AddMonths(1);
@@ -598,12 +609,14 @@ namespace Parfume.Controllers
                     }
                 }
 
-
+               
+                
                 if (_context.PaymentHistories.Any(c => c.OrderId == orderId && c.Status == false))
                 {
                     var paymentHistory = _context.PaymentHistories.Where(c => c.OrderId == orderId && c.Status == false).FirstOrDefault();
                     paymentHistory.Status = true;
                     paymentHistory.Note = note;
+                    paymentHistory.CardId = order.CardId;
                     paymentHistory.PayPrice = Price;
                     paymentHistory.PayDate = CreateDate;
                     paymentHistory.Debt = Convert.ToDouble(order.Debt);
@@ -634,7 +647,8 @@ namespace Parfume.Controllers
                         Debt = Convert.ToDouble(order.Debt),
                         PaymentDate = CreateDate,
                         PayDate = CreateDate,
-                        OrderId = orderId
+                        OrderId = orderId,
+                        CardId=order.CardId
                     };
                     _context.PaymentHistories.Add(pymentH);
                     _context.SaveChanges();

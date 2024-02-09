@@ -35,7 +35,7 @@
             <label class="labelColor">Instagram</label>
             <input type="text" readonly class="form-control  text-center " value="@Model.Customer.InstagramAddress" />
         </div>
-        <div class="col-2">
+        <div class="col-3">
             <label class="labelColor">Ödəmə tarixi</label>
             <input type="text" readonly class="form-control  text-center " value="@Model.PaymentDate?.ToString("dd/MM/yyyy")" />
         </div>
@@ -98,7 +98,7 @@
             <label class="labelColor">Qeyd</label>
             <input type="text" class="form-control note " />
         </div>
-        <div class="col-2 ">
+        <div class="col-3 ">
             <label class="labelColor">Ödəniş tarixi</label>
             <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
                 <input type="text" required data-val-required="Vaxtı qeyd etməlisiz" id="Create_Date" class="form-control datetimepicker-input" data-target="#datetimepicker3" />
@@ -155,14 +155,17 @@
                         <td>@item.PayPrice</td>
                         <td>@item.Note</td>
                         <td>@item.Debt</td>
-                        <td>@item.PayDate?.ToString("dd/MM/yyyy")</td>
-                        <td>@item.PaymentDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@item.PayDate?.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        <td>@item.PaymentDate?.ToString("dd/MM/yyyy HH:mm:ss")</td>
                         <td>
-                            @if (item.PayPrice != null && (IsAdmin|| IsSatici) )
+                            @if (item.PayPrice != null && (IsAdmin || IsSatici))
                             {
-                                <button type="button" class="btn btn-info changePay " data-href="@Url.Action("ChangePaymentPay","Order",new {payHistoryId=item.Id })" style=" background-color: #7c6e58 !important; width: 80px; ">
+                                <button type="button" class="btn btn-info changePay " data-href="@Url.Action("ChangePaymentPay", "Order", new { payHistoryId = item.Id })" style=" background-color: #7c6e58 !important; width: 80px; ">
                                     Edit
                                 </button>
+                            }
+                            @if (item.PayPrice != null && (IsAdmin))
+                            {
                                 <button type="button" class="btn btn-info deletePay " data-payHistoryId="@item.Id" style=" background-color: #7c6e58 !important; width: 80px; ">
                                     Silmək
                                 </button>

@@ -99,9 +99,10 @@ namespace Parfume.Controllers
                 }
                 var model = new SellerReportModel();
                 model.Orders = crediteHistory;
-                model.Count = crediteHistory.Count;
-                
-
+                foreach (var item in crediteHistory)
+                {
+                    model.Count += item.Amount;
+                }
                 return PartialView("_PartialTableSeller", model);
 
             }

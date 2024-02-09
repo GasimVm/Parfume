@@ -58,7 +58,7 @@ function ApplyBtn() {
         var sellerId = $(".sellerId option:selected").val();
 
         if (dateRange == "Invalid date - Invalid date") {
-            console.log("true")
+            
             dateRange = "Hamısı";
         }
         var formData = new FormData();
@@ -69,6 +69,7 @@ function ApplyBtn() {
         $(".message").remove("");
         $("#table").remove("");
         $(".result").remove("");
+        $(".orderCount").remove("");
         //$(".Bonus").val("");
         $.ajax({
             type: 'POST',
@@ -77,7 +78,6 @@ function ApplyBtn() {
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log(response.data)
                 $(".resultCash").append(response);
                 //$(".Bonus").val(response.data["bonus"])
             },

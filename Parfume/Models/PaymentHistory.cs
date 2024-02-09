@@ -31,7 +31,8 @@ namespace Parfume.Models
 
         public int OrderId { get; set; }
         public virtual Order Order { get; set; }
-
+        public int? CardId { get; set; }
+        public virtual Card Card { get; set; }
         public virtual ICollection<CrediteHistory>  CrediteHistories { get; set; }
 
 
