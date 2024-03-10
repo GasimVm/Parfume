@@ -43,6 +43,7 @@ namespace Parfume.Controllers
             {
                 DateTime startDateTime = DateTime.MinValue;
                 DateTime endDateTime = DateTime.Now;
+                
                 var crediteHistory = new List<Order>();
                 if (dateRange.Contains("Invalid date - Invalid date") || dateRange.Contains("Hamısı"))
                 {
@@ -77,7 +78,9 @@ namespace Parfume.Controllers
                         startDateTime = DateTime.ParseExact(dateRange.Split('-')[0].Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
                         endDateTime = DateTime.ParseExact(dateRange.Split('-')[1].Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
                     }
-                    crediteHistory = _context.SellerByOrderHistories.Where(c => c.CreateDate.Date >= startDateTime.Date && c.CreateDate.Date <= endDateTime.Date && c.SellerId==sellerId)
+                   var crediteHistory1 = _context.SellerByOrderHistories.Where(c => c.CreateDate.Date >= startDateTime.Date).FirstOrDefault();
+
+                   crediteHistory = _context.SellerByOrderHistories.Where(c =>c.Order.CreateDate.Date >=  startDateTime.Date &&  c.Order.CreateDate <= endDateTime.Date && c.SellerId==sellerId)
                     .Include(c => c.Order)
                     .Include(c => c.Order).ThenInclude(c => c.Customer)
                     .Include(c => c.Order).ThenInclude(c => c.Product)
@@ -106,7 +109,7 @@ namespace Parfume.Controllers
                 return PartialView("_PartialTableSeller", model);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Json(new { status = "error" });
             }

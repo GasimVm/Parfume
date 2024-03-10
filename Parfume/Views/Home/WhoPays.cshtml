@@ -36,13 +36,17 @@
                 @foreach (var item in Model)
                 {
                     string color = "";
-                    
+
                     if (item.PaymentDate?.Date<DateTime.Now.AddDays(2).Date)
                     {
                         color = "red";
                     }else if(item.PaymentDate?.Date < DateTime.Now.AddDays(4).Date)
                     {
                         color="yellow";
+                    }
+                      if (item.PaymentDate?.AddDays(60).Date < DateTime.Now.Date)
+                    {
+                        color = "#7373f3";
                     }
 
                 <tr style="background-color:@color" data-href="@Url.Action("Pay","Home",new {orderId=item.Id })">

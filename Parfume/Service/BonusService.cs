@@ -48,7 +48,7 @@ namespace Parfume.Service
         public bool CheckBonus(int customerId, double bonusAmount)
         {
             var customerDb = _context.Customers.Where(c => c.Id == customerId).First();
-            if (customerDb.BonusAmount < bonusAmount || customerDb.BonusAmount == bonusAmount)
+            if (customerDb.BonusAmount < bonusAmount  )
             {
                 return true;
             }
